@@ -39,6 +39,8 @@ $(foreach smart~fun,\
     $(notdir $(filter-out %~,$(wildcard $(smart.root)/funs/smart.*))),\
     $(smart~defun))
 
+.SUFFIXES:
+
 smart~defun :=
 
 ifdef ROOT.mk

@@ -1,7 +1,5 @@
 MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 
-.SUFFIXES:
-
 ifndef SRCDIR
   smart~error := SRCDIR is undefined
   $(error $(smart~error))
@@ -46,8 +44,8 @@ OBJECTS := \
 
 ifdef PROGRAMS
   modules: $(PROGRAMS)
-  $(PROGRAMS): $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o $@ $^ $(LOADLIBS)
+  $(eval $(PROGRAMS): $(OBJECTS) ; \
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LOADLIBS))
 endif #PROGRAMS
 
 ifdef LIBRARIES
@@ -55,17 +53,16 @@ ifdef LIBRARIES
   LIBRARIES.a := $(filter %.a,$(LIBRARIES))
   LIBRARIES.so := $(filter %.so,$(LIBRARIES))
   modules: $(LIBRARIES.a) $(LIBRARIES.so)
-  $(LIBRARIES.a): $(OBJECTS)
-	$(AR) $(ARFLAGS) $@ $^ $(LIBADD)
-  $(LIBRARIES.so): $(OBJECTS)
-	$(CXX) $(LDFLAGS) -shared -o $@ $^ $(LOADLIBS)
+  $(eval $(LIBRARIES.a): $(OBJECTS) ; $(AR) $(ARFLAGS) $@ $^ $(LIBADD))
+  $(eval $(LIBRARIES.so): $(OBJECTS) ; \
+	$(CXX) $(LDFLAGS) -shared -o $@ $^ $(LOADLIBS))
 endif #LIBRARIES
 
 COMPILE.c++ = $(CXX) $(CXXFLAGS) -c -o $@ $<
 COMPILE.c = $(CC) $(CFLAGS) -c -o $@ $<
 
-$(SOURCES.cpp:%.cpp=%.o):%.o:%.cpp ; $(COMPILE.c++)
-$(SOURCES.c:%.c=%.o):%.o:%.c ; $(COMPILE.c)
+$(eval $(SOURCES.cpp:%.cpp=%.o):%.o:%.cpp ; $(COMPILE.c++))
+$(eval $(SOURCES.c:%.c=%.o):%.o:%.c ; $(COMPILE.c))
 
 $(eval clean-$(SM.MK): ; \
   rm -vf $(strip $(LIBRARIES) $(PROGRAMS) $(OBJECTS)))
