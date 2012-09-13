@@ -1,0 +1,39 @@
+# -*- makefile-gmake -*-
+#
+#    Copyright (C) 2012, Duzy Chan <code@duzy.info>
+#    All rights reserved.
+#
+#####################################################
+#
+#  smart.load - Load a subdir under SRCDIR.
+#  
+#  @param: loadee
+#
+ifndef SRCDIR
+  smart~error := SRCDIR is undefined
+endif #SRCDIR
+
+ifndef smart~error
+
+smart~loadee.mk := $(wildcard $(SRCDIR)/$(@loadee)/sm.mk)
+
+ifndef @loadee
+  smart~error := @loadee is undefined
+endif
+
+ifndef smart~error
+
+$(info load $(@loadee))
+
+ifdef smart~loadee.mk
+  include $(smart~loadee.mk)
+else
+  #$(warning no loadee "$(SRCDIR)/$(@loadee)/sm.mk")
+  smart~error := no loadee "$(SRCDIR)/$(@loadee)/sm.mk"
+endif
+
+smart~loadee.mk :=
+@loadee :=
+
+endif #!smart~error
+endif #!smart~error
