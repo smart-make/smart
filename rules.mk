@@ -45,7 +45,7 @@ OBJECTS := \
 ifdef PROGRAMS
   modules: $(PROGRAMS)
   $(eval $(PROGRAMS): $(OBJECTS) ; \
-	$(CXX) $(LDFLAGS) -o $@ $^ $(LOADLIBS))
+	$(CXX) $(LDFLAGS) -o $$@ $$^ $(LOADLIBS))
 endif #PROGRAMS
 
 ifdef LIBRARIES
@@ -53,20 +53,22 @@ ifdef LIBRARIES
   LIBRARIES.a := $(filter %.a,$(LIBRARIES))
   LIBRARIES.so := $(filter %.so,$(LIBRARIES))
   modules: $(LIBRARIES.a) $(LIBRARIES.so)
-  $(eval $(LIBRARIES.a): $(OBJECTS) ; $(AR) $(ARFLAGS) $@ $^ $(LIBADD))
+  $(eval $(LIBRARIES.a): $(OBJECTS) ; \
+	$(AR) $(ARFLAGS) $$@ $$^ $(LIBADD))
   $(eval $(LIBRARIES.so): $(OBJECTS) ; \
-	$(CXX) $(LDFLAGS) -shared -o $@ $^ $(LOADLIBS))
+	$(CXX) $(LDFLAGS) -shared -o $$@ $$^ $(LOADLIBS))
 endif #LIBRARIES
 
-COMPILE.c++ = $(CXX) $(CXXFLAGS) -c -o $@ $<
-COMPILE.c = $(CC) $(CFLAGS) -c -o $@ $<
+COMPILE.c++ = $(CXX) $(CXXFLAGS) -c -o $$@ $$<
+COMPILE.go = $(GCCGO) $(GOFLAGS) -c -o $$@ $$<
+COMPILE.c = $(CC) $(CFLAGS) -c -o $$@ $$<
 
 $(eval $(SOURCES.cpp:%.cpp=%.o):%.o:%.cpp ; $(COMPILE.c++))
+$(eval $(SOURCES.go:%.go=%.o):%.o:%.go ; $(COMPILE.go))
 $(eval $(SOURCES.c:%.c=%.o):%.o:%.c ; $(COMPILE.c))
 
+clean: clean-$(SM.MK)
 $(eval clean-$(SM.MK): ; \
   rm -vf $(strip $(LIBRARIES) $(PROGRAMS) $(OBJECTS)))
-
-clean: clean-$(SM.MK)
 
 endif #SOURCES
