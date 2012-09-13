@@ -67,9 +67,9 @@ COMPILE.c = $(CC) $(CFLAGS) -c -o $@ $<
 $(SOURCES.cpp:%.cpp=%.o):%.o:%.cpp ; $(COMPILE.c++)
 $(SOURCES.c:%.c=%.o):%.o:%.c ; $(COMPILE.c)
 
-$(eval clean-$(NAME): ; \
+$(eval clean-$(SM.MK): ; \
   rm -vf $(strip $(LIBRARIES) $(PROGRAMS) $(OBJECTS)))
 
-clean: clean-$(NAME)
+clean: clean-$(SM.MK)
 
 endif #SOURCES
