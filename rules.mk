@@ -10,6 +10,10 @@ $(foreach @loadee,$(SUBDIRS),$(smart.load))
 endif #SUBDIRS
 
 ifdef SOURCES
+
+ifeq ($(shell uname),Linux)
+
+else # uname == Linux
 LOADLIBS += \
   -lkernel32\
   -luser32\
@@ -30,6 +34,8 @@ LOADLIBS += \
   -lnetapi32\
   -lmpr\
 
+endif # uname != Linux
+
 SOURCES := $(SOURCES:%=$(SRCDIR)/%)
 SOURCES.cc := $(filter %.cc, $(SOURCES))
 SOURCES.cpp := $(filter %.cpp, $(SOURCES))
@@ -43,6 +49,7 @@ OBJECTS := \
   $(SOURCES.c:%.c=%.o)\
 
 ifdef PROGRAMS
+  PROGRAMS := $(PROGRAMS:%=$(SRCDIR)/%)
   modules: $(PROGRAMS)
   $(eval $(PROGRAMS): $(OBJECTS) ; \
 	$(CXX) $(LDFLAGS) -o $$@ $$^ $(LOADLIBS))
