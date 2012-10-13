@@ -12,3 +12,7 @@ Makefile.in
 /install-sh
 /missing
 *~
+docs/main.aux
+docs/main.log
+docs/smart-make.pdf
+docs/main.out

@@ -4,6 +4,11 @@
 #
 smart.me = $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 smart.root := $(smart.me)
+smart.stack :=
+
+smart.context.names := SM.MK \
+  NAME SUBDIRS SOURCES PROGRAMS LIBRARIES \
+  CFLAGS CXXFLAGS
 
 SMART.DECLARE := $(smart.root)/declare.mk
 SMART.RULES := $(smart.root)/rules.mk

@@ -1,0 +1,41 @@
+# -*- makefile-gmake -*-
+#
+#    Copyright (C) 2012, Duzy Chan <code@duzy.info>
+#    All rights reserved.
+#
+#####################################################
+#
+#  smart.pop - Restore the last pushed context.
+#  
+#
+#
+smart~sm.mk := $(lastword $(smart.stack))
+smart.stack := $(filter-out $(smart~sm.mk),$(smart.stack))
+
+define smart~restore.simple
+$(eval \
+  $(smart~name) := $(smart.stack.$(smart~name)-$(smart~sm.mk))
+ )
+endef #smart~restore.simple
+
+define smart~restore.recursive
+$(eval \
+  $(smart~name) = $(value $(smart.stack.$(smart~name)-$(smart~sm.mk)))
+ )
+endef #smart~restore.recursive
+
+define smart~restore
+$(smart~restore.$(flavor $(smart~name)))$(eval \
+  smart.stack.$(smart~name)-$(smart~sm.mk) :=
+ )
+endef #smart~restore
+
+$(foreach smart~name,$(smart.context.names),$(smart~restore))
+
+smart~restore.simple :=
+smart~restore.recursive :=
+smart~restore :=
+smart~name :=
+smart~sm.mk :=
+
+#$(warning pop: $(NAME), $(SM.MK))
