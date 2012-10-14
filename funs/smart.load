@@ -22,6 +22,7 @@ endif
 ifndef smart~error
 
 #$(warning info: load: $(NAME), $(SRCDIR), $(@loadee), $(smart~loadee.mk))
+#$(warning info: $(SM.MK), $(SUBDIRS))
 
 ifdef smart~loadee.mk
   $(call smart.push)
