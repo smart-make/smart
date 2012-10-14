@@ -7,7 +7,7 @@ smart.root := $(smart.me)
 smart.stack :=
 
 smart.context.names := SM.MK \
-  NAME SUBDIRS SOURCES PROGRAMS LIBRARIES \
+  NAME SRCDIR SUBDIRS SOURCES PROGRAMS LIBRARIES \
   CFLAGS CXXFLAGS
 
 SMART.DECLARE := $(smart.root)/declare.mk

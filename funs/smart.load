@@ -21,18 +21,18 @@ endif
 
 ifndef smart~error
 
-#$(warning load: $(NAME), $(@loadee))
+#$(warning info: load: $(NAME), $(SRCDIR), $(@loadee), $(smart~loadee.mk))
 
 ifdef smart~loadee.mk
   $(call smart.push)
   include $(smart~loadee.mk)
   $(call smart.pop)
 else
-  #$(warning no loadee "$(SRCDIR)/$(@loadee)/sm.mk")
+  $(warning no loadee "$(SRCDIR)/$(@loadee)/sm.mk")
   smart~error := no loadee "$(SRCDIR)/$(@loadee)/sm.mk"
 endif
 
-#$(warning load: $(NAME), $(@loadee))
+#$(warning info: load: $(NAME), $(@loadee), $(smart~loadee.mk))
 
 smart~loadee.mk :=
 @loadee :=
