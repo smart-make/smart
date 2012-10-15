@@ -13,30 +13,28 @@ ifndef SRCDIR
   smart~error := SRCDIR is undefined
 else
 
-smart~loadee.mk := $(wildcard $(SRCDIR)/$(@loadee)/sm.mk)
-
 ifndef @loadee
   smart~error := @loadee is undefined
-endif
+else
 
-ifndef smart~error
+smart~loadee.mk := $(wildcard $(SRCDIR)/$(@loadee)/sm.mk)
+
+ifndef smart~loadee.mk
+  smart~error := missing "$(SRCDIR)/$(@loadee)/sm.mk"
+else
 
 #$(warning info: load: $(NAME), $(SRCDIR), $(@loadee), $(smart~loadee.mk))
 #$(warning info: $(SM.MK), $(SUBDIRS))
 
-ifdef smart~loadee.mk
-  $(call smart.push)
-  include $(smart~loadee.mk)
-  $(call smart.pop)
-else
-  $(warning no loadee "$(SRCDIR)/$(@loadee)/sm.mk")
-  smart~error := no loadee "$(SRCDIR)/$(@loadee)/sm.mk"
-endif
+$(call smart.push)
+include $(smart~loadee.mk)
+$(call smart.pop)
 
 #$(warning info: load: $(NAME), $(@loadee), $(smart~loadee.mk))
 
 smart~loadee.mk :=
 @loadee :=
 
-endif #!smart~error
-endif #SRCDIR
+endif #!smart~loadee.mk
+endif #!@loadee
+endif #!SRCDIR

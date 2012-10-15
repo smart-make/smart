@@ -3,7 +3,7 @@ MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 ifndef SRCDIR
   smart~error := SRCDIR is undefined
   $(error $(smart~error))
-endif
+endif #!SRCDIR
 
 ifdef SUBDIRS
   include $(smart.root)/internal/subdirs.mk

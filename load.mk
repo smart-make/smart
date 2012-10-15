@@ -7,7 +7,8 @@ smart.root := $(smart.me)
 smart.stack :=
 
 smart.context.names := SM.MK \
-  NAME SRCDIR SUBDIRS SOURCES PROGRAMS LIBRARIES \
+  NAME SRCDIR \
+  SUBDIRS SOURCES PROGRAMS LIBRARIES \
   CFLAGS CXXFLAGS
 
 SMART.DECLARE := $(smart.root)/declare.mk
@@ -15,9 +16,8 @@ SMART.RULES := $(smart.root)/rules.mk
 
 MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 
-#ROOT := $(PWD)
 ROOT := $(smart.me)
-ROOT.mk := $(wildcard $(ROOT)/sm.mk)
+ROOT.MK := $(wildcard $(ROOT)/sm.mk)
 
 smart~error :=
 
@@ -48,8 +48,8 @@ $(foreach smart~fun,\
 
 smart~defun :=
 
-ifdef ROOT.mk
-  include $(ROOT.mk)
-endif #ROOT.mk
+ifdef ROOT.MK
+  include $(ROOT.MK)
+endif #ROOT.MK
 
 .DEFAULT_GOAL := modules
