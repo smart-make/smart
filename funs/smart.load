@@ -17,24 +17,37 @@ ifndef @loadee
   smart~error := @loadee is undefined
 else
 
-smart~loadee.mk := $(wildcard $(SRCDIR)/$(@loadee)/sm.mk)
+smart~sm.mk := $(wildcard $(SRCDIR)/$(@loadee)/sm.mk)
+smart~smart :=
 
-ifndef smart~loadee.mk
-  smart~error := missing "$(SRCDIR)/$(@loadee)/sm.mk"
+ifndef smart~sm.mk
+  smart~sm.mk := $(wildcard $(SRCDIR)/$(@loadee)/smart.mk)
+  smart~smart := true
+endif #!smart~sm.mk
+
+ifndef smart~sm.mk
+  smart~error := missing scripts in "$(SRCDIR)/$(@loadee)"
 else
 
-#$(warning info: load: $(NAME), $(SRCDIR), $(@loadee), $(smart~loadee.mk))
-#$(warning info: $(SM.MK), $(SUBDIRS))
-
 $(call smart.push)
-include $(smart~loadee.mk)
+
+ifdef smart~smart
+  MAKEFILE_LIST += $(SRCDIR)/$(@loadee)/smart.mk
+  include $(SMART.DECLARE)
+endif #smart~smart
+
+include $(smart~sm.mk)
+
+ifdef smart~smart
+  include $(SMART.RULES)
+endif #smart~smart
+
 $(call smart.pop)
 
-#$(warning info: load: $(NAME), $(@loadee), $(smart~loadee.mk))
-
-smart~loadee.mk :=
+smart~smart :=
+smart~sm.mk :=
 @loadee :=
 
-endif #!smart~loadee.mk
+endif #!smart~sm.mk
 endif #!@loadee
 endif #!SRCDIR
