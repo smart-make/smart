@@ -1,0 +1,30 @@
+# -*- makefile-gmake -*-
+#
+#    Copyright (C) 2012, Duzy Chan <code@duzy.info>.
+#    All rights reserved.
+#
+$(smart.internal)
+
+define smart~restore.simple
+$(eval \
+  $(smart~name) := $(smart.context.$(smart~name)-$(@name))
+ )
+endef #smart~restore.simple
+
+define smart~restore.recursive
+$(eval \
+  $(smart~name) = $(value $(smart.context.$(smart~name)-$(@name)))
+ )
+endef #smart~restore.recursive
+
+define smart~restore
+$(smart~restore.$(flavor $(smart~name)))
+endef #smart~restore
+
+$(foreach smart~name,$(smart.context.names),$(smart~restore))
+$(foreach smart~name,$(smart.context.names:%=EXPORT.%),$(smart~restore))
+
+smart~restore.simple :=
+smart~restore.recursive :=
+smart~restore :=
+smart~name :=

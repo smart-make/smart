@@ -9,6 +9,8 @@
 #  
 #
 #
+$(smart.internal)
+
 smart~sm.mk := $(lastword $(smart.stack))
 smart.stack := $(filter-out $(smart~sm.mk),$(smart.stack))
 

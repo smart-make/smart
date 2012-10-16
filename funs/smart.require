@@ -1,0 +1,48 @@
+# -*- makefile-gmake -*-
+#
+#    Copyright (C) 2012, Duzy Chan <code@duzy.info>
+#    All rights reserved.
+#
+#####################################################
+#
+#  smart.require - Load a subdir under SRCDIR.
+#  
+#  @param: name
+#
+$(smart.internal)
+
+ifndef @name
+  smart~error := @name is undefined
+else
+
+ifndef smart.scripts.$(@name)
+  smart~error := no script for "$(@name)"
+else
+
+smart~sm.mk := $(smart.scripts.$(@name))
+smart~names := $(filter-out \
+  SM.MK NAME SRCDIR SUBDIRS REQUIRES PROGRAMS LIBRARIES,\
+  $(smart.context.names))
+
+#$(warning info: "$(NAME)" requires "$(@name), $(smart~sm.mk)")
+#$(warning info: EXPORTS: $(filter smart.context.EXPORT.%-$(smart~sm.mk),$(.VARIABLES)))
+#$(warning info: EXPORTS: $(filter smart.context.EXPORT.%,$(.VARIABLES)))
+
+define smart~require
+$(eval \
+  ifdef smart.context.EXPORT.$(smart~name)-$(smart~sm.mk)
+    $(smart~name) += $(smart.context.EXPORT.$(smart~name)-$(smart~sm.mk))
+  endif
+ )
+endef #smart~require
+
+$(foreach smart~name,$(smart~names),$(smart~require))
+
+endif #smart.scripts.$(@name)
+endif #@name
+
+smart~require :=
+smart~sm.mk :=
+smart~names :=
+smart~name :=
+@name :=

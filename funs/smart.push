@@ -9,7 +9,8 @@
 #  
 #
 #
-#$(warning push: $(NAME), $(SM.MK))
+$(smart.internal)
+
 smart.stack := $(smart.stack) $(SM.MK)
 
 define smart~save.simple

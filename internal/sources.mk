@@ -1,27 +1,4 @@
-ifeq ($(shell uname),Linux)
-
-else # uname == Linux
-LOADLIBS += \
-  -lkernel32\
-  -luser32\
-  -lgdi32\
-  -lcomdlg32\
-  -lwinspool\
-  -lwinmm\
-  -lshell32\
-  -lcomctl32\
-  -lole32\
-  -loleaut32\
-  -luuid\
-  -lrpcrt4\
-  -ladvapi32\
-  -lwsock32\
-  -lodbc32\
-  -lws2_32\
-  -lnetapi32\
-  -lmpr\
-
-endif # uname != Linux
+$(smart.internal)
 
 SOURCES := $(SOURCES:%=$(SRCDIR)/%)
 SOURCES.cc := $(filter %.cc, $(SOURCES))

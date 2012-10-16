@@ -1,8 +1,12 @@
+$(smart.internal)
+
 LIBRARIES := $(LIBRARIES:%=$(SRCDIR)/%)
 LIBRARIES.a := $(filter %.a,$(LIBRARIES))
 LIBRARIES.so := $(filter %.so,$(LIBRARIES))
 
-modules: $(LIBRARIES.a) $(LIBRARIES.so)
+ifneq ($(filter-out $(LIBRARIES),$(LIBRARIES.a) $(LIBRARIES.so)),)
+  $(error unregonized libraries "$(filter-out $(LIBRARIES),$(LIBRARIES.a) $(LIBRARIES.so))")
+endif
 
 $(eval $(LIBRARIES.a): $(OBJECTS) ; \
 	$(AR) $(ARFLAGS) $$@ $$^ $(LIBADD))

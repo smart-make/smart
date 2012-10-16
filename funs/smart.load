@@ -9,6 +9,8 @@
 #  
 #  @param: loadee
 #
+$(smart.internal)
+
 ifndef SRCDIR
   smart~error := SRCDIR is undefined
 else
@@ -29,6 +31,10 @@ ifndef smart~sm.mk
   smart~error := missing scripts in "$(SRCDIR)/$(@loadee)"
 else
 
+ifeq ($(smart.load-$(smart~sm.mk)),true)
+  $(warning info: "$(smart~sm.mk)" already loaded)
+else
+
 $(call smart.push)
 
 ifdef smart~smart
@@ -36,6 +42,7 @@ ifdef smart~smart
   include $(SMART.DECLARE)
 endif #smart~smart
 
+smart.load-$(smart~sm.mk) := true
 include $(smart~sm.mk)
 
 ifdef smart~smart
@@ -44,10 +51,11 @@ endif #smart~smart
 
 $(call smart.pop)
 
-smart~smart :=
-smart~sm.mk :=
-@loadee :=
-
+endif #$(smart.load-$(smart~sm.mk)) == true
 endif #!smart~sm.mk
 endif #!@loadee
 endif #!SRCDIR
+
+smart~smart :=
+smart~sm.mk :=
+@loadee :=
