@@ -19,7 +19,7 @@ endef #smart.internal
 
 SMART.MK = $(SM.MK)
 SMART.DECLARE := $(smart.root)/declare.mk
-SMART.RULES := $(smart.root)/save.mk
+SMART.RULES := $(smart.root)/pend.mk
 
 $(smart.internal)
 ROOT := $(smart.me)
