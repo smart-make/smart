@@ -11,6 +11,8 @@ ifndef SRCDIR
   $(error $(smart~error))
 endif #!SRCDIR
 
+module-$(SM.MK):
+
 #ifdef SUBDIRS
 #  include $(smart.root)/internal/subdirs.mk
 #endif #SUBDIRS
@@ -35,7 +37,7 @@ ifdef LIBRARIES
   modules: module-$(SM.MK)
 endif #LIBRARIES
 
-$(eval clean-$(SM.MK):; $(if $(LIBRARIES)$(PROGRAMS)$(OBJECTS),rm -vf $(strip $(LIBRARIES) $(PROGRAMS) $(OBJECTS))))
+$(eval clean-$(SM.MK):; $(if $(LIBRARIES)$(PROGRAMS)$(OBJECTS),@rm -vf $(strip $(LIBRARIES) $(PROGRAMS) $(OBJECTS))))
 clean: clean-$(SM.MK)
 
 PHONY += module-$(SM.MK) clean-$(SM.MK)
