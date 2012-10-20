@@ -46,12 +46,3 @@ smart~save.simple :=
 smart~save.recursive :=
 smart~save :=
 smart~name :=
-
-ifndef SRCDIR
-  smart~error := SRCDIR is undefined
-  $(error $(smart~error))
-endif #!SRCDIR
-
-ifdef SUBDIRS
-  include $(smart.root)/internal/subdirs.mk
-endif #SUBDIRS

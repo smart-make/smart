@@ -37,6 +37,17 @@ ifdef LIBRARIES
   modules: module-$(SM.MK)
 endif #LIBRARIES
 
+ifdef SETTLE
+  include $(smart.root)/internal/settle.mk
+  settle: settle-$(SM.MK)
+  PHONY += settle-$(SM.MK)
+endif #SETTLE
+
+ifeq ($(SETTLE_ROOT),true)
+  $(info settle_root: $(SRCDIR))
+  smart.settle_root := $(SRCDIR)
+endif #SETTLE_ROOT
+
 $(eval clean-$(SM.MK):; $(if $(LIBRARIES)$(PROGRAMS)$(OBJECTS),@rm -vf $(strip $(LIBRARIES) $(PROGRAMS) $(OBJECTS))))
 clean: clean-$(SM.MK)
 

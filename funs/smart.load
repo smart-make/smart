@@ -23,8 +23,8 @@ smart~sm.mk := $(wildcard $(SRCDIR)/$(@loadee)/sm.mk)
 smart~smart :=
 
 ifndef smart~sm.mk
-  smart~sm.mk := $(wildcard $(SRCDIR)/$(@loadee)/smart.mk)
-  smart~smart := true
+  smart~sm.mk := $(or $(wildcard $(SRCDIR)/$(@loadee)/smart),$(wildcard $(SRCDIR)/$(@loadee)/smart.mk))
+  smart~smart := $(notdir $(smart~sm.mk))
 endif #!smart~sm.mk
 
 ifndef smart~sm.mk
@@ -38,7 +38,7 @@ else
 $(call smart.push)
 
 ifdef smart~smart
-  MAKEFILE_LIST += $(SRCDIR)/$(@loadee)/smart.mk
+  MAKEFILE_LIST += $(SRCDIR)/$(@loadee)/$(smart~smart)
   include $(SMART.DECLARE)
 endif #smart~smart
 

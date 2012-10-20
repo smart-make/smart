@@ -6,6 +6,8 @@ $(smart.internal)
 $(foreach smart~name,$(smart.context.names),$(eval $(smart~name):=))
 $(foreach smart~name,$(smart.context.names:%=EXPORT.%),$(eval $(smart~name):=))
 
+SETTLE_ROOT :=
+
 SM.MK := $(lastword $(MAKEFILE_LIST))
 SRCDIR := $(smart.me)
 NAME := $(notdir $(SRCDIR))

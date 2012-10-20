@@ -16,7 +16,7 @@ ifndef @name
 else
 
 ifndef smart.scripts.$(@name)
-  smart~error := no script for "$(@name)"
+  smart~error := no script for "$(@name) (by $(NAME), $(SM.MK))"
 else
 
 smart~scripts := $(smart.scripts.$(@name))

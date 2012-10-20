@@ -7,11 +7,12 @@ smart.root := $(smart.me)
 smart.stack :=
 smart.list :=
 smart.export :=
-
+smart.settle_root :=
 smart.context.names := SM.MK NAME SRCDIR \
-  SUBDIRS SOURCES PROGRAMS LIBRARIES REQUIRES \
+  MODULES SUBDIRS SOURCES PROGRAMS LIBRARIES REQUIRES \
+  SETTLE_ROOT SETTLE \
   CFLAGS CXXFLAGS ARFLAGS LDFLAGS LOADLIBS LIBADD \
-  DEFINES INCLUDES
+  DEFINES INCLUDES INSTALLS INSTALL_PATH
 
 define smart.internal
 $(eval MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
@@ -23,6 +24,7 @@ SMART.RULES := $(smart.root)/pend.mk
 
 $(smart.internal)
 ROOT := $(smart.me)
+OUT = $(ROOT)/out
 
 smart~error :=
 
@@ -53,12 +55,12 @@ smart~defun :=
 
 .SUFFIXES:
 
-PHONY := modules clean
+PHONY := modules settle clean
 ROOT.MK := $(wildcard $(ROOT)/sm.mk)
 ifdef ROOT.MK
   include $(ROOT.MK)
 else
-  ROOT.MK := $(wildcard $(ROOT)/smart.mk)
+  ROOT.MK := $(or $(wildcard $(ROOT)/smart),$(wildcard $(ROOT)/smart.mk))
   ifdef ROOT.MK
     MAKEFILE_LIST += $(ROOT.MK)
     include $(SMART.DECLARE)
