@@ -19,32 +19,32 @@ ifndef smart.scripts.$(@name)
   smart~error := no script for "$(@name) (by $(NAME), $(SM.MK))"
 else
 
-smart~scripts := $(smart.scripts.$(@name))
 smart~names := $(filter-out \
   SM.MK NAME SRCDIR SUBDIRS REQUIRES PROGRAMS LIBRARIES,\
   $(smart.context.names))
 
-#$(warning info: "$(NAME)" requires "$(@name), $(smart~scripts)")
-#$(warning info: EXPORTS: $(filter smart.context.EXPORT.%-$(smart~scripts),$(.VARIABLES)))
+#$(warning info: "$(NAME)" requires "$(@name), $(smart.scripts.$(@name))")
+#$(warning info: EXPORTS: $(filter smart.context.EXPORT.%-$(smart.scripts.$(@name)),$(.VARIABLES)))
 #$(warning info: EXPORTS: $(filter smart.context.EXPORT.%,$(.VARIABLES)))
 
 define smart~require
 $(eval \
-  ifdef smart.context.EXPORT.$(smart~name)-$(smart~sm.mk)
-    $(smart~name) += $(smart.context.EXPORT.$(smart~name)-$(smart~sm.mk))
+  ifdef smart.context.EXPORT.$(smart~name)-$(smart~sm)
+    $(smart~name) += $(smart.context.EXPORT.$(smart~name)-$(smart~sm))
   endif
  )
 endef #smart~require
 
-$(foreach smart~sm.mk,$(smart~scripts),\
-    $(foreach smart~name,$(smart~names),$(smart~require))\
-    $(eval module-$(SM.MK): module-$(smart~sm.mk)))
+$(foreach smart~sm,$(smart.scripts.$(@name)),\
+  $(foreach smart~name,$(smart~names),$(smart~require)))
+
+$(foreach smart~sm,$(smart.scripts.$(@name)),\
+  $(foreach @name, $(smart.context.REQUIRES-$(smart~sm)),\
+    $(eval include $(smart.root)/funs/smart.require)))
 
 endif #smart.scripts.$(@name)
 endif #@name
 
 smart~require :=
-smart~scripts :=
 smart~names :=
 smart~name :=
-@name :=

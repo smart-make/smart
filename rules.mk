@@ -13,12 +13,14 @@ endif #!SRCDIR
 
 module-$(SM.MK):
 
-#ifdef SUBDIRS
-#  include $(smart.root)/internal/subdirs.mk
-#endif #SUBDIRS
-
 ifdef REQUIRES
- $(foreach @name,$(REQUIRES),$(smart.require))
+  $(foreach @name, $(REQUIRES),\
+    $(eval include $(smart.root)/funs/smart.require)\
+    $(foreach smart~sm, $(smart.scripts.$(@name)),\
+      $(eval module-$(SM.MK): module-$(smart~sm))\
+     ))
+
+  #$(info $(NAME): $(REQUIRES))
 endif #REQUIRES
 
 ifdef SOURCES

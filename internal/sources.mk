@@ -37,7 +37,11 @@ INCLUDES := $(patsubst %,-I%,$(INCLUDES:-I%=%))
 COMPILE.c++ = $(CXX) -o $$@ $(strip $(CXXFLAGS) $(DEFINES) $(INCLUDES) -c) $$<
 COMPILE.go = $(GCCGO) -o $$@ $(strip $(GOFLAGS) $(DEFINES) $(INCLUDES) -c) $$<
 COMPILE.c = $(CC) -o $$@ $(strip $(CFLAGS) $(DEFINES) $(INCLUDES) -c) $$<
+COMPILE.s = $(AS) -o $$@ $(strip $(ASFLAGS) $(INCLUDES)) $$<
 
+$(eval $(SOURCES.cc:%.cc=%.o):%.o:%.cc	  ; $(COMPILE.c++))
 $(eval $(SOURCES.cpp:%.cpp=%.o):%.o:%.cpp ; $(COMPILE.c++))
-$(eval $(SOURCES.go:%.go=%.o):%.o:%.go ; $(COMPILE.go))
-$(eval $(SOURCES.c:%.c=%.o):%.o:%.c ; $(COMPILE.c))
+$(eval $(SOURCES.go:%.go=%.o):%.o:%.go	  ; $(COMPILE.go))
+$(eval $(SOURCES.c:%.c=%.o):%.o:%.c	  ; $(COMPILE.c))
+$(eval $(SOURCES.s:%.s=%.o):%.o:%.s	  ; $(COMPILE.c))
+$(eval $(SOURCES.S:%.S=%.o):%.o:%.S	  ; $(COMPILE.c))
