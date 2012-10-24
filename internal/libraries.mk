@@ -8,6 +8,9 @@ ifneq ($(filter-out $(LIBRARIES),$(LIBRARIES.a) $(LIBRARIES.so)),)
   $(error unregonized libraries "$(filter-out $(LIBRARIES),$(LIBRARIES.a) $(LIBRARIES.so))")
 endif
 
+$(call smart~unique,ARFLAGS)
+$(call smart~unique,LDFLAGS)
+
 $(eval $(LIBRARIES.a): $(OBJECTS) ; \
 	$(AR) $(ARFLAGS) $$@ $$^ $(LIBADD))
 $(eval $(LIBRARIES.so): $(OBJECTS) ; \

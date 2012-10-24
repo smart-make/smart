@@ -16,20 +16,10 @@ OBJECTS := \
   $(SOURCES.s:%.s=%.o)\
   $(SOURCES.S:%.S=%.o)\
 
-define smart~unique
-$(eval \
-  ifdef $1
-    $1 :=
-    $$(foreach _,$($1),$$(if $$(filter $$_,$$($1)),,$$(eval $1 += $$_)))
-    $1 := $$(strip $$($1))
-  endif
- )
-endef #smart~unique
-
 $(call smart~unique,DEFINES)
 $(call smart~unique,INCLUDES)
-#$(call smart~unique,CFLAGS)
-#$(call smart~unique,CXXFLAGS)
+$(call smart~unique,CFLAGS)
+$(call smart~unique,CXXFLAGS)
 
 INCLUDES := $(patsubst %,-I%,$(INCLUDES:-I%=%))
 INCLUDES := $(patsubst %,-I%,$(INCLUDES:-I%=%))

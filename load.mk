@@ -71,6 +71,16 @@ endif #ROOT.MK
 
 #$(warning info: $(smart.list))
 
+define smart~unique
+$(eval \
+  ifdef $1
+    $1 :=
+    $$(foreach _,$($1),$$(if $$(filter $$_,$$($1)),,$$(eval $1 += $$_)))
+    $1 := $$(strip $$($1))
+  endif
+ )
+endef #smart~unique
+
 define smart~rules
 $(eval \
   $(foreach @name,$(smart~sm),$(smart.restore))
