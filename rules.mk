@@ -27,6 +27,13 @@ ifdef SOURCES
   include $(smart.root)/internal/sources.mk
 endif #SOURCES
 
+ifdef FULLLIBS
+  LDLIBS  = -Wl,--whole-archive $(sort $(FULLLIBS))
+  LDLIBS += -Wl,--no-whole-archive $(LOADLIBS) $(LIBADD)
+else
+  LDLIBS  = $(LOADLIBS) $(LIBADD)
+endif #FULLLIBS
+
 ifdef PROGRAMS
   include $(smart.root)/internal/programs.mk
   module-$(SM.MK): $(PROGRAMS)
