@@ -12,6 +12,6 @@ $(call smart~unique,ARFLAGS)
 $(call smart~unique,LDFLAGS)
 
 $(eval $(LIBRARIES.a): $(OBJECTS) ; \
-	$(AR) $(ARFLAGS) $$@ $$^ $(LIBADD))
+	$(AR) $(ARFLAGS) $$@ $$^)
 $(eval $(LIBRARIES.so): $(OBJECTS) ; \
-	$(CXX) $(LDFLAGS) -shared -o $$@ $$^ $(LOADLIBS))
+	$(CXX) $(LDFLAGS) -shared -o $$@ $$^ $(LOADLIBS) $(LIBADD))

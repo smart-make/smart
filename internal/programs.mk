@@ -5,4 +5,6 @@ PROGRAMS := $(PROGRAMS:%=$(SRCDIR)/%)
 $(call smart~unique,LDFLAGS)
 
 $(eval $(PROGRAMS): $(OBJECTS) ; \
-	$(CXX) $(LDFLAGS) -o $$@ $$^ $(LOADLIBS))
+	$(CXX) $(LDFLAGS) -o $$@ $$^ $(LOADLIBS) $(LIBADD))
+
+$(info $(NAME): $(LIBADD))
