@@ -23,6 +23,8 @@ ifdef REQUIRES
   #$(info $(NAME): $(REQUIRES))
 endif #REQUIRES
 
+OBJECTS :=
+
 ifdef SOURCES
   include $(smart.root)/internal/sources.mk
 endif #SOURCES

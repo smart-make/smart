@@ -11,7 +11,12 @@ endif
 $(call smart~unique,ARFLAGS)
 $(call smart~unique,LDFLAGS)
 
+ifdef LIBRARIES.a
 $(eval $(LIBRARIES.a): $(OBJECTS) ; \
 	$(AR) $(ARFLAGS) $$@ $$^)
+endif #LIBRARIES.a
+
+ifdef LIBRARIES.so
 $(eval $(LIBRARIES.so): $(OBJECTS) ; \
 	$(CXX) $(LDFLAGS) -shared -o $$@ $$^ $(LDLIBS))
+endif #LIBRARIES.so
