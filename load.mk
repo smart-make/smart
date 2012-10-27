@@ -74,12 +74,15 @@ endif #ROOT.MK
 define smart~unique
 $(eval \
   ifdef $1
+    smart~unique.v := $($1)
     $1 :=
-    $$(foreach _,$($1),$$(if $$(filter $$_,$$($1)),,$$(eval $1 += $$_)))
+    $$(foreach _,$$(smart~unique.v),$$(if $$(filter $$_,$$($1)),,$$(eval $1 += $$_)))
     $1 := $$(strip $$($1))
+    smart~unique.v :=
   endif
  )
 endef #smart~unique
+#$(let (foo,abcdef),(bar,123456))
 
 define smart~rules
 $(eval \
