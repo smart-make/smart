@@ -20,7 +20,7 @@ ifndef smart.scripts.$(@name)
 else
 
 smart~names := $(filter-out \
-  SM.MK NAME SRCDIR SUBDIRS REQUIRES PROGRAMS LIBRARIES,\
+  SM.MK NAME SRCDIR SUBDIRS REQUIRES PROGRAM LIBRARY,\
   $(smart.context.names))
 
 #$(warning info: "$(NAME)" requires "$(@name), $(smart.scripts.$(@name))")

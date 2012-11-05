@@ -1,8 +1,8 @@
 $(smart.internal)
 
-PROGRAMS := $(PROGRAMS:%=$(SRCDIR)/%)
+PROGRAM := $(PROGRAM:%=$(SRCDIR)/%)
 
 $(call smart~unique,LDFLAGS)
 
-$(eval $(PROGRAMS): $(OBJECTS) ; \
+$(eval $(PROGRAM): $(OBJECTS) ; \
 	$(CXX) $(LDFLAGS) -o $$@ $$^ $(LDLIBS))

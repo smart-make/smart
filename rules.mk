@@ -36,17 +36,17 @@ else
   LDLIBS  = $(LOADLIBS) $(LIBADD)
 endif #FULLLIBS
 
-ifdef PROGRAMS
+ifdef PROGRAM
   include $(smart.root)/internal/programs.mk
-  module-$(SM.MK): $(PROGRAMS)
+  module-$(SM.MK): $(PROGRAM)
   modules: module-$(SM.MK)
-endif #PROGRAMS
+endif #PROGRAM
 
-ifdef LIBRARIES
+ifdef LIBRARY
   include $(smart.root)/internal/libraries.mk
-  module-$(SM.MK): $(LIBRARIES)
+  module-$(SM.MK): $(LIBRARY)
   modules: module-$(SM.MK)
-endif #LIBRARIES
+endif #LIBRARY
 
 ifdef SETTLE
   include $(smart.root)/internal/settle.mk
@@ -59,7 +59,7 @@ ifeq ($(SETTLE_ROOT),true)
   smart.settle_root := $(SRCDIR)
 endif #SETTLE_ROOT
 
-$(eval clean-$(SM.MK):; $(if $(LIBRARIES)$(PROGRAMS)$(OBJECTS),@rm -vf $(strip $(LIBRARIES) $(PROGRAMS) $(OBJECTS))))
+$(eval clean-$(SM.MK):; $(if $(LIBRARY)$(PROGRAM)$(OBJECTS),@rm -vf $(strip $(LIBRARY) $(PROGRAM) $(OBJECTS))))
 clean: clean-$(SM.MK)
 
 PHONY += module-$(SM.MK) clean-$(SM.MK)

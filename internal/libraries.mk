@@ -1,22 +1,22 @@
 $(smart.internal)
 
-LIBRARIES := $(LIBRARIES:%=$(SRCDIR)/%)
-LIBRARIES.a := $(filter %.a,$(LIBRARIES))
-LIBRARIES.so := $(filter %.so,$(LIBRARIES))
+LIBRARY := $(LIBRARY:%=$(SRCDIR)/%)
+LIBRARY.a := $(filter %.a,$(LIBRARY))
+LIBRARY.so := $(filter %.so,$(LIBRARY))
 
-ifneq ($(filter-out $(LIBRARIES),$(LIBRARIES.a) $(LIBRARIES.so)),)
-  $(error unregonized libraries "$(filter-out $(LIBRARIES),$(LIBRARIES.a) $(LIBRARIES.so))")
+ifneq ($(filter-out $(LIBRARY),$(LIBRARY.a) $(LIBRARY.so)),)
+  $(error unregonized libraries "$(filter-out $(LIBRARY),$(LIBRARY.a) $(LIBRARY.so))")
 endif
 
 $(call smart~unique,ARFLAGS)
 $(call smart~unique,LDFLAGS)
 
-ifdef LIBRARIES.a
-$(eval $(LIBRARIES.a): $(OBJECTS) ; \
+ifdef LIBRARY.a
+$(eval $(LIBRARY.a): $(OBJECTS) ; \
 	$(AR) $(ARFLAGS) $$@ $$^)
-endif #LIBRARIES.a
+endif #LIBRARY.a
 
-ifdef LIBRARIES.so
-$(eval $(LIBRARIES.so): $(OBJECTS) ; \
+ifdef LIBRARY.so
+$(eval $(LIBRARY.so): $(OBJECTS) ; \
 	$(CXX) $(LDFLAGS) -shared -o $$@ $$^ $(LDLIBS))
-endif #LIBRARIES.so
+endif #LIBRARY.so
