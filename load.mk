@@ -12,7 +12,8 @@ smart.context.names := SM.MK NAME SRCDIR \
   MODULES SUBDIRS SOURCES PROGRAM LIBRARY REQUIRES \
   SETTLE_ROOT SETTLE \
   CFLAGS CXXFLAGS GOFLAGS ASFLAGS ARFLAGS LDFLAGS FULLLIBS LOADLIBS LIBADD \
-  DEFINES INCLUDES INSTALLS INSTALL_PATH
+  DEFINES INCLUDES INSTALLS INSTALL_PATH \
+  APK PACKAGE PLATFORM LIBS SUPPORTS
 
 define smart.internal
 $(eval MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
@@ -37,11 +38,12 @@ ifdef smart~fun
 define $(smart~fun)
 $$(eval \
    smart~error :=
+   smart~result :=
    include $(smart.root)/funs/$(smart~fun)
    ifneq ($$(smart~error),)
      $$$$(error $(smart~fun): $$(smart~error))
    endif
-  )
+  )$$(smart~result)
 endef
 endif
  )

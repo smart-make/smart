@@ -48,6 +48,12 @@ ifdef LIBRARY
   modules: module-$(SM.MK)
 endif #LIBRARY
 
+ifdef APK
+  include $(smart.root)/internal/android.mk
+  module-$(SM.MK): $(APK)
+  modules: module-$(SM.MK)
+endif #APK
+
 ifdef SETTLE
   include $(smart.root)/internal/settle.mk
   settle: settle-$(SM.MK)

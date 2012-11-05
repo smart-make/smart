@@ -1,0 +1,18 @@
+# -*- makefile-gmake -*-
+#
+#    Copyright (C) 2012, Duzy Chan <code@duzy.info>
+#    All rights reserved.
+#
+#####################################################
+#
+#  smart.find - Find sources.
+#  
+#  @param: loadee
+#
+#$(info find: $1/$2)
+smart~* := $(wildcard $1/*)
+ifdef smart~*
+  smart~result := $(strip $(smart~result) $(filter $2,$(smart~*)))
+  $(foreach 1,$(filter-out $2,$(smart~*)),$(eval include $(smart.root)/funs/smart.find))
+endif #smart~*
+smart~* :=

@@ -19,7 +19,14 @@ CXXFLAGS :=
 ARFLAGS := cru
 LDFLAGS :=
 LIBADD :=
-LOADLIBS := 
+LOADLIBS :=
+
+ifneq ($(wildcard $(SRCDIR)/AndroidManifest.xml),)
+  ifndef ANDROID.root
+    include $(smart.root)/internal/android/init.mk
+  endif #ANDROID.root
+  ANDROID_ROOT = $(ANDROID.root)
+endif
 
 ifeq ($(shell uname),Linux)
 
