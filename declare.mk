@@ -21,13 +21,6 @@ LDFLAGS :=
 LIBADD :=
 LOADLIBS :=
 
-ifneq ($(wildcard $(SRCDIR)/AndroidManifest.xml),)
-  ifndef ANDROID.root
-    include $(smart.root)/internal/android/init.mk
-  endif #ANDROID.root
-  ANDROID_ROOT = $(ANDROID.root)
-endif
-
 ifeq ($(shell uname),Linux)
 
 else # uname == Linux
@@ -54,5 +47,7 @@ LOADLIBS += \
 endif # uname != Linux
 
 EXEEXT := .exe
+
+$(foreach 1,$(wildcard $(smart.root)/detect/*.mk),$(eval include $1))
 
 -include $(wildcard $(ROOT)/declare.mk)
