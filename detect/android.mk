@@ -3,4 +3,5 @@ ifneq ($(wildcard $(SRCDIR)/AndroidManifest.xml),)
     include $(smart.root)/internal/android/init.mk
   endif #ANDROID.root
   ANDROID_ROOT = $(ANDROID.root)
+  ANDROID_EXTRAS = $(ANDROID.root)/extras
 endif
