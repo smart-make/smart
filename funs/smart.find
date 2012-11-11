@@ -7,12 +7,18 @@
 #
 #  smart.find - Find sources.
 #  
-#  @param: loadee
+#  @param: 1, 2, 3
 #
 #$(info find: $1/$2)
 smart~* := $(wildcard $1/*)
 ifdef smart~*
-  smart~result := $(strip $(smart~result) $(filter $2,$(smart~*)))
+  ifdef 3
+    smart~result += $(filter-out $3,$(smart~*))
+  endif
+  ifdef 2
+    smart~result += $(filter $2,$(smart~*))
+  endif
   $(foreach 1,$(filter-out $2,$(smart~*)),$(eval include $(smart.root)/funs/smart.find))
+  smart~result := $(strip $(smart~result))
 endif #smart~*
 smart~* :=

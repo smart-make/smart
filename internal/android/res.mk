@@ -1,6 +1,10 @@
+smart~res.all := \
+  $(wildcard $(SRCDIR)/res $(SRCDIR)/assets) \
+  $(call smart.find,$(SRCDIR)/res,%.xml %.png %.jpg) \
+  $(call smart.find,$(SRCDIR)/assets,,%~)
+
 define smart~rule
-  $(OUT)/$(NAME)/res/.sources: | $(LIBS.local) \
-    $(wildcard $(SRCDIR)/res $(SRCDIR)/assets)
+  $(OUT)/$(NAME)/res/.sources: $(LIBS.local) $(smart~res.all)
 	@mkdir -p $$(@D)
 	$(ANDROID.aapt) package -m -J "$(OUT)/$(NAME)/res" \
 	-P "$(OUT)/$(NAME)/public.xml" \
@@ -15,8 +19,7 @@ endef #smart~rule
 $(eval $(smart~rule))
 
 define smart~rule
-  $(OUT)/$(NAME)/res/.packed: | $(LIBS.local) \
-    $(wildcard $(SRCDIR)/res $(SRCDIR)/assets)
+  $(OUT)/$(NAME)/res/.packed: $(LIBS.local) $(smart~res.all)
 	$(ANDROID.aapt) package -u -F $$@ \
         $(addprefix -I ,"$(ANDROID_PLATFORM_LIB)") \
 	$(foreach 1,$(LIBS),-I "$1") $(if $(PACKAGE),-x) \
@@ -32,4 +35,4 @@ $(eval $(smart~rule))
 
 smart~rule =
 
-$(OUT)/$(NAME)/classes/.list : | $(OUT)/$(NAME)/res/.sources
+$(OUT)/$(NAME)/classes/.list : $(OUT)/$(NAME)/res/.sources
