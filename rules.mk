@@ -54,6 +54,12 @@ ifdef APK
   modules: module-$(SM.MK)
 endif #APK
 
+ifdef TARGETS
+  include $(smart.root)/internal/targets.mk
+  module-$(SM.MK): $(TARGETS)
+  modules: module-$(SM.MK)
+endif #TARGETS
+
 ifdef SETTLE
   include $(smart.root)/internal/settle.mk
   settle: settle-$(SM.MK)
