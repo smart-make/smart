@@ -9,7 +9,7 @@ LIBS.local :=
 LIBS.native :=
 ifneq ($(wildcard $(SRCDIR)/libs),)
   LIBS.local := $(wildcard $(PWD)/$(SRCDIR)/libs/*.jar)
-  LIBS.native := $(call smart.find,$(SRCDIR)/libs,%.so)
+  LIBS.native := $(call smart.find,$(SRCDIR)/libs,%.so %/gdbserver %/gdb.setup)
 endif
 
 LIBS += $(LIBS.local)
