@@ -32,7 +32,7 @@ $(smart~restore.$(flavor $(smart~name)))$(eval \
  )
 endef #smart~restore
 
-$(foreach smart~name,$(smart.context.names),$(smart~restore))
+$(foreach smart~name,$(filter $(smart.context.names),$(.VARIABLES)),$(smart~restore))
 
 smart~restore.simple :=
 smart~restore.recursive :=

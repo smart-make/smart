@@ -8,7 +8,8 @@ smart.stack :=
 smart.list :=
 smart.export :=
 smart.settle_root :=
-smart.context.names := SM.MK NAME SRCDIR \
+smart.context.names := this.% export.% THIS.% EXPORT.% \
+  SM.MK NAME SRCDIR \
   MODULES SUBDIRS SOURCES TARGETS PROGRAM LIBRARY REQUIRES \
   SETTLE_ROOT SETTLE \
   CFLAGS CXXFLAGS GOFLAGS ASFLAGS ARFLAGS LDFLAGS FULLLIBS LOADLIBS LIBADD \

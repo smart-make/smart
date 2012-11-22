@@ -30,8 +30,7 @@ define smart~save
 $(smart~save.$(flavor $(smart~name)))
 endef #smart~save
 
-$(foreach smart~name,$(smart.context.names),$(smart~save))
-$(foreach smart~name,$(smart.context.names:%=EXPORT.%),$(smart~save))
+$(foreach smart~name,$(filter $(smart.context.names),$(.VARIABLES)),$(smart~save))
 
 ifdef smart.scripts.$(NAME)
   smart.scripts.$(NAME) += $(@name)

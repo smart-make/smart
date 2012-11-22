@@ -3,8 +3,7 @@
 #    All rights reserved.
 #
 $(smart.internal)
-$(foreach smart~name,$(smart.context.names),$(eval $(smart~name):=))
-$(foreach smart~name,$(smart.context.names:%=EXPORT.%),$(eval $(smart~name):=))
+$(foreach smart~name,$(filter $(smart.context.names),$(.VARIABLES)),$(eval $(smart~name):=))
 
 SM.MK := $(lastword $(MAKEFILE_LIST))
 SRCDIR := $(smart.me)
