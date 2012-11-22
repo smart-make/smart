@@ -1,8 +1,7 @@
 $(smart.internal)
 
 NDK_BUILD := $(NDK_BUILD:%=$(SRCDIR)/%)
-
-NDK_TOOLCHAIN_VERSION:=$(or $(NDK_TOOLCHAIN_VERSION),4.6)
+NDK_TOOLCHAIN_VERSION := $(or $(NDK_TOOLCHAIN_VERSION),4.6)
 export NDK_TOOLCHAIN_VERSION
 ifdef NDK_MODULE_PATH
   export NDK_MODULE_PATH
@@ -21,7 +20,7 @@ ifneq ($(NDK_VERBOSE),1)
 endif
 
 define smart~rules-ndk
-  $(NDK_BUILD_TARGETS): \
+  $(OUT)/$(NAME)/.ndkbuilt: \
     $(wildcard \
       $(SRCDIR)/*.c $(SRCDIR)/*.h \
       $(SRCDIR)/Android.mk $(SRCDIR)/Application.mk \
@@ -35,7 +34,8 @@ define smart~rules-ndk
 	$(if $(NDK_DEBUG),NDK_DEBUG=$(NDK_DEBUG)) \
 	$(if $(NDK_VERBOSE),V=$(NDK_VERBOSE)) \
 	NDK_PROJECT_PATH="." \
-
+	&& (mkdir -p $$(@D) && echo "$(NDK_BUILD_TARGETS)" > $$@)
+  $(NDK_BUILD_TARGETS): $(OUT)/$(NAME)/.ndkbuilt
 endef #smart~rules-ndk
 ifdef NDK_BUILD_TARGETS
   $(eval $(smart~rules-ndk))
