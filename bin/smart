@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+SMARTROOT=$(dir $0)
+GNUMAKE=$(which make)
+exec $GNUMAKE -f $SMARTROOT/load.mk
