@@ -28,8 +28,12 @@ SMART.DECLARE := $(smart.root)/declare.mk
 SMART.RULES := $(smart.root)/pend.mk
 
 $(smart.internal)
-ROOT := $(smart.me)
+ROOT := $(or $(smart.me),.)
 OUT = $(ROOT)/out
+
+ifdef MAKEFILE_LIST
+$(warning You should never try to include this file!)
+endif
 
 smart~error :=
 
