@@ -13,8 +13,13 @@ ifeq ($(NAME),.)
   NAME := $(notdir $(PWD))
 endif
 
+GCC_Werrors := \
+  -Werror=uninitialized \
+  -Werror=switch \
+
 CC := gcc
-CXXFLAGS :=
+CFLAGS := $(GCC_Werrors) -Werror=declaration-after-statement
+CXXFLAGS := $(GCC_Werrors)
 ARFLAGS := cru
 LDFLAGS :=
 LIBADD :=
