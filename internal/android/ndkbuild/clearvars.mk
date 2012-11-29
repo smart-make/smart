@@ -40,4 +40,4 @@ smart~modules-LOCALS := \
     \
     MODULE_CLASS \
 
-$(foreach 1,$(smart~modules-LOCALS),$(eval LOCAL_$1 :=))
+$(foreach 1,$(filter-out PATH,$(smart~modules-LOCALS)),$(eval LOCAL_$1 :=))

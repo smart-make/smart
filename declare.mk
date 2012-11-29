@@ -13,9 +13,19 @@ ifeq ($(NAME),.)
   NAME := $(notdir $(PWD))
 endif
 
+# -Werror=format  -->  __attribute__((__sentinel__)) (e.g. G_GNUC_NULL_TERMINATED)
 GCC_Werrors := \
-  -Werror=uninitialized \
+  -Werror=declaration-after-statement \
+  -Werror=format \
+  -Werror=format-extra-args \
+  -Werror=implicit-function-declaration \
+  -Werror=nested-externs \
+  -Werror=pointer-sign \
+  -Werror=return-type \
   -Werror=switch \
+  -Werror=uninitialized \
+  -Werror=unused-function \
+  -Werror=unused-variable \
 
 CC := gcc
 CFLAGS := $(GCC_Werrors) -Werror=declaration-after-statement

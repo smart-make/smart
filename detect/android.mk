@@ -11,7 +11,7 @@ endif
 smart~android_files := $(wildcard $(SRCDIR)/Android.mk $(SRCDIR)/jni/Android.mk)
 ifdef smart~android_files
   ifndef ANDROID.ndk
-    include $(smart.root)/internal/android/ndk/init.mk
+    include $(smart.root)/internal/android/ndkbuild/init.mk
   endif #ANDROID.ndk
   ANDROID_NDK = $(ANDROID.ndk)
   NDK_BUILD := $(firstword $(smart~android_files))

@@ -7,6 +7,7 @@ ifdef NDK_MODULE_PATH
   export NDK_MODULE_PATH
 endif
 
+my-dir = $(smart.me)
 CLEAR_VARS = $(ANDROID.clearvars)
 BUILD_STATIC_LIBRARY = $(ANDROID.build_static)
 BUILD_SHARED_LIBRARY = $(ANDROID.build_shared)
@@ -25,7 +26,7 @@ define smart~rules-ndk
       $(SRCDIR)/*.c $(SRCDIR)/*.h \
       $(SRCDIR)/Android.mk $(SRCDIR)/Application.mk \
       $(SRCDIR)/*.mk \
-     ) $(smart.root)/internal/android/ndk.mk
+     ) $(smart.root)/internal/android/ndkbuild.mk
 	$$(MAKE) -f $(ANDROID.ndk)/build/core/build-local.mk -C $(SRCDIR) \
 	APP_BUILD_SCRIPT="$(NDK_BUILD:$(SRCDIR)/%=%)" \
 	APP_MODULES=$(LOCAL_MODULE) \

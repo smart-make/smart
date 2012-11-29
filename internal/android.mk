@@ -53,7 +53,7 @@ ifdef NDK_LIBRARY
 endif #NDK_LIBRARY
 
 ifdef NDK_BUILD
-  include $(smart.root)/internal/android/ndk.mk
+  include $(smart.root)/internal/android/ndkbuild.mk
 endif #NDK_BUILD
 
 ifdef NDK_PROGRAM
