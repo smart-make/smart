@@ -13,6 +13,7 @@ ifeq ($(NAME),.)
   NAME := $(notdir $(PWD))
 endif
 
+# G_GNUC_WARN_UNUSED_RESULT
 # -Werror=format  -->  __attribute__((__sentinel__)) (e.g. G_GNUC_NULL_TERMINATED)
 GCC_Werrors := \
   -Werror=declaration-after-statement \
@@ -26,6 +27,7 @@ GCC_Werrors := \
   -Werror=uninitialized \
   -Werror=unused-function \
   -Werror=unused-variable \
+  -Werror=unused-result \
 
 CC := gcc
 CFLAGS := $(GCC_Werrors) -Werror=declaration-after-statement

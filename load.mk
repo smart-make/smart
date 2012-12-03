@@ -17,11 +17,24 @@ smart.context.names := this.% export.% THIS.% EXPORT.% \
   \
   APK PACKAGE PLATFORM LIBS SUPPORTS \
   NDK_BUILD NDK_BUILD_OPTIONS NDK_APPLICATION_MK NDK_VERBOSE NDK_DEBUG NDK_LOG \
+  NDK_MODULE_PATH \
   APP_ABI
 
 define smart.internal
 $(eval MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
 endef #smart.internal
+
+## Set module context variable.
+## e.g. $(call smart.set,$(NAME),VAR,value)
+define smart.set
+$(eval smart.context.$(strip $2)-$(smart.scripts.$(strip $1)) := $(strip $3))
+endef #smart.set
+
+## Get module context variable.
+## e.g. $(call smart.get,$(NAME),VAR)
+define smart.get
+$(smart.context.$(strip $2)-$(smart.scripts.$(strip $1)))
+endef #smart.get
 
 SMART.MK = $(SM.MK)
 SMART.DECLARE := $(smart.root)/declare.mk

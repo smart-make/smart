@@ -1,2 +1,0 @@
-NDK_BUILD_TYPE := executable
-NDK_BUILD_TARGETS := $(LOCAL_MODULE)

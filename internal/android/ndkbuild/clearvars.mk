@@ -1,4 +1,4 @@
-## $(ANDROID.ndk)/build/core/definitions.mk
+## see: $(ANDROID.ndk)/build/core/definitions.mk
 smart~modules-LOCALS := \
     MODULE \
     MODULE_FILENAME \
