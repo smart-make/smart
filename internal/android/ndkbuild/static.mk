@@ -12,10 +12,11 @@ define smart~export_static
 	@echo 'LOCAL_PATH := $$$$(call my-dir)' >> $$@
 	@echo 'include $$$$(CLEAR_VARS)' >> $$@
 	@echo 'LOCAL_MODULE := $(LOCAL_MODULE)' >> $$@
-	@echo 'LOCAL_SRC_FILES := ../../../obj/local/$$$$(TARGET_ARCH_ABI)/lib$$$$(LOCAL_MODULE).a' >> $$@
+	@echo 'LOCAL_SRC_FILES := ../../../$(SRCDIR)/obj/local/$$$$(TARGET_ARCH_ABI)/lib$$$$(LOCAL_MODULE).a' >> $$@
 	@echo 'LOCAL_EXPORT_C_INCLUDES := $(LOCAL_EXPORT_C_INCLUDES:%=$(PWD)/$(SRCDIR)/%)' >> $$@
 	@echo 'LOCAL_EXPORT_LDLIBS := $(LOCAL_EXPORT_LDLIBS)' >> $$@
 	@echo 'include $$$$(PREBUILT_STATIC_LIBRARY)' >> $$@
+	@echo "exported: $(NAME)/Android.mk"
 endef #smart~export_static
 $(eval $(smart~export_static))
 smart~export_static :=
