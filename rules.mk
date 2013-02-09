@@ -25,52 +25,9 @@ endif #REQUIRES
 
 OBJECTS :=
 
-ifdef SOURCES
-  include $(smart.root)/internal/sources.mk
-endif #SOURCES
-
-ifdef FULLLIBS
-  LDLIBS  = -Wl,--whole-archive $(sort $(FULLLIBS))
-  LDLIBS += -Wl,--no-whole-archive $(LOADLIBS) $(LIBADD)
-else
-  LDLIBS  = $(LOADLIBS) $(LIBADD)
-endif #FULLLIBS
-
-ifdef PROGRAM
-  include $(smart.root)/internal/programs.mk
-  ifdef PROGRAM
-    module-$(SM.MK): $(PROGRAM)
-    modules: module-$(SM.MK)
-  endif #PROGRAM
-endif #PROGRAM
-
-ifdef LIBRARY
-  include $(smart.root)/internal/libraries.mk
-  ifdef LIBRARY
-    module-$(SM.MK): $(LIBRARY)
-    modules: module-$(SM.MK)
-  endif #LIBRARY
-endif #LIBRARY
-
-ifneq ($(or $(APK),$(NDK_LIBRARY),$(NDK_PROGRAM),$(NDK_BUILD)),)
-  include $(smart.root)/internal/android.mk
-  ifdef APK
-    module-$(SM.MK): $(APK)
-    modules: module-$(SM.MK)
-  endif #APK
-  ifdef NDK_BUILD_TARGETS
-    module-$(SM.MK): $(NDK_BUILD_TARGETS)
-    modules: module-$(SM.MK)
-  endif #NDK_BUILD_TARGETS
-endif #APK
-
-ifdef TARGETS
-  include $(smart.root)/internal/targets.mk
-  ifdef TARGETS
-    module-$(SM.MK): $(TARGETS)
-    modules: module-$(SM.MK)
-  endif #TARGETS
-endif #TARGETS
+ifdef TOOL
+  include $(smart.root)/internal/tools/$(TOOL)/rules.mk
+endif #TOOL
 
 ifdef SETTLE
   include $(smart.root)/internal/settle.mk

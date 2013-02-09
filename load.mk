@@ -105,7 +105,6 @@ $(eval \
   endif
  )
 endef #smart~unique
-#$(let (foo,abcdef),(bar,123456))
 
 define smart~rules
 $(eval \

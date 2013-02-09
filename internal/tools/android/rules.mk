@@ -33,19 +33,19 @@ SOURCES.c := $(filter %.c,$(SOURCES))
 SOURCES.c++ := $(filter %.cpp,$(SOURCES))
 
 ifneq ($(wildcard $(SRCDIR)/res $(SRCDIR)/assets),)
-  include $(smart.root)/internal/android/res.mk
+  include $(smart.root)/internal/tools/android/res.mk
 endif
 
 ifdef SOURCES.aidl
-  include $(smart.root)/internal/android/aidl.mk
+  include $(smart.root)/internal/tools/android/aidl.mk
 endif #SOURCES.aidl
 
 ifdef SOURCES.java
-  include $(smart.root)/internal/android/java.mk
+  include $(smart.root)/internal/tools/android/java.mk
 endif #SOURCES.java
 
 ifdef LIBS.native
-  include $(smart.root)/internal/android/so.mk
+  include $(smart.root)/internal/tools/android/so.mk
 endif #LIBS.native
 
 ifdef NDK_LIBRARY
@@ -53,7 +53,7 @@ ifdef NDK_LIBRARY
 endif #NDK_LIBRARY
 
 ifdef NDK_BUILD
-  include $(smart.root)/internal/android/ndkbuild.mk
+  include $(smart.root)/internal/tools/android/ndkbuild.mk
 endif #NDK_BUILD
 
 ifdef NDK_PROGRAM
@@ -61,9 +61,20 @@ ifdef NDK_PROGRAM
 endif #NDK_PROGRAM
 
 ifdef PACKAGE
-  include $(smart.root)/internal/android/jar.mk
+  include $(smart.root)/internal/tools/android/jar.mk
 endif #PACKAGE
 
 ifdef APK
-  include $(smart.root)/internal/android/apk.mk
+  include $(smart.root)/internal/tools/android/apk.mk
+endif #APK
+
+ifneq ($(or $(APK),$(NDK_LIBRARY),$(NDK_PROGRAM),$(NDK_BUILD)),)
+  ifdef APK
+    module-$(SM.MK): $(APK)
+    modules: module-$(SM.MK)
+  endif #APK
+  ifdef NDK_BUILD_TARGETS
+    module-$(SM.MK): $(NDK_BUILD_TARGETS)
+    modules: module-$(SM.MK)
+  endif #NDK_BUILD_TARGETS
 endif #APK

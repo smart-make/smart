@@ -9,6 +9,8 @@ SM.MK := $(lastword $(MAKEFILE_LIST))
 SRCDIR := $(smart.me)
 NAME := $(notdir $(SRCDIR))
 
+$(warning TODO: set TOOL for $(NAME))
+
 ifeq ($(NAME),.)
   NAME := $(notdir $(PWD))
 endif
@@ -64,6 +66,6 @@ endif # uname != Linux
 
 EXEEXT := .exe
 
-$(foreach 1,$(wildcard $(smart.root)/detect/*.mk),$(eval include $1))
-
+$(foreach 1,$(wildcard $(smart.root)/internal/tools/*/detect.mk),\
+    $(eval include $1))
 -include $(wildcard $(ROOT)/declare.mk)
