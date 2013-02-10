@@ -6,13 +6,14 @@ $(smart.internal)
 
 ifndef smart.test.assert
   $(error "smart.test.assert" not defined)
-endif
+endif #smart.test.assert
 
+$(info test: $(SRCDIR))
 $(call smart.test.assert,smart.test.declared,true)
+$(call smart.test.assert,TEST_FOO,foo-$(NAME))
+$(call smart.test.assert,TEST_BAR,bar-$(NAME))
 
 smart.test.names += $(SRCDIR)
-
-$(info $(SRCDIR))
 
 module-$(SM.MK): $(SM.MK) ; echo $(SRCDIR)
 modules: $(SM.MK)

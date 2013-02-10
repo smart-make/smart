@@ -3,6 +3,5 @@
 #    All rights reserved.
 #
 $(smart.internal)
-
 smart.test.declared := true
 smart.test.names :=

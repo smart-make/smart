@@ -3,3 +3,5 @@
 #    All rights reserved.
 #
 SUBDIRS := leaf-2-1 leaf-2-2 leaf-2-3
+TEST_FOO := foo-leaf-2
+TEST_BAR := bar-leaf-2

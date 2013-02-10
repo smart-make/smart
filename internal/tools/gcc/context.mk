@@ -1,0 +1,7 @@
+#
+#    Copyright (C) 2012, 2013, Duzy Chan <code@duzy.info>.
+#    All rights reserved.
+#
+smart.context.gcc := SOURCES PROGRAM LIBRARY \
+  CFLAGS CXXFLAGS GOFLAGS ASFLAGS ARFLAGS LDFLAGS \
+  FULLLIBS LOADLIBS LIBADD DEFINES INCLUDES INSTALLS INSTALL_PATH \
