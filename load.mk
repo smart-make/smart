@@ -4,6 +4,7 @@
 #
 smart.me = $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 smart.root := $(smart.me)
+smart.tooldir = $(smart.root)/internal/tools/$(TOOL)
 smart.stack :=
 smart.list :=
 smart.export :=

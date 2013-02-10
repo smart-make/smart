@@ -5,7 +5,7 @@
 $(smart.internal)
 
 ifdef SOURCES
-  include $(smart.root)/internal/tools/gcc/sources.mk
+  include $(smart.tooldir)/sources.mk
 endif #SOURCES
 
 ifdef FULLLIBS
@@ -16,7 +16,7 @@ else
 endif #FULLLIBS
 
 ifdef PROGRAM
-  include $(smart.root)/internal/tools/gcc/programs.mk
+  include $(smart.tooldir)/programs.mk
   ifdef PROGRAM
     module-$(SM.MK): $(PROGRAM)
     modules: module-$(SM.MK)
@@ -24,7 +24,7 @@ ifdef PROGRAM
 endif #PROGRAM
 
 ifdef LIBRARY
-  include $(smart.root)/internal/tools/gcc/libraries.mk
+  include $(smart.tooldir)/libraries.mk
   ifdef LIBRARY
     module-$(SM.MK): $(LIBRARY)
     modules: module-$(SM.MK)
@@ -32,7 +32,7 @@ ifdef LIBRARY
 endif #LIBRARY
 
 ifdef TARGETS
-  include $(smart.root)/internal/tools/gcc/targets.mk
+  include $(smart.tooldir)/targets.mk
   ifdef TARGETS
     module-$(SM.MK): $(TARGETS)
     modules: module-$(SM.MK)

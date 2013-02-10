@@ -1,7 +1,8 @@
 smart~android_files := $(wildcard $(SRCDIR)/AndroidManifest.xml)
 ifdef smart~android_files
+  TOOL := android
   ifndef ANDROID.root
-    include $(smart.root)/internal/tools/android/init.mk
+    include $(smart.tooldir)/init.mk
   endif #ANDROID.root
   ANDROID_ROOT = $(ANDROID.root)
   ANDROID_EXTRAS = $(ANDROID.root)/extras
@@ -10,8 +11,9 @@ endif
 
 smart~android_files := $(wildcard $(SRCDIR)/Android.mk $(SRCDIR)/jni/Android.mk)
 ifdef smart~android_files
+  TOOL := android
   ifndef ANDROID.ndk
-    include $(smart.root)/internal/tools/android/ndkbuild/init.mk
+    include $(smart.tooldir)/ndkbuild/init.mk
   endif #ANDROID.ndk
   ANDROID_NDK = $(ANDROID.ndk)
   NDK_BUILD := $(firstword $(smart~android_files))
