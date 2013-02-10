@@ -9,7 +9,7 @@ smart.stack :=
 smart.list :=
 smart.export :=
 smart.settle_root :=
-smart.context.names := this.% export.% THIS.% EXPORT.% \
+smart.context.names := this.% export.% THIS.% EXPORT.% TOOL \
   SM.MK NAME SRCDIR \
   MODULES SUBDIRS SOURCES TARGETS PROGRAM LIBRARY REQUIRES \
   SETTLE_ROOT SETTLE \
@@ -36,6 +36,19 @@ endef #smart.set
 define smart.get
 $(smart.context.$(strip $2)-$(smart.scripts.$(strip $1)))
 endef #smart.get
+
+## Assert variable value
+define smart.test.assert
+$(eval \
+  ifndef $1
+    $$(error undefine "$1")
+  else
+    ifneq ($($(strip $1)),$2)
+      $$(error bad value "$1", ($($1) != $2))
+    endif
+  endif
+ )
+endef #smart.test.assert
 
 SMART.MK = $(SM.MK)
 SMART.DECLARE := $(smart.root)/declare.mk

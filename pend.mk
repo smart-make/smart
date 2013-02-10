@@ -5,15 +5,6 @@
 $(smart.internal)
 $(foreach @name,$(SM.MK),$(eval include $(smart.root)/funs/smart.save))
 
-# define warn-name
-# $(eval \
-#   ifdef ~name
-#    $$(info $(SM.MK):0: $(~name) deprecated)
-#   endif
-#  )
-# endef #warn-name
-# $(foreach ~name,$(filter-out SM.MK,$(smart.context.names)),$(warn-name))
-
 ifndef SRCDIR
   smart~error := SRCDIR is undefined
   $(error $(smart~error))

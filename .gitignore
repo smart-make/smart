@@ -4,6 +4,7 @@ Makefile.in
 
 # http://www.gnu.org/software/autoconf
 
+*~
 /autom4te.cache
 /aclocal.m4
 /compile
@@ -11,9 +12,8 @@ Makefile.in
 /depcomp
 /install-sh
 /missing
-*~
-docs/main.aux
-docs/main.log
-docs/smart-make.pdf
-docs/main.out
+/docs/main.aux
+/docs/main.log
+/docs/smart-make.pdf
+/docs/main.out
 /bin/smart

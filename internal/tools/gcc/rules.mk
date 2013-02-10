@@ -30,11 +30,3 @@ ifdef LIBRARY
     modules: module-$(SM.MK)
   endif #LIBRARY
 endif #LIBRARY
-
-ifdef TARGETS
-  include $(smart.tooldir)/targets.mk
-  ifdef TARGETS
-    module-$(SM.MK): $(TARGETS)
-    modules: module-$(SM.MK)
-  endif #TARGETS
-endif #TARGETS

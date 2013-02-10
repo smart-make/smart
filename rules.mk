@@ -29,6 +29,14 @@ ifdef TOOL
   include $(smart.root)/internal/tools/$(TOOL)/rules.mk
 endif #TOOL
 
+ifdef TARGETS
+  include $(smart.root)/internal/targets.mk
+  ifdef TARGETS
+    module-$(SM.MK): $(TARGETS)
+    modules: module-$(SM.MK)
+  endif #TARGETS
+endif #TARGETS
+
 ifdef SETTLE
   include $(smart.root)/internal/settle.mk
   settle: settle-$(SM.MK)
