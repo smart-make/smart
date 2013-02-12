@@ -1,0 +1,8 @@
+#!/bin/bash
+tests=( \
+    modules \
+    tree \
+    )
+for ((i=0; i < ${#tests[@]}; ++i)); {
+    cd ${tests[i]} && ./run && cd - > /dev/null
+}
