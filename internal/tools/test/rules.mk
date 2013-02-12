@@ -11,7 +11,6 @@ ifndef smart.test.assert.equal
   $(error "smart.test.assert.equal" not defined)
 endif #smart.test.assert.equal
 
-$(info test: $(SRCDIR))
 $(call smart.test.assert.value,smart.test.declared,true)
 $(call smart.test.assert.value,TEST_FOO,foo-$(NAME))
 $(call smart.test.assert.value,TEST_BAR,bar-$(NAME))
@@ -47,5 +46,5 @@ $(foreach 1,\
     ./leaf-3/leaf-3-3/smart \
     , $(call smart.test.assert.equal,$(filter $1,$(smart.list)),$1))
 
-module-$(SM.MK): $(SM.MK) ; echo $(SRCDIR)
-modules: $(SM.MK)
+$(eval module-$(SM.MK): $(SM.MK) ; @echo "$(SMART.MK)")
+modules: module-$(SM.MK)
