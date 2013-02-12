@@ -1,6 +1,7 @@
 #!/bin/bash
 tests=( \
     modules \
+    targets \
     tree \
     )
 for ((i=0; i < ${#tests[@]}; ++i)); {
