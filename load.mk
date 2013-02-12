@@ -30,7 +30,7 @@ $(smart.context.$(strip $2)-$(smart.scripts.$(strip $1)))
 endef #smart.get
 
 ## Assert variable value
-define smart.test.assert
+define smart.test.assert.value
 $(eval \
   ifndef $1
     $$(error undefine "$1")
@@ -40,7 +40,16 @@ $(eval \
     endif
   endif
  )
-endef #smart.test.assert
+endef #smart.test.assert.value
+
+## Assert equal
+define smart.test.assert.equal
+$(eval \
+  ifneq ($1,$2)
+    $$(error ($1 != $2))
+  endif
+ )
+endef #smart.test.assert.equal
 
 SMART.MK = $(SM.MK)
 SMART.DECLARE := $(smart.root)/declare.mk
