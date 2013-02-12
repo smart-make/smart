@@ -1,7 +1,8 @@
-#!/bin/bash
-. ../../scripts/debug.bash
-declare -A counttests
-tests=( \
+#
+#    Copyright (C) 2012,2013, Duzy Chan <code@duzy.info>.
+#    All rights reserved.
+#
+$(foreach 1,\
     ./smart \
     ./leaf-1/smart \
     ./leaf-1/leaf-1-1/smart \
@@ -24,25 +25,4 @@ tests=( \
     ./leaf-3/leaf-3-1/smart \
     ./leaf-3/leaf-3-2/smart \
     ./leaf-3/leaf-3-3/smart \
-    )
-lines=($(smart TOOL=test))
-if (( ${#tests[@]} != ${#lines[@]} )); then
-    error "${#tests[@]} != ${#lines[@]}"
-fi
-for ((i=0; i < ${#lines[@]}; ++i)); {
-    line=${lines[i]}
-    counttests[$line]=$((${counttests[$line]}+1))
-}
-for ((i=0; i < ${#tests[@]}; ++i)); {
-    test=${tests[i]}
-    if ((${counttests[$test]} != 1)); then
-	error "$test (${counttests[$test]})"
-    fi
-}
-for ((i=0; i < ${#tests[@]}; ++i)); {
-    test=${tests[i]}
-    s=$(smart TOOL=test module-$test)
-    if [[ "x$test" != "x$s" ]]; then
-	info "$test: $s"
-    fi
-}
+    , $(call smart.test.assert.equal,$(filter $1,$(smart.list)),$1))

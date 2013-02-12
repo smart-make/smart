@@ -6,7 +6,10 @@ $(smart.internal)
 
 SM.MK := $(lastword $(MAKEFILE_LIST))
 SRCDIR := $(smart.me)
-NAME := $(notdir $(SRCDIR))
+NAME := $(patsubst %.mk,%,$(notdir $(SM.MK)))
+ifeq ($(NAME),smart)
+  NAME := $(notdir $(SRCDIR))
+endif
 ifeq ($(NAME),.)
   NAME := $(notdir $(PWD))
 endif
