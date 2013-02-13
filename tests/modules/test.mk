@@ -2,10 +2,6 @@
 #    Copyright (C) 2012,2013, Duzy Chan <code@duzy.info>.
 #    All rights reserved.
 #
-#
-#    Copyright (C) 2012,2013, Duzy Chan <code@duzy.info>.
-#    All rights reserved.
-#
 $(call smart.test.assert.value,TEST_MODULES_NAME,modules)
 $(call smart.test.assert.value,TEST_MODULE_1_NAME,module-1)
 $(call smart.test.assert.value,TEST_MODULE_2_NAME,module-2)
