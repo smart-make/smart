@@ -12,10 +12,12 @@ ifndef smart.test.assert.equal
 endif #smart.test.assert.equal
 
 $(call smart.test.assert.value,smart.test.declared,true)
-$(call smart.test.assert.value,TEST_FOO,foo-$(NAME))
-$(call smart.test.assert.value,TEST_BAR,bar-$(NAME))
 
 smart.test.names += $(SRCDIR)
+
+include $(SRCDIR)/check-$(NAME).mk
+#$(call smart.test.assert.value,TEST_FOO,foo-$(NAME))
+#$(call smart.test.assert.value,TEST_BAR,bar-$(NAME))
 
 ifndef smart.list
   $(error "smart.list" undefined)

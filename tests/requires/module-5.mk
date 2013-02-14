@@ -6,4 +6,5 @@ TEST_MODULE_5_NAME := $(NAME)
 TEST_MODULE_5_SMMK := $(SMART.MK)
 TEST_FOO := foo-module-5
 TEST_BAR := bar-module-5
-
+EXPORT.TEST_FOO := foo-5
+EXPORT.TEST_BAR := bar-5

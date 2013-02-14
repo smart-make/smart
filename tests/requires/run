@@ -15,7 +15,6 @@ tests=( \
     ./tree/leaf-5/smart \
     )
 lines=($(smart TOOL=test))
-echo ${lines[@]}
 if (( ${#tests[@]} != ${#lines[@]} )); then
     error "${#tests[@]} != ${#lines[@]}"
 fi
@@ -27,4 +26,3 @@ for ((i=0; i < ${#tests[@]}; ++i)); {
     fi
 }
 
-todo "test EXPORT.*"

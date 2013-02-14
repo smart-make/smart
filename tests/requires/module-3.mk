@@ -7,3 +7,5 @@ TEST_MODULE_3_SMMK := $(SMART.MK)
 TEST_FOO := foo-module-3
 TEST_BAR := bar-module-3
 REQUIRES := module-1
+EXPORT.TEST_FOO := foo-3
+EXPORT.TEST_BAR := bar-3
