@@ -2,7 +2,7 @@ $(smart.internal)
 
 ## NDK_BUILD is APP_BUILD_SCRIPT, e.g. Android.mk
 NDK_BUILD := $(NDK_BUILD:%=$(SRCDIR)/%)
-NDK_TOOLCHAIN_VERSION := $(or $(NDK_TOOLCHAIN_VERSION),4.6)
+NDK_TOOLCHAIN_VERSION := $(or $(NDK_TOOLCHAIN_VERSION),4.7)
 
 ## load Android.mk
 include $(smart.tooldir)/ndkbuild/a.mk
