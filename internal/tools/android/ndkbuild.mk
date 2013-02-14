@@ -15,13 +15,14 @@ ifneq ($(NDK_VERBOSE),1)
   endif
 endif
 
+# $$(MAKE)
 define smart~rules-ndk
   $(OUT)/$(NAME)/.ndkbuilt: \
     $(wildcard \
       $(SRCDIR)/*.c $(SRCDIR)/*.h \
       $(SRCDIR)/Android.mk $(SRCDIR)/Application.mk \
      ) $(smart.tooldir)/ndkbuild.mk
-	@$$(MAKE) -f $(ANDROID.ndk)/build/core/build-local.mk -C $(SRCDIR) \
+	make -f $(ANDROID.ndk)/build/core/build-local.mk -C $(SRCDIR) \
 	APP_BUILD_SCRIPT="$(NDK_BUILD:$(SRCDIR)/%=%)" \
 	APP_MODULES="$(LOCAL_MODULE)" \
 	$(if $(APP_ABI),APP_ABI="$(APP_ABI)") \

@@ -30,5 +30,5 @@ $(eval \
 endef #smart~add_module_path
  $(foreach m,$(REQUIRES), $(foreach i,$(call smart.get,$m,NDK_EXPORT),\
      $(smart~add_module_path)))
- #$(warning NDK_MODULE_PATH: $(NDK_MODULE_PATH))
+ $(warning NDK_MODULE_PATH: $(NDK_MODULE_PATH))
 endif #REQUIRES

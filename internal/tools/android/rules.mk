@@ -78,5 +78,3 @@ ifneq ($(or $(APK),$(NDK_LIBRARY),$(NDK_PROGRAM),$(NDK_BUILD)),)
     modules: module-$(SM.MK)
   endif #NDK_BUILD_TARGETS
 endif #APK
-
-$(warning $(NAME), $(SRCDIR), $(SM.MK), $(TOOL))

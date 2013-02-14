@@ -10,5 +10,6 @@ smart.context.android := SOURCES \
   NDK_VERBOSE \
   NDK_DEBUG \
   NDK_LOG \
-  NDK_MODULE_PATH \
   APP_ABI \
+
+#  NDK_MODULE_PATH \

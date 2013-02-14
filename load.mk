@@ -122,13 +122,12 @@ $(eval \
 endef #smart~unique
 
 define smart~rules
-$(eval \
-  $(foreach @name,$(smart~sm),$(smart.restore))
+$(smart.restore)$(eval \
   include $(smart.root)/rules.mk
  )
 endef #smart~rules
 
-$(foreach smart~sm,$(smart.list),$(smart~rules))
+$(foreach @name,$(smart.list),$(smart~rules))
 
 smart~rules :=
 

@@ -35,9 +35,3 @@ ifdef smart~android_files
 endif #smart~android_files
 
 smart~android_files :=
-
-
-
-
-
-

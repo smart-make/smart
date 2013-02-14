@@ -22,8 +22,6 @@ ifdef TOOL
   else
     include $(smart.tooldir)/context.mk
   endif
-else
-  $(error "TOOL" undefined for "$(SRCDIR)")
 endif
 
 MAKEFILE_LIST := $(MAKEFILE_LIST.saved)
@@ -32,7 +30,5 @@ TOOL.saved := $(TOOL)
 
 $(foreach 1,$(filter $(smart.context.names),$(.VARIABLES)),$(eval $1 :=))
 
-ifdef TOOL.saved
-  TOOL := $(TOOL.saved)
-  include $(smart.root)/internal/declare.mk
-endif
+TOOL := $(TOOL.saved)
+include $(smart.root)/internal/declare.mk

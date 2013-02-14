@@ -14,5 +14,9 @@ ifeq ($(NAME),.)
   NAME := $(notdir $(PWD))
 endif
 
--include $(wildcard $(smart.tooldir)/declare.mk)
+ifdef TOOL
+  -include $(wildcard $(smart.tooldir)/declare.mk)
+endif
 -include $(wildcard $(ROOT)/declare.mk)
+
+#$(warning NDK_MODULE_PATH: $(NDK_MODULE_PATH), $(NAME))
