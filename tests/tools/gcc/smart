@@ -1,0 +1,4 @@
+PROGRAM := foo.bin
+SOURCES := main.c
+REQUIRES := foo
+SUBDIRS := foo

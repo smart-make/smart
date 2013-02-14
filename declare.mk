@@ -4,9 +4,17 @@
 #
 $(smart.internal)
 
-TOOL :=
 MAKEFILE_LIST.saved := $(MAKEFILE_LIST)
-$(foreach 1,$(wildcard $(smart.root)/internal/tools/*/detect.mk),$(eval include $1))
+SRCDIR := $(smart.me)
+TOOL :=
+
+-include $(SRCDIR)/.tool
+ifndef TOOL
+  -include $(ROOT)/.tool
+endif #TOOL
+ifndef TOOL
+  $(foreach 1,$(wildcard $(smart.root)/internal/tools/*/detect.mk),$(eval include $1))
+endif #TOOL
 
 ifdef TOOL
   ifeq ($(TOOL),names)
@@ -15,7 +23,7 @@ ifdef TOOL
     include $(smart.tooldir)/context.mk
   endif
 else
-  $(error TOOL undefined for "$(smart.me)")
+  $(error "TOOL" undefined for "$(SRCDIR)")
 endif
 
 MAKEFILE_LIST := $(MAKEFILE_LIST.saved)

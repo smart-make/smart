@@ -48,5 +48,3 @@ LOADLIBS += \
 endif # uname != Linux
 
 EXEEXT := .exe
-
-$(warning xxx)

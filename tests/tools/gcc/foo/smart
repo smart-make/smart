@@ -1,0 +1,4 @@
+LIBRARY := libfoo.a
+SOURCES := foo.c
+EXPORT.INCLUDES := $(SRCDIR)
+EXPORT.LOADLIBS := $(SRCDIR)/libfoo.a

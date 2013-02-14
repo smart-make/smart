@@ -1,10 +1,6 @@
 #!/bin/bash
 tests=( \
-    modules \
-    targets \
-    tree \
-    requires \
-    tools \
+    gcc \
     )
 for ((i=0; i < ${#tests[@]}; ++i)); {
     cd ${tests[i]}

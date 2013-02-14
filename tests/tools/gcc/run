@@ -1,0 +1,20 @@
+#!/bin/bash
+. ../../../scripts/debug.bash
+
+files=( main.o foo.bin foo/foo.o foo/libfoo.a )
+
+rm ${files[@]}
+
+lines=$(smart)
+
+for ((i=0; i < ${#files[@]}; ++i)); {
+    if [[ ! -f ${files[i]} ]]; then
+	error "missing ${files[i]}"
+    fi
+}
+
+s=$(./foo.bin)
+
+if [[ "x$s" != "xfoo: foo" ]]; then
+    error "$s != foo: foo"
+fi

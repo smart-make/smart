@@ -25,4 +25,3 @@ for ((i=0; i < ${#tests[@]}; ++i)); {
 	error "$test != $line ($i)"
     fi
 }
-
