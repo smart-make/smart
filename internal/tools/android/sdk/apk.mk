@@ -18,7 +18,7 @@ $(eval $(smart~rule))
 define smart~rule
   $(OUT)/$(NAME)/_.signed: $(OUT)/$(NAME)/_.unsigned
 	@cp -f $$< $$@
-	$(ANDROID.jarsigner)\
+	$(ANDROID.jarsigner) -sigalg MD5withRSA -digestalg SHA1 \
 	$(addprefix -keystore , $(KEYSTORE))\
 	$(if $(KEYPASS),-keypass `cat $(KEYPASS)`)\
 	$(if $(STOREPASS), -storepass `cat $(STOREPASS)`)\

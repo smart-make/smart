@@ -5,7 +5,7 @@ NDK_BUILD := $(NDK_BUILD:%=$(SRCDIR)/%)
 NDK_TOOLCHAIN_VERSION := $(or $(NDK_TOOLCHAIN_VERSION),4.7)
 
 ## load Android.mk
-include $(smart.tooldir)/ndkbuild/a.mk
+include $(smart.tooldir)/ndk/load.mk
 
 #$(warning $(NAME): $(NDK_BUILD_TYPE): $(NDK_BUILD_TARGETS))
 
@@ -20,8 +20,10 @@ define smart~rules-ndk
   $(OUT)/$(NAME)/.ndkbuilt: \
     $(wildcard \
       $(SRCDIR)/*.c $(SRCDIR)/*.h \
+      $(LOCAL_SRC_FILES:%=$(SRCDIR)/%) \
       $(SRCDIR)/Android.mk $(SRCDIR)/Application.mk \
-     ) $(smart.tooldir)/ndkbuild.mk
+     ) \
+    $(smart.tooldir)/ndk/build.mk
 	make -f $(ANDROID.ndk)/build/core/build-local.mk -C $(SRCDIR) \
 	APP_BUILD_SCRIPT="$(NDK_BUILD:$(SRCDIR)/%=%)" \
 	APP_MODULES="$(LOCAL_MODULE)" \

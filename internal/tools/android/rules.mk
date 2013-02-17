@@ -33,39 +33,39 @@ SOURCES.c := $(filter %.c,$(SOURCES))
 SOURCES.c++ := $(filter %.cpp,$(SOURCES))
 
 ifneq ($(wildcard $(SRCDIR)/res $(SRCDIR)/assets),)
-  include $(smart.tooldir)/res.mk
+  include $(smart.tooldir)/sdk/res.mk
 endif
 
 ifdef SOURCES.aidl
-  include $(smart.tooldir)/aidl.mk
+  include $(smart.tooldir)/sdk/aidl.mk
 endif #SOURCES.aidl
 
 ifdef SOURCES.java
-  include $(smart.tooldir)/java.mk
+  include $(smart.tooldir)/sdk/java.mk
 endif #SOURCES.java
 
 ifdef LIBS.native
-  include $(smart.tooldir)/so.mk
+  include $(smart.tooldir)/sdk/so.mk
 endif #LIBS.native
 
 ifdef NDK_LIBRARY
   $(error TODO: native support for NDK_LIBRARY)
 endif #NDK_LIBRARY
 
-ifdef NDK_BUILD
-  include $(smart.tooldir)/ndkbuild.mk
-endif #NDK_BUILD
-
 ifdef NDK_PROGRAM
   $(error TODO: native support for NDK_PROGRAM)
 endif #NDK_PROGRAM
 
+ifdef NDK_BUILD
+  include $(smart.tooldir)/ndk/build.mk
+endif #NDK_BUILD
+
 ifdef PACKAGE
-  include $(smart.tooldir)/jar.mk
+  include $(smart.tooldir)/sdk/jar.mk
 endif #PACKAGE
 
 ifdef APK
-  include $(smart.tooldir)/apk.mk
+  include $(smart.tooldir)/sdk/apk.mk
 endif #APK
 
 ifneq ($(or $(APK),$(NDK_LIBRARY),$(NDK_PROGRAM),$(NDK_BUILD)),)
