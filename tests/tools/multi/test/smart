@@ -1,0 +1,3 @@
+discard := $(test-log-visit)
+SUBDIRS := test-1 test-2
+NAMES := $(NAMES) $(NAME)

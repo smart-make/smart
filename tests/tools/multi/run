@@ -1,0 +1,36 @@
+# -*- shell-script -*-
+function run ()
+{
+    local files=( foo.o multi-prog-0 )
+    local visits=( \
+	"multi,smart" \
+	"multi,test/.tool" \
+	"test,test/smart" \
+	"test,.tool" \
+	"test-1,test/test-1/smart" \
+	"test,.tool" \
+	"test-2,test/test-2/smart" \
+	"test,test/check-test.mk" \
+	"test,test.mk" \
+	)
+    
+    rm ${files[@]} 2>/dev/null
+    rm -vf visit.log && touch visit.log
+
+    local lines=$(smart)
+    for ((i=0; i < ${#files[@]}; ++i)); {
+	if [[ ! -f ${files[i]} ]]; then
+	    error "missing ${files[i]}"
+	fi
+    }
+    
+    lines=( $(cat visit.log) )
+    is-same-set visits lines || {
+	error "'${visits[@]}' is not in visit.log"
+    }
+    
+    local s=$(./multi-prog-0)
+    if [[ "x$s" != "xmulti tool test - 0" ]]; then
+	error "$s != multi tool test - 0"
+    fi
+}

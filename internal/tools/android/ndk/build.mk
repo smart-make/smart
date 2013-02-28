@@ -15,19 +15,26 @@ ifneq ($(NDK_VERBOSE),1)
   endif
 endif
 
+#$(warning $(MAKE))
+#$(warning $(SRCDIR))
+#$(warning $(NDK_BUILD))
+#$(warning $(LOCAL_SRC_FILES:%=$(dir $(NDK_BUILD))%))
+
 # $$(MAKE)
+# $(smart.tooldir)/ndk/build.mk
+#	$(if $(APP_ABI),APP_ABI="$(APP_ABI)")
 define smart~rules-ndk
-  $(OUT)/$(NAME)/.ndkbuilt: \
+  $(NDK_BUILD_TARGETS): $(OUT)/$(NAME)/.ndk/built
+  $(OUT)/$(NAME)/.ndk/built: \
     $(wildcard \
-      $(SRCDIR)/*.c $(SRCDIR)/*.h \
-      $(LOCAL_SRC_FILES:%=$(SRCDIR)/%) \
-      $(SRCDIR)/Android.mk $(SRCDIR)/Application.mk \
-     ) \
-    $(smart.tooldir)/ndk/build.mk
+      $(LOCAL_SRC_FILES:%=$(dir $(NDK_BUILD))%) \
+      $(dir $(NDK_BUILD))/*.h \
+      $(dir $(NDK_BUILD))/Android.mk \
+      $(dir $(NDK_BUILD))/Application.mk \
+     )
 	make -f $(ANDROID.ndk)/build/core/build-local.mk -C $(SRCDIR) \
-	APP_BUILD_SCRIPT="$(NDK_BUILD:$(SRCDIR)/%=%)" \
+	APP_BUILD_SCRIPT="$(NDK_BUILD)" \
 	APP_MODULES="$(LOCAL_MODULE)" \
-	$(if $(APP_ABI),APP_ABI="$(APP_ABI)") \
 	$(if $(NDK_APPLICATION_MK),NDK_APPLICATION_MK="$(NDK_APPLICATION_MK)") \
 	$(if $(NDK_TOOLCHAIN_VERSION),NDK_TOOLCHAIN_VERSION="$(NDK_TOOLCHAIN_VERSION)") \
 	$(if $(NDK_MODULE_PATH),NDK_MODULE_PATH="$(NDK_MODULE_PATH)") \
@@ -35,7 +42,6 @@ define smart~rules-ndk
 	$(if $(NDK_VERBOSE),V=$(NDK_VERBOSE)) \
 	NDK_PROJECT_PATH="."
 	@(mkdir -p $$(@D) && echo "targets = $(NDK_BUILD_TARGETS)" > $$@)
-  $(NDK_BUILD_TARGETS): $(OUT)/$(NAME)/.ndkbuilt
 endef #smart~rules-ndk
 ifdef NDK_BUILD_TARGETS
   $(eval $(smart~rules-ndk))

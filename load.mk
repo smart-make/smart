@@ -35,8 +35,8 @@ $(eval \
   ifndef $1
     $$(error undefined "$1")
   else
-    ifneq ($($(strip $1)),$2)
-      $$(error bad value "$1", ($($1) != $2))
+    ifneq ("$($(strip $1))","$2")
+      $$(error bad value "$(strip $1)", ("$($1)" != "$2"))
     endif
   endif
  )

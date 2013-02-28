@@ -1,27 +1,23 @@
-#!/bin/bash
-. ../../scripts/debug.bash
-tests=( \
-    ./smart \
-    ./tree/smart \
-    ./module-5.mk \
-    ./module-1.mk \
-    ./tree/leaf-1/smart \
-    ./module-3.mk \
-    ./module-2.mk \
-    ./tree/leaf-2/smart \
-    ./tree/leaf-3/smart \
-    ./module-4.mk \
-    ./tree/leaf-4/smart \
-    ./tree/leaf-5/smart \
-    )
-lines=($(smart TOOL=test))
-if (( ${#tests[@]} != ${#lines[@]} )); then
-    error "${#tests[@]} != ${#lines[@]}"
-fi
-for ((i=0; i < ${#tests[@]}; ++i)); {
-    test=${tests[i]}
-    line=${lines[i]}
-    if [[ "x$test" != "x$line" ]]; then
-	error "$test != $line ($i)"
-    fi
+# -*- shell-script -*-
+function run ()
+{
+    local lines=($(smart TOOL=test))
+    local tests=( \
+	./smart \
+	./tree/smart \
+	./module-5.mk \
+	./module-1.mk \
+	./tree/leaf-1/smart \
+	./module-3.mk \
+	./module-2.mk \
+	./tree/leaf-2/smart \
+	./tree/leaf-3/smart \
+	./module-4.mk \
+	./tree/leaf-4/smart \
+	./tree/leaf-5/smart \
+	)
+
+    is-same-set lines tests || {
+	error "wrong output"
+    }
 }

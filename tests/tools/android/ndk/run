@@ -1,0 +1,5 @@
+# -*- shell-script -*-
+function run ()
+{
+    todo "NDK test"
+}

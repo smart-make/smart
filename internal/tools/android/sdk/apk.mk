@@ -1,9 +1,18 @@
 APK := $(APK:%=$(SRCDIR)/%)
 
 CERT := cert
-KEYSTORE := $(wildcard $(SRCDIR)/.androidsdk/keystore)
-KEYPASS := $(wildcard $(SRCDIR)/.androidsdk/keypass)
-STOREPASS := $(wildcard $(SRCDIR)/.androidsdk/storepass)
+KEYSTORE := $(or \
+  $(wildcard $(SRCDIR)/.androidsdk/keystore),\
+  $(wildcard $(SRCDIR)/.android/keystore),\
+  $(wildcard $(smart.tooldir)/sdk/key/keystore))
+KEYPASS := $(or \
+  $(wildcard $(SRCDIR)/.androidsdk/keypass),\
+  $(wildcard $(SRCDIR)/.android/keypass),\
+  $(wildcard $(smart.tooldir)/sdk/key/keypass))
+STOREPASS := $(or \
+  $(wildcard $(SRCDIR)/.androidsdk/storepass),\
+  $(wildcard $(SRCDIR)/.android/storepass),\
+  $(wildcard $(smart.tooldir)/sdk/key/storepass))
 
 define smart~rule
   $(OUT)/$(NAME)/_.pack:

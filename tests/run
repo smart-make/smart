@@ -1,15 +1,101 @@
 #!/bin/bash
-tests=( \
+source ../scripts/debug.bash
+
+function is-subset-of ()
+{
+    if [[ "x$1" != "x" ]]; then
+	eval "local a1=( \"\${$1[@]}\" )"
+    else
+	local a1=()
+    fi
+    if [[ "x$2" != "x" ]]; then
+	eval "local a2=( \"\${$2[@]}\" )"
+    else
+	local a2=()
+    fi
+
+    local same=yes
+    for ((i=0; i < ${#a1[@]}; ++i)) {
+	local found=no
+	for ((j=0; j < ${#a2[@]}; ++j)) {
+	    if [[ "x${a1[$i]}" == "x${a2[$j]}" ]]; then
+		found=yes
+		break
+	    fi
+	}
+
+	if [[ "x$found" != "xyes" ]]; then
+	    same=no
+	    break
+	fi
+    }
+
+    [[ "x$same" == "xyes" ]]
+}
+
+function is-same-set ()
+{
+    if [[ "x$1" != "x" ]]; then
+	eval "local n1=( \"\${#$1[@]}\" )"
+    else
+	local n1=0
+    fi
+    if [[ "x$2" != "x" ]]; then
+	eval "local n2=( \"\${#$2[@]}\" )"
+    else
+	local n2=0
+    fi
+
+    #echo "$n1, $n2"
+
+    if (( $n1 != $n2 )); then
+	false
+    else
+	is-subset-of $1 $2
+    fi
+}
+
+function ensure-internal-test-utilities () {
+    local a1=()
+    local a2=()
+
+    a1=(1 2 3)
+    a2=(1 2 3)
+    is-subset-of a1 a2 || error "is-subset-of not working"
+    is-same-set  a1 a2 || error "is-same-set not working"
+
+    a1=(1 2 3)
+    a2=(1 a 2 b 3)
+    is-subset-of a1 a2 || error "is-subset-of not working"
+    is-same-set  a1 a2 && error "is-same-set not working"
+
+    a1=(1 a 2 b 3)
+    a2=(1 2 3)
+    is-subset-of a1 a2 && error "is-subset-of not working"
+    is-same-set  a1 a2 && error "is-same-set not working"
+}
+
+function run-tests ()
+{
+    local tests=( "$@" )
+    for ((i=0; i < ${#tests[@]}; ++i)); {
+	(
+	    source "$PWD/${tests[i]}/run" && (
+		echo "test: Entering directory \`$PWD/${tests[i]}'"
+		cd "${tests[i]}"
+		( run )
+		cd - > /dev/null
+		echo "test: Leaving directory \`$PWD/${tests[i]}'"
+	    )
+	)
+    }
+}
+
+ensure-internal-test-utilities
+
+run-tests \
     modules \
     targets \
     tree \
     requires \
     tools \
-    )
-for ((i=0; i < ${#tests[@]}; ++i)); {
-    cd ${tests[i]}
-    echo "test: Entering directory \`${tests[i]}'"
-    ./run
-    echo "test: Leaving directory \`${tests[i]}'"
-    cd - > /dev/null
-}

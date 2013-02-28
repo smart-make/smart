@@ -1,20 +1,19 @@
-#!/bin/bash
-. ../../../scripts/debug.bash
+# -*- shell-script -*-
+function run ()
+{
+    local files=( main.o foo.bin foo/foo.o foo/libfoo.a )
 
-files=( main.o foo.bin foo/foo.o foo/libfoo.a )
+    rm ${files[@]} 2>/dev/null
 
-rm ${files[@]}
+    local lines=$(smart)
+    for ((i=0; i < ${#files[@]}; ++i)); {
+	if [[ ! -f ${files[i]} ]]; then
+	    error "missing ${files[i]}"
+	fi
+    }
 
-lines=$(smart)
-
-for ((i=0; i < ${#files[@]}; ++i)); {
-    if [[ ! -f ${files[i]} ]]; then
-	error "missing ${files[i]}"
+    local s=$(./foo.bin)
+    if [[ "x$s" != "xfoo: foo" ]]; then
+	error "$s != foo: foo"
     fi
 }
-
-s=$(./foo.bin)
-
-if [[ "x$s" != "xfoo: foo" ]]; then
-    error "$s != foo: foo"
-fi

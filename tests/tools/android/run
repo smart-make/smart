@@ -2,8 +2,7 @@
 function run ()
 {
     run-tests \
-    	gcc \
-	android \
-	multi \
-	
+	sdk \
+	ndk \
+
 }
