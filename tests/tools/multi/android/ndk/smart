@@ -1,4 +1,5 @@
 discard := $(test-log-visit)
 discard := $(test-log-tool)
-SUBDIRS := test-1 test-2
 NAMES := $(NAMES) $(NAME)
+$(warning TODO: ndk test code)
+

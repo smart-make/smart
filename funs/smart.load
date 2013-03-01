@@ -40,13 +40,17 @@ ifeq ($(smart.load-$(smart~sm.mk)),true)
   $(warning info: "$(smart~sm.mk)" already loaded)
 else
 
+smart~srcdir := $(SRCDIR)
+
+$(call smart.test.load.before.push)
 $(call smart.push)
+$(call smart.test.load.after.push)
 
 ifdef smart~smart
-  ifeq ($(smart~sm.mk),$(SRCDIR)/$(@loadee).mk)
-    MAKEFILE_LIST += $(SRCDIR)/$(@loadee).mk
+  ifeq ($(smart~sm.mk),$(smart~srcdir)/$(@loadee).mk)
+    MAKEFILE_LIST += $(smart~srcdir)/$(@loadee).mk
   else
-    MAKEFILE_LIST += $(SRCDIR)/$(@loadee)/$(smart~smart)
+    MAKEFILE_LIST += $(smart~srcdir)/$(@loadee)/$(smart~smart)
   endif
   include $(SMART.DECLARE)
 endif #smart~smart
@@ -54,11 +58,15 @@ endif #smart~smart
 smart.load-$(smart~sm.mk) := true
 include $(smart~sm.mk)
 
+$(call smart.test.loaded)
+
 ifdef smart~smart
   include $(SMART.RULES)
 endif #smart~smart
 
+$(call smart.test.load.before.pop)
 $(call smart.pop)
+$(call smart.test.load.after.pop)
 
 endif #$(smart.load-$(smart~sm.mk)) == true
 endif #!smart~sm.mk

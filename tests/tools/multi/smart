@@ -1,6 +1,6 @@
-test-log-visit = $(shell echo "$(NAME),$(lastword $(MAKEFILE_LIST))" >> visit.log)
 discard := $(test-log-visit)
+discard := $(test-log-tool)
 PROGRAM := multi-prog-0
 SOURCES := foo.c
-SUBDIRS := test
+SUBDIRS := test android
 NAMES := $(NAMES) $(NAME)

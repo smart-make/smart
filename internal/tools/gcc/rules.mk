@@ -4,8 +4,8 @@
 #
 $(smart.internal)
 
-$(warning $(SOURCES))
-$(warning $(PROGRAM))
+#$(warning $(NAME): $(TOOL), $(SOURCES))
+#$(warning $(NAME): $(TOOL), $(PROGRAM))
 
 ifdef SOURCES
   include $(smart.tooldir)/sources.mk

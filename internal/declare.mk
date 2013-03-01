@@ -4,15 +4,7 @@
 #
 $(smart.internal)
 
-SM.MK := $(lastword $(MAKEFILE_LIST))
-SRCDIR := $(smart.me)
-NAME := $(patsubst %.mk,%,$(notdir $(SM.MK)))
-ifeq ($(NAME),smart)
-  NAME := $(notdir $(SRCDIR))
-endif
-ifeq ($(NAME),.)
-  NAME := $(notdir $(PWD))
-endif
+#$(warning $(NAME), $(TOOL), $(SRCDIR), $(SM.MK))
 
 ifdef TOOL
   -include $(wildcard $(smart.tooldir)/declare.mk)

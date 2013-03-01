@@ -29,6 +29,12 @@ define smart.get
 $(smart.context.$(strip $2)-$(smart.scripts.$(strip $1)))
 endef #smart.get
 
+smart.test.load.before.push :=
+smart.test.load.before.pop :=
+smart.test.load.after.push :=
+smart.test.load.after.pop :=
+smart.test.loaded :=
+
 ## Assert variable value
 define smart.test.assert.value
 $(eval \

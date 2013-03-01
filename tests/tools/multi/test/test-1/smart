@@ -1,2 +1,3 @@
 discard := $(test-log-visit)
+discard := $(test-log-tool)
 NAMES := $(NAMES) $(NAME)

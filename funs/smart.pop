@@ -32,7 +32,16 @@ $(smart~restore.$(flavor $(smart~name)))$(eval \
  )
 endef #smart~restore
 
-$(foreach smart~name,$(filter $(smart.context.names),$(.VARIABLES)),$(smart~restore))
+## clear the current context
+$(foreach 1,$(filter $(smart.context.names),$(.VARIABLES)),$(eval $1 :=))
+
+## must restore TOOL first for getting the right context names
+$(foreach smart~name,TOOL,$(smart~restore))
+$(foreach smart~name,$(filter-out TOOL,$(filter $(smart.context.names),$(.VARIABLES))),$(smart~restore))
+
+ifneq ($(smart~sm.mk),$(SM.MK))
+  $(error smart build system crashed!)
+endif
 
 smart~restore.simple :=
 smart~restore.recursive :=

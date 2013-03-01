@@ -1,36 +1,101 @@
 # -*- shell-script -*-
 function run ()
 {
-    local files=( foo.o multi-prog-0 )
     local visits=( \
-	"multi,smart" \
-	"multi,test/.tool" \
-	"test,test/smart" \
-	"test,.tool" \
-	"test-1,test/test-1/smart" \
-	"test,.tool" \
-	"test-2,test/test-2/smart" \
-	"test,test/check-test.mk" \
-	"test,test.mk" \
+	"multi,.,./smart,.tool" \
+	"multi,,.,./smart,declare.mk" \
+	"multi,,.,./smart,smart" \
+	"test,,./test,./test/smart,test/.tool" \
+	"test,,./test,./test/smart,declare.mk" \
+	"test,,./test,./test/smart,test/smart" \
+	"test-1,,./test/test-1,./test/test-1/smart,declare.mk" \
+	"test-1,,./test/test-1,./test/test-1/smart,test/test-1/smart" \
+	"test-2,,./test/test-2,./test/test-2/smart,declare.mk" \
+	"test-2,,./test/test-2,./test/test-2/smart,test/test-2/smart" \
+	"android,,./android,./android/smart,declare.mk" \
+	"android,,./android,./android/smart,android/smart" \
+	"sdk,,./android/sdk,./android/sdk/smart,declare.mk" \
+	"sdk,,./android/sdk,./android/sdk/smart,android/sdk/smart" \
+	"ndk,,./android/ndk,./android/ndk/smart,declare.mk" \
+	"ndk,,./android/ndk,./android/ndk/smart,android/ndk/smart" \
+	"test,test,./test,./test/smart,test/check-test.mk" \
+	"test,test,./test,./test/smart,test.mk" \
 	)
-    
+    local tools=( \
+	".,.tool," \
+	".,declare.mk,gcc," \
+	".,smart,gcc," \
+	"./test,test/.tool,," \
+	"./test,declare.mk,test," \
+	"./test,test/smart,test," \
+	"./test/test-1,declare.mk,," \
+	"./test/test-1,test/test-1/smart,," \
+	"./test/test-2,declare.mk,," \
+	"./test/test-2,test/test-2/smart,," \
+	"./android,declare.mk,," \
+	"./android,android/smart,," \
+	"./android/sdk,declare.mk,android," \
+	"./android/sdk,android/sdk/smart,android," \
+	"./android/ndk,declare.mk,," \
+	"./android/ndk,android/ndk/smart,," \
+	)
+    local loads=( \
+	"0:multi,gcc,.,./smart,smart" \
+	"1:,,,,smart" \
+	"2:test,test,./test,./test/smart,test/smart" \
+	"0:test,test,./test,./test/smart,test/smart" \
+	"1:,,,,test/smart" \
+	"2:test-1,,./test/test-1,./test/test-1/smart,test/test-1/smart" \
+	"3:test-1,,./test/test-1,./test/test-1/smart,test/test-1/smart" \
+	"4:test,test,./test,./test/smart,test/test-1/smart" \
+	"0:test,test,./test,./test/smart,test/test-1/smart" \
+	"1:,,,,test/test-1/smart" \
+	"2:test-2,,./test/test-2,./test/test-2/smart,test/test-2/smart" \
+	"3:test-2,,./test/test-2,./test/test-2/smart,test/test-2/smart" \
+	"4:test,test,./test,./test/smart,test/test-2/smart" \
+	"3:test,test,./test,./test/smart,test/test-2/smart" \
+	"4:multi,gcc,.,./smart,test/test-2/smart" \
+	"0:multi,gcc,.,./smart,test/test-2/smart" \
+	"1:,,,,test/test-2/smart" \
+	"2:android,,./android,./android/smart,android/smart" \
+	"0:android,,./android,./android/smart,android/smart" \
+	"1:,,,,android/smart" \
+	"2:sdk,android,./android/sdk,./android/sdk/smart,android/sdk/smart" \
+	"3:sdk,android,./android/sdk,./android/sdk/smart,android/sdk/smart" \
+	"4:android,,./android,./android/smart,android/sdk/smart" \
+	"0:android,,./android,./android/smart,android/sdk/smart" \
+	"1:,,,,android/sdk/smart" \
+	"2:ndk,,./android/ndk,./android/ndk/smart,android/ndk/smart" \
+	"3:ndk,,./android/ndk,./android/ndk/smart,android/ndk/smart" \
+	"4:android,,./android,./android/smart,android/ndk/smart" \
+	"3:android,,./android,./android/smart,android/ndk/smart" \
+	"4:multi,gcc,.,./smart,android/ndk/smart" \
+	)
+
+    local files=( foo.o multi-prog-0 )
+
     rm ${files[@]} 2>/dev/null
-    rm -vf visit.log && touch visit.log
+    rm -f visit.log tools.log loads.log
 
     local lines=$(smart)
-    for ((i=0; i < ${#files[@]}; ++i)); {
-	if [[ ! -f ${files[i]} ]]; then
-	    error "missing ${files[i]}"
-	fi
+
+    function to-lines () {
+	echo "" && for l in $@; do echo $l; done
     }
     
     lines=( $(cat visit.log) )
-    is-same-set visits lines || {
-	error "'${visits[@]}' is not in visit.log"
-    }
-    
-    local s=$(./multi-prog-0)
-    if [[ "x$s" != "xmulti tool test - 0" ]]; then
-	error "$s != multi tool test - 0"
-    fi
+    check-same-array visits lines
+
+    lines=( $(cat tools.log) )
+    check-same-array tools lines
+
+    lines=( $(cat loads.log) )
+    check-same-array loads lines
+
+    local names=(multi test test-1 test-2 android sdk ndk)
+    local lines=( $(cat names.log) )
+    check-same-array names lines
+
+    check-files files
+    check-program-result ./multi-prog-0 0 "multi tool test - 0"
 }

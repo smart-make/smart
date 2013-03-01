@@ -1,3 +1,3 @@
-*.o
-*.log
-multi-prog-0
+/*.o
+/*.log
+/multi-prog-0

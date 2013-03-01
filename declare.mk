@@ -4,17 +4,27 @@
 #
 $(smart.internal)
 
-MAKEFILE_LIST.saved := $(MAKEFILE_LIST)
+SM.MK := $(lastword $(MAKEFILE_LIST))
 SRCDIR := $(smart.me)
+NAME := $(patsubst %.mk,%,$(notdir $(SM.MK)))
+ifeq ($(NAME),smart)
+  NAME := $(notdir $(SRCDIR))
+endif
+ifeq ($(NAME),.)
+  NAME := $(notdir $(PWD))
+endif
+#$(warning $(NAME), $(SRCDIR), $(SM.MK))
+
+MAKEFILE_LIST.saved := $(MAKEFILE_LIST)
 TOOL :=
 
 -include $(SRCDIR)/.tool
 ifndef TOOL
-  -include $(ROOT)/.tool
-endif #TOOL
-ifndef TOOL
   $(foreach 1,$(wildcard $(smart.root)/internal/tools/*/detect.mk),$(eval include $1))
 endif #TOOL
+
+#$(warning $(SRCDIR), $(TOOL))
+#$(warning $(lastword $(MAKEFILE_LIST)))
 
 ifdef TOOL
   ifeq ($(TOOL),names)
@@ -24,11 +34,13 @@ ifdef TOOL
   endif
 endif
 
+#$(warning $(smart.context.names))
+#$(warning $(NAME), $(TOOL), $(SRCDIR), $(SM.MK))
+
 MAKEFILE_LIST := $(MAKEFILE_LIST.saved)
 MAKEFILE_LIST.saved :=
-TOOL.saved := $(TOOL)
 
-$(foreach 1,$(filter $(smart.context.names),$(.VARIABLES)),$(eval $1 :=))
+$(foreach 1,$(filter-out SM.MK SRCDIR NAME TOOL,$(filter $(smart.context.names),$(.VARIABLES))),$(eval $1 :=))
+#$(warning $(NAME), $(TOOL), $(SRCDIR), $(SM.MK))
 
-TOOL := $(TOOL.saved)
 include $(smart.root)/internal/declare.mk

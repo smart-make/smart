@@ -1,5 +1,33 @@
 # -*- shell-script -*-
 function run ()
 {
-    lines=$(smart)
+    local lines=$(smart)
+    local files=( \
+	sdk.apk \
+	out/sdk/public.xml \
+	out/sdk/classes.dex \
+	out/sdk/_.pack \
+	out/sdk/_.signed \
+	out/sdk/_.unsigned \
+	out/sdk/res/org/smart/test/ASDK/R.java \
+	out/sdk/classes/org/smart/test/ASDK/Foo.class \
+	out/sdk/classes/org/smart/test/ASDK/R.class \
+	out/sdk/classes/org/smart/test/ASDK/R\$attr.class \
+	out/sdk/classes/org/smart/test/ASDK/R\$layout.class \
+	out/sdk/classes/org/smart/test/ASDK/R\$string.class \
+	)
+    check-files ${files[@]}
+
+    #lines=( $(unzip -l sdk.apk) )
+    lines=( $(jar -t < sdk.apk) )
+    files=( \
+	META-INF/MANIFEST.MF \
+	META-INF/CERT.SF \
+	META-INF/CERT.RSA \
+	res/layout/main.xml \
+	AndroidManifest.xml \
+	resources.arsc \
+	classes.dex \
+	)
+    is-same-set lines files || error "wrong APK"
 }

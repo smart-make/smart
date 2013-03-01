@@ -1,4 +1,4 @@
 discard := $(test-log-visit)
 discard := $(test-log-tool)
-SUBDIRS := test-1 test-2
+SUBDIRS := sdk ndk
 NAMES := $(NAMES) $(NAME)

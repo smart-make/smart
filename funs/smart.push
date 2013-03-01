@@ -25,7 +25,12 @@ $(eval \
  )
 endef #smart~save.recursive
 
+#$(warning $(NAME), $(SM.MK), $(TOOL))
+
 $(foreach smart~name,$(smart.context.names),$(smart~save.$(flavor $(smart~name))))
+$(foreach 1,$(filter $(smart.context.names),$(.VARIABLES)),$(eval $1 :=))
+#MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
+#MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 
 smart~save.simple :=
 smart~save.recursive :=

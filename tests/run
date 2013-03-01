@@ -46,8 +46,6 @@ function is-same-set ()
 	local n2=0
     fi
 
-    #echo "$n1, $n2"
-
     if (( $n1 != $n2 )); then
 	false
     else
@@ -55,7 +53,59 @@ function is-same-set ()
     fi
 }
 
-function ensure-internal-test-utilities () {
+function check-same-array ()
+{
+    if [[ "x$1" != "x" ]]; then
+	eval "local a1=( \"\${$1[@]}\" )"
+    else
+	local a1=()
+    fi
+    if [[ "x$2" != "x" ]]; then
+	eval "local a2=( \"\${$2[@]}\" )"
+    else
+	local a2=()
+    fi
+
+    if [[ ${#a1[@]} != ${#a2[@]} ]]; then
+	error -1 "length not equal: ${#a1[@]} != ${#a2[@]}"
+    fi
+
+    function l () { printf "\n"; }
+
+    for ((i=0; i < ${#a1[@]}; ++i)) {
+	if [[ "x${a1[$i]}" != "x${a2[$i]}" ]]; then
+	    info -1 "line $i: ${a1[$i]}"
+	    info -1 "line $i: ${a2[$i]}"
+	    error -1 "line $i not same!"
+	fi
+    }
+}
+
+function check-files ()
+{
+    eval "local files=( \"\${$1[@]}\" )"
+    for file in $files; do
+	[[ -f $file ]] || error -1 "$file not found"
+    done
+}
+
+function check-dirs ()
+{
+    eval "local dirs=( \"\${$1[@]}\" )"
+    for d in $dirs; do
+	[[ -d $d ]] || error -1 "$d not found"
+    done
+}
+
+function check-program-result ()
+{
+    local s=$($1)
+    [[ "x$?" == "x$2" ]] || error -1 "$? != $2"
+    [[ "x$s" == "x$3" ]] || error -1 "$s != $3"
+}
+
+function ensure-internal-test-utilities ()
+{
     local a1=()
     local a2=()
 
@@ -63,6 +113,7 @@ function ensure-internal-test-utilities () {
     a2=(1 2 3)
     is-subset-of a1 a2 || error "is-subset-of not working"
     is-same-set  a1 a2 || error "is-same-set not working"
+    check-same-array a1 a2
 
     a1=(1 2 3)
     a2=(1 a 2 b 3)
@@ -73,6 +124,8 @@ function ensure-internal-test-utilities () {
     a2=(1 2 3)
     is-subset-of a1 a2 && error "is-subset-of not working"
     is-same-set  a1 a2 && error "is-same-set not working"
+
+    check-program-result "echo foo" 0 "foo"
 }
 
 function run-tests ()
@@ -93,9 +146,12 @@ function run-tests ()
 
 ensure-internal-test-utilities
 
-run-tests \
-    modules \
-    targets \
-    tree \
-    requires \
-    tools \
+# run-tests \
+#     modules \
+#     targets \
+#     tree \
+#     requires \
+#     tools \
+
+todo "restore all tests"
+run-tests tools
