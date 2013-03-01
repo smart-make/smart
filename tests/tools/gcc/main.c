@@ -7,5 +7,5 @@
 int main (int argc, char **argv)
 {
   printf ("foo: %s\n", foo ());
-  return 0;
+  return 100;
 }

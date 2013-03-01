@@ -29,6 +29,8 @@ $(foreach smart~name,TOOL,$(smart~restore))
 
 smart~restore~names := $(filter-out TOOL,$(filter $(smart.context.names),$(.VARIABLES)))
 $(foreach smart~name,$(smart~restore~names),$(smart~restore))
+
+smart~restore~names := $(filter-out EXPORT.%,$(smart~restore~names))
 $(foreach smart~name,$(smart~restore~names:%=EXPORT.%),$(smart~restore))
 
 smart~restore~names :=

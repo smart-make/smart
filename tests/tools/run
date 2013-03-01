@@ -1,11 +1,9 @@
 # -*- shell-script -*-
 function run ()
 {
-    # run-tests \
-    # 	gcc \
-    # 	android \
-    # 	multi \
+    run-tests \
+    	gcc \
+    	android \
+    	multi \
 
-    todo "restore all tests"
-    run-tests multi
 }

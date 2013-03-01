@@ -99,8 +99,10 @@ function check-dirs ()
 
 function check-program-result ()
 {
-    local s=$($1)
-    [[ "x$?" == "x$2" ]] || error -1 "$? != $2"
+    local s r
+    s=$($1)
+    r=$?
+    [[ "x$r" == "x$2" ]] || error -1 "$r != $2"
     [[ "x$s" == "x$3" ]] || error -1 "$s != $3"
 }
 
@@ -146,12 +148,9 @@ function run-tests ()
 
 ensure-internal-test-utilities
 
-# run-tests \
-#     modules \
-#     targets \
-#     tree \
-#     requires \
-#     tools \
-
-todo "restore all tests"
-run-tests tools
+run-tests \
+    modules \
+    targets \
+    tree \
+    requires \
+    tools \

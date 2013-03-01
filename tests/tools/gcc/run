@@ -6,14 +6,7 @@ function run ()
     rm ${files[@]} 2>/dev/null
 
     local lines=$(smart)
-    for ((i=0; i < ${#files[@]}; ++i)); {
-	if [[ ! -f ${files[i]} ]]; then
-	    error "missing ${files[i]}"
-	fi
-    }
 
-    local s=$(./foo.bin)
-    if [[ "x$s" != "xfoo: foo" ]]; then
-	error "$s != foo: foo"
-    fi
+    check-files files
+    check-program-result ./foo.bin 100 "foo: foo"
 }

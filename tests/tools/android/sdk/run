@@ -16,7 +16,7 @@ function run ()
 	out/sdk/classes/org/smart/test/ASDK/R\$layout.class \
 	out/sdk/classes/org/smart/test/ASDK/R\$string.class \
 	)
-    check-files ${files[@]}
+    check-files files
 
     #lines=( $(unzip -l sdk.apk) )
     lines=( $(jar -t < sdk.apk) )
