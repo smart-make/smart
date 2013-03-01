@@ -3,4 +3,5 @@
 #
 discard := $(test-log-visit)
 discard := $(test-log-tool)
-NAMES := $(NAMES) $(NAME)
+NAMES := $(NAMES) $(NAME):$(APK)
+$(call smart.test.assert.value,APK,sdk.apk)

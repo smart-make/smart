@@ -21,9 +21,17 @@ define smart~restore
 $(smart~restore.$(flavor $(smart~name)))
 endef #smart~restore
 
-$(foreach smart~name,$(smart.context.names),$(smart~restore))
-$(foreach smart~name,$(smart.context.names:%=EXPORT.%),$(smart~restore))
+## clear the current context
+$(foreach 1,$(filter $(smart.context.names),$(.VARIABLES)),$(eval $1 :=))
 
+## must restore TOOL first for getting the right context names
+$(foreach smart~name,TOOL,$(smart~restore))
+
+smart~restore~names := $(filter-out TOOL,$(filter $(smart.context.names),$(.VARIABLES)))
+$(foreach smart~name,$(smart~restore~names),$(smart~restore))
+$(foreach smart~name,$(smart~restore~names:%=EXPORT.%),$(smart~restore))
+
+smart~restore~names :=
 smart~restore.simple :=
 smart~restore.recursive :=
 smart~restore :=

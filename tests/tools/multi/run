@@ -73,7 +73,7 @@ function run ()
 	)
 
     local files=( foo.o multi-prog-0 \
-	sdk.apk \
+	android/sdk/sdk.apk \
 	out/sdk/public.xml \
 	out/sdk/classes.dex \
 	out/sdk/_.pack \
@@ -88,6 +88,7 @@ function run ()
 	)
 
     rm -f ${files[@]} visit.log tools.log loads.log names.log
+    rm -rf out
 
     local lines=$(smart)
 
@@ -104,7 +105,7 @@ function run ()
     lines=( $(cat loads.log) )
     check-same-array loads lines
 
-    local names=(multi test test-1 test-2 android sdk ndk)
+    local names=(multi test test-1 test-2 android sdk:sdk.apk ndk)
     local lines=( $(cat names.log) )
     check-same-array names lines
 
