@@ -84,7 +84,7 @@ function check-same-array ()
 function check-files ()
 {
     eval "local files=( \"\${$1[@]}\" )"
-    for file in $files; do
+    for file in ${files[@]}; do
 	[[ -f $file ]] || error -1 "$file not found"
     done
 }
@@ -92,7 +92,7 @@ function check-files ()
 function check-dirs ()
 {
     eval "local dirs=( \"\${$1[@]}\" )"
-    for d in $dirs; do
+    for d in ${dirs[@]}; do
 	[[ -d $d ]] || error -1 "$d not found"
     done
 }

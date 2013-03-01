@@ -2,4 +2,3 @@ discard := $(test-log-visit)
 discard := $(test-log-tool)
 NAMES := $(NAMES) $(NAME)
 $(warning TODO: ndk test code)
-

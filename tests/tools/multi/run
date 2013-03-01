@@ -72,10 +72,22 @@ function run ()
 	"4:multi,gcc,.,./smart,android/ndk/smart" \
 	)
 
-    local files=( foo.o multi-prog-0 )
+    local files=( foo.o multi-prog-0 \
+	sdk.apk \
+	out/sdk/public.xml \
+	out/sdk/classes.dex \
+	out/sdk/_.pack \
+	out/sdk/_.signed \
+	out/sdk/_.unsigned \
+	out/sdk/res/org/smart/test/ASDK/R.java \
+	out/sdk/classes/org/smart/test/ASDK/Foo.class \
+	out/sdk/classes/org/smart/test/ASDK/R.class \
+	out/sdk/classes/org/smart/test/ASDK/R\$attr.class \
+	out/sdk/classes/org/smart/test/ASDK/R\$layout.class \
+	out/sdk/classes/org/smart/test/ASDK/R\$string.class \
+	)
 
-    rm ${files[@]} 2>/dev/null
-    rm -f visit.log tools.log loads.log
+    rm -f ${files[@]} visit.log tools.log loads.log names.log
 
     local lines=$(smart)
 
