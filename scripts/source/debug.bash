@@ -1,5 +1,6 @@
 #
-#  Copyright (C), by Duzy Chan <code@duzy.info>, 2013
+#  Copyright (C) 2013, by Duzy Chan <code@duzy.info>
+#  
 #  All rights reserved.
 #
 shopt -s extglob

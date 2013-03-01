@@ -1,5 +1,5 @@
 #!/bin/bash
-source ../scripts/debug.bash
+source ../scripts/source/debug.bash
 
 function is-subset-of ()
 {

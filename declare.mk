@@ -17,14 +17,20 @@ endif
 
 MAKEFILE_LIST.saved := $(MAKEFILE_LIST)
 TOOL :=
-
--include $(SRCDIR)/.tool
+TOOL_FILE := $(wildcard $(SRCDIR)/.tool)
+-include $(TOOL_FILE)
 ifndef TOOL
   $(foreach 1,$(wildcard $(smart.root)/internal/tools/*/detect.mk),$(eval include $1))
-endif #TOOL
+endif #!TOOL
 
-#$(warning $(SRCDIR), $(TOOL))
-#$(warning $(lastword $(MAKEFILE_LIST)))
+## search .tool upwards
+ifeq ($(or $(TOOL),$(TOOL_FILE)),)
+  TOOL_FILE := $(call smart.findtool,$(SRCDIR))
+  ifndef TOOL_FILE
+    #TOOL_FILE := $(shell $(smart.root)/scripts/find-tool $(SRCDIR))
+  endif
+  -include $(TOOL_FILE)
+endif #no TOOL nor TOOL_FILE
 
 ifdef TOOL
   ifeq ($(TOOL),names)

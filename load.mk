@@ -10,7 +10,7 @@ smart.list :=
 smart.export :=
 smart.settle_root :=
 smart.context.names = this.% export.% THIS.% EXPORT.% \
-  SM.MK TOOL NAME SRCDIR REQUIRES SUBDIRS MODULES TARGETS \
+  SM.MK TOOL TOOL_FILE NAME SRCDIR REQUIRES SUBDIRS MODULES TARGETS \
   SETTLE_ROOT SETTLE $(smart.context.$(TOOL))
 
 define smart.internal

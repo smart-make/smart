@@ -1,0 +1,15 @@
+# -*- makefile-gmake -*-
+#
+#    Copyright (C) 2013, Duzy Chan <code@duzy.info>.
+#
+#    All rights reserved.
+#
+$(smart.internal)
+smart~result := $(wildcard $(patsubst %/,%,$1)/.tool)
+ifndef smart~result
+ifeq ($(filter $1,. .. /),)
+  smart~findtool~up := $(patsubst %/,%,$(dir $1))
+  $(foreach 1,$(smart~findtool~up),$(eval include $(smart.root)/funs/smart.findtool))
+  smart~findtool~up :=
+endif
+endif
