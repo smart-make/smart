@@ -1,6 +1,9 @@
 APK := $(APK:%=$(SRCDIR)/%)
 
-CERT := cert
+ifndef CERT
+  CERT := cert
+endif #CERT
+
 KEYSTORE := $(or \
   $(wildcard $(SRCDIR)/.androidsdk/keystore),\
   $(wildcard $(SRCDIR)/.android/keystore),\
