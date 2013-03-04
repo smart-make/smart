@@ -2,8 +2,10 @@
 function run ()
 {
     run-tests \
-    	gcc \
-    	android \
-    	multi \
+	android
+
+    	# gcc \
+    	# android \
+    	# multi \
 
 }

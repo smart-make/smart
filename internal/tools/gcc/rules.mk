@@ -18,14 +18,6 @@ else
   LDLIBS  = $(LOADLIBS) $(LIBADD)
 endif #FULLLIBS
 
-ifdef PROGRAM
-  include $(smart.tooldir)/programs.mk
-  ifdef PROGRAM
-    module-$(SM.MK): $(PROGRAM)
-    modules: module-$(SM.MK)
-  endif #PROGRAM
-endif #PROGRAM
-
 ifdef LIBRARY
   include $(smart.tooldir)/libraries.mk
   ifdef LIBRARY
@@ -33,3 +25,11 @@ ifdef LIBRARY
     modules: module-$(SM.MK)
   endif #LIBRARY
 endif #LIBRARY
+
+ifdef PROGRAM
+  include $(smart.tooldir)/programs.mk
+  ifdef PROGRAM
+    module-$(SM.MK): $(PROGRAM)
+    modules: module-$(SM.MK)
+  endif #PROGRAM
+endif #PROGRAM

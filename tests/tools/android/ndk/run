@@ -1,5 +1,6 @@
 # -*- shell-script -*-
 function run ()
 {
-    todo "NDK test"
+    #local lines=$(smart)
+    smart
 }
