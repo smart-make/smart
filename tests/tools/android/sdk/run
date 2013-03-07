@@ -1,7 +1,6 @@
 # -*- shell-script -*-
 function run ()
 {
-    local lines=$(smart)
     local files=( \
 	sdk.apk \
 	out/sdk/public.xml \
@@ -16,9 +15,12 @@ function run ()
 	out/sdk/classes/org/smart/test/ASDK/R\$layout.class \
 	out/sdk/classes/org/smart/test/ASDK/R\$string.class \
 	)
+
+    rm -rf ${files[@]} out
+
+    local lines=$(smart)
     check-files files
 
-    #lines=( $(unzip -l sdk.apk) )
     lines=( $(jar -t < sdk.apk) )
     files=( \
 	META-INF/MANIFEST.MF \
