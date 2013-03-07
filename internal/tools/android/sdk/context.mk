@@ -3,5 +3,7 @@
 #    
 #    All rights reserved.
 #
+$(smart.internal)
+
 smart.context.android/sdk := SOURCES \
   APK CERT PACKAGE PLATFORM LIBS SUPPORTS \

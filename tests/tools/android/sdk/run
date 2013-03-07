@@ -14,12 +14,20 @@ function run ()
 	out/sdk/classes/org/smart/test/ASDK/R\$attr.class \
 	out/sdk/classes/org/smart/test/ASDK/R\$layout.class \
 	out/sdk/classes/org/smart/test/ASDK/R\$string.class \
+	out/objs/android-14-armeabi-v7a/jni/jni.o \
+	out/libs/armeabi-v7a/jni.so \
 	)
 
     rm -rf ${files[@]} out
 
     local lines=$(smart)
     check-files files
+
+    if false; then
+	echo "=================================================="
+	echo "$lines"
+	echo "=================================================="
+    fi
 
     lines=( $(jar -t < sdk.apk) )
     files=( \
@@ -30,6 +38,8 @@ function run ()
 	AndroidManifest.xml \
 	resources.arsc \
 	classes.dex \
+	lib/armeabi-v7a/jni.so \
 	)
+
     is-same-set lines files || error "wrong APK"
 }

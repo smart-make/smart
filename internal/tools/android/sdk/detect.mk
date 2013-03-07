@@ -5,9 +5,6 @@
 #
 $(smart.internal)
 
-smart~android_files := $(wildcard $(SRCDIR)/AndroidManifest.xml)
-ifdef smart~android_files
+ifneq ($(wildcard $(SRCDIR)/AndroidManifest.xml),)
   TOOL := android/sdk
 endif
-
-smart~android_files :=

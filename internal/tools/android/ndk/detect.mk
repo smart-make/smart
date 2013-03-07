@@ -5,6 +5,8 @@
 #
 $(smart.internal)
 
-ifneq ($(wildcard $(SRCDIR)/Android.mk $(SRCDIR)/jni/Android.mk),)
+ifeq ($(notdir $(SRCDIR)),jni)
+ifneq ($(wildcard $(dir $(SRCDIR))AndroidManifest.xml),)
   TOOL := android/ndk
+endif
 endif

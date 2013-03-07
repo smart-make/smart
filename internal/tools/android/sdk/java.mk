@@ -1,3 +1,10 @@
+#
+#    Copyright (C) 2012, 2013, Duzy Chan <code@duzy.info>.
+#    
+#    All rights reserved.
+#
+$(smart.internal)
+
 define smart~rule
   $(OUT)/$(NAME)/classes/.list : $(SOURCES.java) | $(LIBS.local)
 	@mkdir -p $$(@D)

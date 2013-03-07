@@ -1,3 +1,10 @@
+#
+#    Copyright (C) 2012, 2013, Duzy Chan <code@duzy.info>.
+#    
+#    All rights reserved.
+#
+$(smart.internal)
+
 smart~res.all := \
   $(wildcard $(SRCDIR)/res $(SRCDIR)/assets) \
   $(call smart.find,$(SRCDIR)/res,%.xml %.png %.jpg) \

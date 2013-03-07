@@ -1,3 +1,8 @@
+#
+#    Copyright (C) 2012, 2013, Duzy Chan <code@duzy.info>.
+#    
+#    All rights reserved.
+#
 APK := $(APK:%=$(SRCDIR)/%)
 
 ifndef CERT
