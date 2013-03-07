@@ -7,15 +7,15 @@ endif #CERT
 KEYSTORE := $(or \
   $(wildcard $(SRCDIR)/.androidsdk/keystore),\
   $(wildcard $(SRCDIR)/.android/keystore),\
-  $(wildcard $(smart.tooldir)/sdk/key/keystore))
+  $(wildcard $(smart.tooldir)/key/keystore))
 KEYPASS := $(or \
   $(wildcard $(SRCDIR)/.androidsdk/keypass),\
   $(wildcard $(SRCDIR)/.android/keypass),\
-  $(wildcard $(smart.tooldir)/sdk/key/keypass))
+  $(wildcard $(smart.tooldir)/key/keypass))
 STOREPASS := $(or \
   $(wildcard $(SRCDIR)/.androidsdk/storepass),\
   $(wildcard $(SRCDIR)/.android/storepass),\
-  $(wildcard $(smart.tooldir)/sdk/key/storepass))
+  $(wildcard $(smart.tooldir)/key/storepass))
 
 define smart~rule
   $(OUT)/$(NAME)/_.pack:

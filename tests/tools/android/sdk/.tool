@@ -1,0 +1,1 @@
+TOOL := android/sdk
