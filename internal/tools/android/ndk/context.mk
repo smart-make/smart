@@ -19,7 +19,7 @@ $(smart.internal)
 # APP_DEBUG
 # APP_DEBUGGABLE
 # APP_MANIFEST
-smart.context.android := \
+smart.context.android/ndk := \
   APP_ABI \
   APP_STL \
   APP_OPTIM \

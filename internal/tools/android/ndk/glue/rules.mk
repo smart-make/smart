@@ -5,9 +5,8 @@
 #
 $(smart.internal)
 
-$(info smart: Android NDK: Build for $(TARGET_PLATFORM) using ABI "$(TARGET_ARCH_ABI)")
-
-$(warning $(NAME), $(TARGET_ABI), $(TARGET_TOOLCHAIN))
+#$(info smart: Android NDK: Build "$(NAME)" for $(TARGET_PLATFORM) using ABI "$(TARGET_ARCH_ABI)")
+$(warning TODO: LOCAL_ARM_MODE, LOCAL_ARM_NEON)
 
 ifdef SOURCES
   include $(smart.tooldir)/sources.mk
@@ -19,16 +18,16 @@ endif #SOURCES
 
 ifdef LIBRARY
   include $(smart.tooldir)/library.mk
-  ifdef LIBRARY
-    module-$(SM.MK): $(LIBRARY)
+  ifdef smart~library
+    module-$(SM.MK): $(smart~library)
     modules: module-$(SM.MK)
-  endif #LIBRARY
+  endif #smart~library
 endif #LIBRARY
 
 ifdef PROGRAM
   include $(smart.tooldir)/program.mk
-  ifdef PROGRAM
-    module-$(SM.MK): $(PROGRAM)
+  ifdef smart~program
+    module-$(SM.MK): $(smart~program)
     modules: module-$(SM.MK)
-  endif #PROGRAM
+  endif #smart~program
 endif #PROGRAM

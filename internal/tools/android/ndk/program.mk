@@ -5,12 +5,15 @@
 #
 $(smart.internal)
 
-s := $(OUT)/libs/$(TARGET_ARCH_ABI)/
-PROGRAM := $(addprefix $s,$(PROGRAM:$s%=%))
+~ := $(OUT)/libs/$(TARGET_ARCH_ABI)/
+smart~program := $(addprefix $~,$(PROGRAM:$~%=%))
 
 $(call smart~unique,LDFLAGS)
 
-$(eval $(PROGRAM): $(OBJECTS) ; \
-	$(CXX) $(LDFLAGS) -o $$@ $$^ $(LDLIBS))
+LDFLAGS := $(TARGET_LDFLAGS) $(filter-out -shared,$(LDFLAGS))
 
-#$(warning $(PROGRAM))
+#$(dir $(smart~program)): ; mkdir -p $@
+$(eval $(smart~program): $(OBJECTS) $(dir $(smart~program)) ; \
+	$(TARGET_CXX) $(LDFLAGS) --sysroot=$(SYSROOT) \
+	-Wl,--gc-sections -Wl,-z,nocopyreloc \
+	-o $$@ $(OBJECTS) $(LDLIBS))

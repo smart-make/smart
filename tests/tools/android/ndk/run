@@ -1,6 +1,27 @@
 # -*- shell-script -*-
 function run ()
 {
-    #local lines=$(smart)
-    smart
+    local files=( \
+	"out/objs/android-14-armeabi/a1.o" \
+	"out/objs/android-14-armeabi-v7a/a2.o" \
+	"out/objs/android-9-mips/a3.o" \
+	"out/objs/android-9-x86/a3.o" \
+	"out/libs/armeabi/ndk.so" \
+	"out/libs/armeabi-v7a/ndk.so" \
+	"out/libs/mips/ndk.so" \
+	"out/libs/x86/ndk.so" \
+	"out/libs/mips/ndktest" \
+	"out/libs/x86/ndktest" \
+	)
+
+    rm -rf ${files[@]} out
+
+    local lines=$(smart)
+    if false; then
+	echo "========================================"
+	echo "$lines"
+	echo "========================================"
+    fi
+
+    check-files files
 }

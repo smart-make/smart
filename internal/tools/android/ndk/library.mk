@@ -5,27 +5,30 @@
 #
 $(smart.internal)
 
-s := $(OUT)/libs/$(TARGET_ARCH_ABI)/
-LIBRARY := $(addprefix $s,$(LIBRARY:$s%=%))
-LIBRARY.a := $(filter %.a,$(LIBRARY))
-LIBRARY.so := $(filter %.so,$(LIBRARY))
+~ := $(OUT)/libs/$(TARGET_ARCH_ABI)/
+smart~library := $(addprefix $~,$(LIBRARY:$~%=%))
+smart~library.a := $(filter %.a,$(smart~library))
+smart~library.so := $(filter %.so,$(smart~library))
 
-ifneq ($(filter-out $(LIBRARY),$(LIBRARY.a) $(LIBRARY.so)),)
-  $(error unregonized libraries "$(filter-out $(LIBRARY),$(LIBRARY.a) $(LIBRARY.so))")
+ifneq ($(filter-out $(smart~library),$(smart~library.a) $(smart~library.so)),)
+  $(error unregonized libraries "$(filter-out $(smart~library),$(smart~library.a) $(smart~library.so))")
 endif
 
 $(call smart~unique,ARFLAGS)
 $(call smart~unique,LDFLAGS)
 
-ifdef LIBRARY.a
-$(eval $(LIBRARY.a): $(OBJECTS) ; \
-	$(AR) $(ARFLAGS) $$@ $$^)
-endif #LIBRARY.a
+ifdef smart~library.a
+$(dir $(smart~library.a)): ; mkdir -p $@
+$(eval $(smart~library.a): $(OBJECTS) ; \
+	$(TARGET_AR) $(ARFLAGS) $$@ $(OBJECTS))
+endif #smart~library.a
 
-ifdef LIBRARY.so
-LDFLAGS := $(filter-out -shared,$(LDFLAGS))
-$(eval $(LIBRARY.so): $(OBJECTS) ; \
-	$(CXX) -shared $(LDFLAGS) -o $$@ $$^ $(LDLIBS))
-endif #LIBRARY.so
+ifdef smart~library.so
+LDFLAGS := $(TARGET_LDFLAGS) $(filter-out -shared,$(LDFLAGS))
 
-$(warning $(LIBRARY.a), $(LIBRARY.so))
+$(dir $(smart~library.so)): ; mkdir -p $@
+$(eval $(smart~library.so): $(OBJECTS) $(dir $(smart~library.so)) ; \
+	$(TARGET_CXX) -shared $(LDFLAGS) \
+	-Wl,-soname,$$(@F) --sysroot=$(SYSROOT) \
+	-o $$@ $(OBJECTS) $(LDLIBS))
+endif #smart~library.so
