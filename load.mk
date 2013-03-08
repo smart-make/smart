@@ -133,7 +133,7 @@ $(smart.restore)$(eval \
  )
 endef #smart~rules
 
-$(foreach @name,$(smart.list),$(smart~rules))
+$(foreach @script,$(smart.list),$(smart~rules))
 
 smart~rules :=
 

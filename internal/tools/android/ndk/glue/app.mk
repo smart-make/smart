@@ -16,8 +16,6 @@ $(smart.internal)
 ##	    4. $(BUILD_SYSTEM)/build-binary.mk
 ##
 
-#$(warning $(NAME), $(APP_PLATFORM), $(APP_ABI))
-
 # Which platform/abi/toolchain are we going to use?
 TARGET_PLATFORM := $(strip $(or $(APP_PLATFORM),\
     android-$(NDK_MAX_PLATFORM_LEVEL)))

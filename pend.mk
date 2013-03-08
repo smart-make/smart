@@ -3,7 +3,7 @@
 #    All rights reserved.
 #
 $(smart.internal)
-$(foreach @name,$(SM.MK),$(eval include $(smart.root)/funs/smart.save))
+$(foreach @script,$(SM.MK),$(eval include $(smart.root)/funs/smart.save))
 
 ifndef SRCDIR
   smart~error := SRCDIR is undefined

@@ -36,3 +36,4 @@ smart.context.android/ndk := \
   LDFLAGS \
   LOADLIBS \
   LIBADD \
+  LIBS \

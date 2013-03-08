@@ -11,24 +11,24 @@
 #
 $(smart.internal)
 
-smart~sm.mk := $(lastword $(smart.stack))
-smart.stack := $(filter-out $(smart~sm.mk),$(smart.stack))
+smart~script := $(lastword $(smart.stack))
+smart.stack := $(filter-out $(smart~script),$(smart.stack))
 
 define smart~restore.simple
 $(eval \
-  $(smart~name) := $(smart.stack.$(smart~name)-$(smart~sm.mk))
+  $(smart~name) := $(smart.stack.$(smart~name)-$(smart~script))
  )
 endef #smart~restore.simple
 
 define smart~restore.recursive
 $(eval \
-  $(smart~name) = $(value $(smart.stack.$(smart~name)-$(smart~sm.mk)))
+  $(smart~name) = $(value $(smart.stack.$(smart~name)-$(smart~script)))
  )
 endef #smart~restore.recursive
 
 define smart~restore
 $(smart~restore.$(flavor $(smart~name)))$(eval \
-  smart.stack.$(smart~name)-$(smart~sm.mk) :=
+  smart.stack.$(smart~name)-$(smart~script) :=
  )
 endef #smart~restore
 
@@ -39,7 +39,7 @@ $(foreach 1,$(filter $(smart.context.names),$(.VARIABLES)),$(eval $1 :=))
 $(foreach smart~name,TOOL,$(smart~restore))
 $(foreach smart~name,$(filter-out TOOL,$(filter $(smart.context.names),$(.VARIABLES))),$(smart~restore))
 
-ifneq ($(smart~sm.mk),$(SM.MK))
+ifneq ($(smart~script),$(SM.MK))
   $(error smart build system crashed!)
 endif
 
@@ -47,6 +47,4 @@ smart~restore.simple :=
 smart~restore.recursive :=
 smart~restore :=
 smart~name :=
-smart~sm.mk :=
-
-#$(warning pop: $(NAME), $(SM.MK))
+smart~script :=

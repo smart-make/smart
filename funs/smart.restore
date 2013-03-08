@@ -7,13 +7,13 @@ $(smart.internal)
 
 define smart~restore.simple
 $(eval \
-  $(smart~name) := $(smart.context.$(smart~name)-$(@name))
+  $(smart~name) := $(smart.context.$(smart~name)-$(@script))
  )
 endef #smart~restore.simple
 
 define smart~restore.recursive
 $(eval \
-  $(smart~name) = $(value $(smart.context.$(smart~name)-$(@name)))
+  $(smart~name) = $(value $(smart.context.$(smart~name)-$(@script)))
  )
 endef #smart~restore.recursive
 

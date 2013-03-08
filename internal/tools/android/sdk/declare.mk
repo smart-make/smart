@@ -5,14 +5,11 @@
 #
 $(smart.internal)
 
-smart~android_files := $(wildcard $(SRCDIR)/AndroidManifest.xml)
-ifdef smart~android_files
-  ifndef ANDROID.root
-    include $(smart.tooldir)/init.mk
-  endif #ANDROID.root
-  ANDROID_ROOT = $(ANDROID.root)
-  ANDROID_EXTRAS = $(ANDROID.root)/extras
-  APK := $(NAME).apk
-endif
+ifndef ANDROID.root
+  include $(smart.tooldir)/init.mk
+endif #ANDROID.root
 
-smart~android_files :=
+ANDROID_ROOT = $(ANDROID.root)
+ANDROID_EXTRAS = $(ANDROID.root)/extras
+APK := $(NAME).apk
+LIBS :=

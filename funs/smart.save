@@ -5,12 +5,12 @@
 #
 $(smart.internal)
 
-#$(warning info: save $(NAME), $(SRCDIR), $(@name))
+#$(warning info: save $(NAME), $(SRCDIR), $(@script))
 
 define smart~save.simple
 $(eval \
   ifdef $(smart~name)
-    smart.context.$(smart~name)-$(@name) := $($(smart~name))
+    smart.context.$(smart~name)-$(@script) := $($(smart~name))
   endif
  )
 endef #smart~save.simple
@@ -18,7 +18,7 @@ endef #smart~save.simple
 define smart~save.recursive
 $(eval \
   ifdef $(smart~name)
-    smart.context.$(smart~name)-$(@name) = $(value $(smart~name))
+    smart.context.$(smart~name)-$(@script) = $(value $(smart~name))
   endif
  )
 endef #smart~save.recursive
@@ -33,13 +33,13 @@ endef #smart~save
 $(foreach smart~name,$(filter $(smart.context.names),$(.VARIABLES)),$(smart~save))
 
 ifdef smart.scripts.$(NAME)
-  smart.scripts.$(NAME) += $(@name)
+  smart.scripts.$(NAME) += $(@script)
 else
-  smart.scripts.$(NAME) := $(@name)
+  smart.scripts.$(NAME) := $(@script)
 endif
 
-smart.names-$(@name) := $(NAME)
-smart.list += $(@name)
+smart.names-$(@script) := $(NAME)
+smart.list += $(@script)
 
 smart~save.simple :=
 smart~save.recursive :=
