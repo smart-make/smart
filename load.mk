@@ -2,6 +2,7 @@
 #    Copyright (C) 2012, Duzy Chan <code@duzy.info>.
 #    All rights reserved.
 #
+#SHELL := /bin/bash
 smart.me = $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 smart.root := $(smart.me)
 smart.tooldir = $(smart.root)/internal/tools/$(TOOL)
@@ -139,3 +140,16 @@ $(foreach @script,$(smart.list),$(smart~rules))
 smart~rules :=
 
 .DEFAULT_GOAL := modules
+
+###############################
+# TODO: using these to replace smart.context
+foo:  FOO = foo
+foo1: FOO += foo1
+foo2: FOO += foo2
+
+FOOBAR = $(warning $@)
+foo: ~ = $(FOOBAR)
+
+foo:  foo1 ; @echo $@: $(FOO)$~
+foo1: foo2 ; @echo $@: $(FOO)
+foo2:	   ; @echo $@: $(FOO)

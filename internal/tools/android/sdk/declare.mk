@@ -12,4 +12,5 @@ endif #ANDROID.root
 ANDROID_ROOT = $(ANDROID.root)
 ANDROID_EXTRAS = $(ANDROID.root)/extras
 APK := $(NAME).apk
+CLASSPATH :=
 LIBS :=

@@ -5,7 +5,6 @@
 #
 $(smart.internal)
 
-~ := $(OUT)/libs/$(TARGET_ARCH_ABI)/
 smart~library := $(addprefix $~,$(LIBRARY:$~%=%))
 smart~library.a := $(filter %.a,$(smart~library))
 smart~library.so := $(filter %.so,$(smart~library))
@@ -26,9 +25,9 @@ endif #smart~library.a
 ifdef smart~library.so
 LDFLAGS := $(TARGET_LDFLAGS) $(filter-out -shared,$(LDFLAGS))
 
-$(dir $(smart~library.so)): ; mkdir -p $@
 $(eval $(smart~library.so): $(OBJECTS) $(dir $(smart~library.so)) ; \
 	$(TARGET_CXX) -shared $(LDFLAGS) \
 	-Wl,-soname,$$(@F) --sysroot=$(SYSROOT) \
 	-o $$@ $(OBJECTS) $(LDLIBS))
+$(eval $(OUT)/$(NAME).native: NATIVE_LIST += $(smart~library.so))
 endif #smart~library.so

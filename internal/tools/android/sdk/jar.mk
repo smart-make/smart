@@ -7,4 +7,4 @@ $(smart.internal)
 
 PACKAGE := $(PACKAGE:%=$(SRCDIR)/%)
 
-$(info jar: $(PACKAGE))
+$(warning jar: $(PACKAGE))

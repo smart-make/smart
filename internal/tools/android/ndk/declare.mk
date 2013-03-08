@@ -46,4 +46,4 @@ LOADLIBS :=
 LIBADD :=
 LIBGCC := $(TARGET_LIBGCC)
 
-EXPORT.LIBS := $(OUT)/$(NAME).lib
+EXPORT.LIBS := $(OUT)/$(NAME).native

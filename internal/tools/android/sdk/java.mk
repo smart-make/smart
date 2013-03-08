@@ -6,7 +6,7 @@
 $(smart.internal)
 
 define smart~rule
-  $(OUT)/$(NAME)/classes/.list : $(SOURCES.java) | $(LIBS.local)
+  $(OUT)/$(NAME)/classes/.list : $(SOURCES.java) | $(LIBS.java)
 	@mkdir -p $$(@D)
 	javac -d $$(@D) -cp "$(CLASSPATH)" \
 	`cat $(OUT)/$(NAME)/res/.sources` $(SOURCES.java)
@@ -20,7 +20,7 @@ define smart~rule
 	cd $(OUT)/$(NAME)/classes && $(ANDROID.dx) \
 	$(if $(findstring windows,$(sm.os.name)),,-JXms16M -JXmx1536M)\
 	--dex --output ../$$(@F) \
-	$(LIBS) `cat $$(<F) | sed 's|^\./||'`
+	$(LIBS.java) `cat $$(<F) | sed 's|^\./||'`
 endef #smart~rule
 
 $(eval $(smart~rule))

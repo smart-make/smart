@@ -81,6 +81,13 @@ function check-same-array ()
     }
 }
 
+function check-same-set ()
+{
+    is-same-set $1 $2 || {
+	error -1 "\"$1\" and \"$2\" are not the same"
+    }
+}
+
 function check-files ()
 {
     eval "local files=( \"\${$1[@]}\" )"

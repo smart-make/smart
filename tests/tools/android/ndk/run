@@ -12,6 +12,10 @@ function run ()
 	"out/libs/x86/ndk.so" \
 	"out/libs/mips/ndktest" \
 	"out/libs/x86/ndktest" \
+	"out/a1.native" \
+	"out/a2.native" \
+	"out/a3.native" \
+	"out/a4.native" \
 	)
 
     rm -rf ${files[@]} out
@@ -24,4 +28,30 @@ function run ()
     fi
 
     check-files files
+
+    files=( \
+	"./out/libs/armeabi/ndk.so" \
+	)
+    lines=($(cat "out/a1.native"))
+    check-same-set files lines
+
+    files=( \
+	"./out/libs/armeabi-v7a/ndk.so" \
+	)
+    lines=($(cat "out/a2.native"))
+    check-same-set files lines
+
+    files=( \
+	"./out/libs/x86/ndk.so" \
+	"./out/libs/mips/ndk.so" \
+	)
+    lines=($(cat "out/a3.native"))
+    check-same-set files lines
+
+    files=( \
+	"./out/libs/x86/ndktest" \
+	"./out/libs/mips/ndktest" \
+	)
+    lines=($(cat "out/a4.native"))
+    check-same-set files lines
 }

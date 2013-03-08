@@ -8,18 +8,16 @@ $(smart.internal)
 PLATFORM := $(or $(PLATFORM),android-14)
 $(foreach 1,$(SUPPORTS),$(eval LIBS += $(ANDROID.root)/android-compatibility/$1/android-support-$1.jar))
 
-#$(foreach 1,$(REQUIRES),$(warning $(call smart.get,$1,LIBRARY)))
-$(warning $(LIBS))
-
-LIBS.local := $(filter %.jar,$(LIBS))
+LIBS.java := $(filter %.jar,$(LIBS))
 LIBS.native := $(filter %.so,$(LIBS))
+LIBS.native_list := $(filter %.native,$(LIBS))
 ifneq ($(wildcard $(SRCDIR)/libs),)
-  LIBS.local += $(wildcard $(PWD)/$(SRCDIR)/libs/*.jar)
+  LIBS.java += $(wildcard $(PWD)/$(SRCDIR)/libs/*.jar)
   LIBS.native += $(call smart.find,$(SRCDIR)/libs,%.so %/gdbserver %/gdb.setup)
 endif
 
-CLASSPATH := $(ANDROID_PLATFORM_LIB)
-$(foreach 1,$(LIBS.local),$(eval CLASSPATH += $1))
+CLASSPATH := $(ANDROID_PLATFORM_LIB):$(CLASSPATH)
+$(foreach 1,$(LIBS.java),$(eval CLASSPATH := $(CLASSPATH):$1))
 
 ## Java sources
 ifndef SOURCES
@@ -41,9 +39,9 @@ ifdef SOURCES.java
   include $(smart.tooldir)/java.mk
 endif #SOURCES.java
 
-ifdef LIBS.native
+ifneq ($(or $(LIBS.native),$(LIBS.native_list)),)
   include $(smart.tooldir)/native.mk
-endif #LIBS.native
+endif #LIBS.native or LIBS.native_list
 
 ifdef PACKAGE
   include $(smart.tooldir)/jar.mk

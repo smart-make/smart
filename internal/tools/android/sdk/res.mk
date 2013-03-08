@@ -11,12 +11,12 @@ smart~res.all := \
   $(call smart.find,$(SRCDIR)/assets,,%~)
 
 define smart~rule
-  $(OUT)/$(NAME)/res/.sources: $(LIBS.local) $(smart~res.all)
+  $(OUT)/$(NAME)/res/.sources: $(LIBS.java) $(smart~res.all)
 	@mkdir -p $$(@D)
 	$(ANDROID.aapt) package -m -J "$(OUT)/$(NAME)/res" \
 	-P "$(OUT)/$(NAME)/public.xml" \
         $(addprefix -I ,"$(ANDROID_PLATFORM_LIB)") \
-	$(foreach 1,$(LIBS),-I "$1") \
+	$(foreach 1,$(LIBS.java),-I "$1") \
 	$(addprefix -M ,$(wildcard $(SRCDIR)/AndroidManifest.xml)) \
 	$(addprefix -A ,$(wildcard $(SRCDIR)/assets)) \
 	$(addprefix -S ,$(wildcard $(SRCDIR)/res))
@@ -26,10 +26,10 @@ endef #smart~rule
 $(eval $(smart~rule))
 
 define smart~rule
-  $(OUT)/$(NAME)/res/.packed: $(LIBS.local) $(smart~res.all)
+  $(OUT)/$(NAME)/res/.packed: $(LIBS.java) $(smart~res.all)
 	$(ANDROID.aapt) package -u -F $$@ \
         $(addprefix -I ,"$(ANDROID_PLATFORM_LIB)") \
-	$(foreach 1,$(LIBS),-I "$1") $(if $(PACKAGE),-x) \
+	$(foreach 1,$(LIBS.java),-I "$1") $(if $(PACKAGE),-x) \
 	$(addprefix -M ,$(wildcard $(SRCDIR)/AndroidManifest.xml)) \
 	$(addprefix -A ,$(wildcard $(SRCDIR)/assets)) \
 	$(addprefix -S ,$(wildcard $(SRCDIR)/res))
