@@ -46,4 +46,4 @@ LOADLIBS :=
 LIBADD :=
 LIBGCC := $(TARGET_LIBGCC)
 
-EXPORT.LIBS = $(smart.context.$(NAME)-$(SCRIPT))
+EXPORT.LIBS := $(OUT)/$(NAME).lib

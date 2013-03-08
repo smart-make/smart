@@ -6,25 +6,24 @@
 $(smart.internal)
 
 PLATFORM := $(or $(PLATFORM),android-14)
-CLASSPATH := $(ANDROID_PLATFORM_LIB)
 $(foreach 1,$(SUPPORTS),$(eval LIBS += $(ANDROID.root)/android-compatibility/$1/android-support-$1.jar))
 
 #$(foreach 1,$(REQUIRES),$(warning $(call smart.get,$1,LIBRARY)))
-#$(warning $(LIBS))
+$(warning $(LIBS))
 
-LIBS.local :=
-LIBS.native :=
+LIBS.local := $(filter %.jar,$(LIBS))
+LIBS.native := $(filter %.so,$(LIBS))
 ifneq ($(wildcard $(SRCDIR)/libs),)
-  LIBS.local := $(wildcard $(PWD)/$(SRCDIR)/libs/*.jar)
-  LIBS.native := $(call smart.find,$(SRCDIR)/libs,%.so %/gdbserver %/gdb.setup)
+  LIBS.local += $(wildcard $(PWD)/$(SRCDIR)/libs/*.jar)
+  LIBS.native += $(call smart.find,$(SRCDIR)/libs,%.so %/gdbserver %/gdb.setup)
 endif
 
-LIBS += $(LIBS.local)
-$(foreach 1,$(LIBS),$(eval CLASSPATH := $(CLASSPATH):$1))
+CLASSPATH := $(ANDROID_PLATFORM_LIB)
+$(foreach 1,$(LIBS.local),$(eval CLASSPATH += $1))
 
 ## Java sources
 ifndef SOURCES
-  SOURCES := $(call smart.find,$(SRCDIR)/src,%.java)
+  SOURCES := $(call smart.find,$(SRCDIR)/src,%.java %.aidl)
 endif #SOURCES
 
 SOURCES.aidl := $(filter %.aidl,$(SOURCES))
