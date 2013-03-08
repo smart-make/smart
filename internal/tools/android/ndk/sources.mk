@@ -8,8 +8,10 @@ $(smart.internal)
 smart~sufixes~c := .c
 smart~sufixes~c++ := .C .cc .cpp
 
-SOURCES := $(patsubst $(ROOT)/%,%,$(SOURCES:%=$(SRCDIR)/%))
+smart~sources := $(patsubst $(ROOT)/%,%,$(SOURCES:%=$(SRCDIR)/%))
 OBJECTS :=
+
+#$(warning $(smart~sources))
 
 CFLAGS := $(TARGET_CFLAGS) $(CFLAGS)
 CXXFLAGS := $(TARGET_CFLAGS) $(CXXFLAGS)
@@ -26,7 +28,7 @@ COMPILE.c++ = $(TARGET_CXX) -o $$@ $(strip $(CXXFLAGS) $(DEFINES) $(INCLUDES) -c
 COMPILE.c   = $(TARGET_CC) -o $$@ $(strip $(CFLAGS) $(DEFINES) $(INCLUDES) -c) $$<
 
 define smart~compile~rules
-$(eval SOURCES$2 := $(filter %$2, $(SOURCES)))\
+$(eval SOURCES$2 := $(filter %$2, $(smart~sources)))\
 $(eval OBJECTS += $(SOURCES$2:%$2=$~%.o))\
 $(eval \
   ifdef SOURCES$2
@@ -37,10 +39,10 @@ $(eval \
  )
 endef #smart~compile~rules
 
-ifdef  SOURCES
+ifdef  smart~sources
   ~ := $(OUT)/objs/$(TARGET_ABI)/
   $(foreach 1,c c++,\
     $(foreach 2,$(smart~sufixes~$1),$(smart~compile~rules)))
-endif #SOURCES
+endif #smart~sources
 
 #$(warning $(NAME): $(OBJECTS))

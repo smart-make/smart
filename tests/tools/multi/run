@@ -19,7 +19,7 @@ function run ()
 	"android,,./android,./android/smart,android/smart" \
 	"sdk,,./android/sdk,./android/sdk/smart,declare.mk" \
 	"sdk,,./android/sdk,./android/sdk/smart,android/sdk/smart" \
-	"ndk,./android/ndk,./android/ndk/smart,.tool" \
+	"ndk,./android/ndk,./android/ndk/smart,android/ndk/.tool" \
 	"ndk,,./android/ndk,./android/ndk/smart,declare.mk" \
 	"ndk,,./android/ndk,./android/ndk/smart,android/ndk/smart" \
 	"test,test,./test,./test/smart,test/check-test.mk" \
@@ -45,11 +45,11 @@ function run ()
 	"./android,.tool," \
 	"./android,declare.mk,gcc," \
 	"./android,android/smart,gcc," \
-	"./android/sdk,declare.mk,android," \
-	"./android/sdk,android/sdk/smart,android," \
-	"./android/ndk,.tool," \
-	"./android/ndk,declare.mk,gcc," \
-	"./android/ndk,android/ndk/smart,gcc," \
+	"./android/sdk,declare.mk,android/sdk," \
+	"./android/sdk,android/sdk/smart,android/sdk," \
+	"./android/ndk,android/ndk/.tool," \
+	"./android/ndk,declare.mk,android/ndk," \
+	"./android/ndk,android/ndk/smart,android/ndk," \
 	)
     local loads=( \
 	"0:multi,gcc,.,./smart,smart" \
@@ -72,13 +72,13 @@ function run ()
 	"2:android,gcc,./android,./android/smart,android/smart" \
 	"0:android,gcc,./android,./android/smart,android/smart" \
 	"1:,,,,android/smart" \
-	"2:sdk,android,./android/sdk,./android/sdk/smart,android/sdk/smart" \
-	"3:sdk,android,./android/sdk,./android/sdk/smart,android/sdk/smart" \
+	"2:sdk,android/sdk,./android/sdk,./android/sdk/smart,android/sdk/smart" \
+	"3:sdk,android/sdk,./android/sdk,./android/sdk/smart,android/sdk/smart" \
 	"4:android,gcc,./android,./android/smart,android/sdk/smart" \
 	"0:android,gcc,./android,./android/smart,android/sdk/smart" \
 	"1:,,,,android/sdk/smart" \
-	"2:ndk,gcc,./android/ndk,./android/ndk/smart,android/ndk/smart" \
-	"3:ndk,gcc,./android/ndk,./android/ndk/smart,android/ndk/smart" \
+	"2:ndk,android/ndk,./android/ndk,./android/ndk/smart,android/ndk/smart" \
+	"3:ndk,android/ndk,./android/ndk,./android/ndk/smart,android/ndk/smart" \
 	"4:android,gcc,./android,./android/smart,android/ndk/smart" \
 	"3:android,gcc,./android,./android/smart,android/ndk/smart" \
 	"4:multi,gcc,.,./smart,android/ndk/smart" \
@@ -103,6 +103,10 @@ function run ()
     rm -rf out
 
     local lines=$(smart)
+
+    if false; then
+	echo "$lines"
+    fi
 
     function to-lines () {
 	echo "" && for l in $@; do echo $l; done

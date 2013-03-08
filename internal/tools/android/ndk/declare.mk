@@ -32,10 +32,11 @@ GCC_Werrors := \
   -Werror=unused-result \
   -Werror=unused-variable \
 
-AR := $(TARGET_AR)
-CC := $(TARGET_CC)
-CXX := $(TARGET_CXX)
-LD := $(TARGET_LD)
+# AR := $(TARGET_AR)
+# CC := $(TARGET_CC)
+# CXX := $(TARGET_CXX)
+# LD := $(TARGET_LD)
+
 # $(GCC_Werrors)
 CFLAGS := $(TARGET_CFLAGS)
 CXXFLAGS := $(TARGET_CXXFLAGS)
