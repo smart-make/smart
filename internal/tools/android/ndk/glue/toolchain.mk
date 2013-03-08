@@ -133,3 +133,39 @@ TARGET_GDBSERVER := $(NDK_ROOT)/prebuilt/android-$(TARGET_ARCH)/gdbserver/gdbser
 #NDK_APP_DST_DIR := $(NDK_APP_PROJECT_PATH)/libs/$(TARGET_ARCH_ABI)
 #NDK_APP_GDBSERVER := $(NDK_APP_DST_DIR)/gdbserver
 #NDK_APP_GDBSETUP := $(NDK_APP_DST_DIR)/gdb.setup
+
+ifdef APP_STL
+  $(call ndk-stl-select,$(APP_STL))
+  #$(call ndk-stl-add-dependencies,$(APP_STL))
+  #$(call modules-compute-dependencies)
+  #$(call modules-dump-database)
+endif
+
+##################################################
+## Initializs flags
+smart~CFLAGS := $(TARGET_CFLAGS) $(CFLAGS)
+smart~CXXFLAGS := $(TARGET_CFLAGS) $(CXXFLAGS)
+smart~CPPFLAGS := $(TARGET_CPPFLAGS) $(CPPFLAGS)
+smart~INCLUDES := $(TARGET_C_INCLUDES) $(INCLUDES)
+smart~DEFINES := $(DEFINES)
+smart~ARFLAGS := $(ARFLAGS)
+smart~LDFLAGS := $(TARGET_LDFLAGS) $(TARGET_NO_UNDEFINED_LDFLAGS) \
+  $(filter-out -shared,$(LDFLAGS))
+smart~LDLIBS  := $(LDLIBS)
+smart~OBJECTS := $(OBJECTS)
+
+define smart~use
+$(eval \
+  smart~CFLAGS   += $(call module-get-export,$(smart~m),CFLAGS)
+  smart~CXXFLAGS += $(call module-get-export,$(smart~m),CXXFLAGS)
+  smart~CPPFLAGS += $(call module-get-export,$(smart~m),CPPFLAGS)
+  smart~LDFLAGS  += $(call module-get-export,$(smart~m),LDFLAGS)
+  smart~LDLIBS   += $(call module-get-export,$(smart~m),LDLIBS)
+  smart~INCLUDES += $(call module-get-export,$(smart~m),C_INCLUDES)
+  smart~OBJECTS += $(call module-get-export,$(smart~m),OBJECTS)
+ )
+endef #smart~use
+$(foreach smart~m,$(USE_MODULES) $(APP_STL),$(smart~use))
+smart~use :=
+
+smart~LDLIBS += $(TARGET_LDLIBS) $(TARGET_LIBGCC)

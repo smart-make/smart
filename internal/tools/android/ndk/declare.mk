@@ -5,18 +5,14 @@
 #
 $(smart.internal)
 
+$(warning $(NAME), $(SCRIPT))
+
 ifeq ($(and $(NDK_ROOT),$(BUILD_SYSTEM),$(NDK_ALL_TOOLCHAINS),$(NDK_ALL_ABIS),$(NDK_ALL_ARCHS)),)
   include $(smart.tooldir)/glue/init.mk
 endif
 
-# $(warning $(NDK_ROOT))
-# $(warning $(TARGET_ABI))
-# $(warning $(TARGET_TOOLCHAIN_LIST))
-# $(warning $(TARGET_TOOLCHAIN))
-# $(warning $(TARGET_ARCH_ABI))
-# $(warning $(TARGET_PLATFORM))
-# $(warning $(TARGET_ARCH))
-# $(warning $(TOOLCHAIN_PREFIX))
+## Free the dictionary of LOCAL_MODULE definitions
+$(call modules-clear)
 
 GCC_Werrors := \
   -Werror=declaration-after-statement \
@@ -32,19 +28,14 @@ GCC_Werrors := \
   -Werror=unused-result \
   -Werror=unused-variable \
 
-# AR := $(TARGET_AR)
-# CC := $(TARGET_CC)
-# CXX := $(TARGET_CXX)
-# LD := $(TARGET_LD)
-
-# $(GCC_Werrors)
-CFLAGS := $(TARGET_CFLAGS)
-CXXFLAGS := $(TARGET_CXXFLAGS)
-ARFLAGS := $(TARGET_ARFLAGS)
-LDFLAGS := $(TARGET_LDFLAGS)
-LDLIBS := $(TARGET_LDLIBS)
+CFLAGS :=
+CXXFLAGS :=
+ARFLAGS :=
+LDFLAGS :=
+LDLIBS :=
 LOADLIBS :=
 LIBADD :=
-LIBGCC := $(TARGET_LIBGCC)
+
+TOOLCHAIN_VERSION := 4.6
 
 EXPORT.LIBS := $(OUT)/$(NAME).native

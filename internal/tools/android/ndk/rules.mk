@@ -5,13 +5,13 @@
 #
 $(smart.internal)
 
+## Setup toolchain version, and default to 4.6..
+NDK_TOOLCHAIN_VERSION := $(or $(TOOLCHAIN_VERSION),4.6)
+
+## Prepare sources..
 ifndef SOURCES
-  SOURCES := $(call smart.find,$(SRCDIR),%.c %.cpp %.cc)
+  SOURCES := $(call smart.find,$(SRCDIR),%.c %.C %.cpp %.cc %.CC)
 endif #SOURCES
 
-SOURCES.c := $(filter %.c,$(SOURCES))
-SOURCES.cc := $(filter %.cc,$(SOURCES))
-SOURCES.c++ := $(filter %.cpp,$(SOURCES))
-
-## Build it as a new app.
+## Build it as a new app..
 include $(smart.tooldir)/glue/app.mk

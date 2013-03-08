@@ -17,3 +17,5 @@ endif #SUBDIRS
 ifdef MODULES
   include $(smart.root)/internal/modules.mk
 endif #MODULES
+
+-include $(smart.tooldir)/pend.mk

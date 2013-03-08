@@ -14,6 +14,23 @@ ifeq ($(and $(BUILD_SYSTEM),$(NDK_ALL_ABIS),$(NDK_ALL_ARCHS),$(NDK_ALL_TOOLCHAIN
   # before init.mk
   NDK_ROOT := /store/open/android-ndk
   include $(NDK_ROOT)/build/core/init.mk
+
+  ##################################################
+  # Setup imports (see $(BUILD_SYSTEM)/setup-imports.mk)
+  CLEAR_VARS                := $(BUILD_SYSTEM)/clear-vars.mk
+  BUILD_HOST_EXECUTABLE     := $(BUILD_SYSTEM)/build-host-executable.mk
+  BUILD_HOST_STATIC_LIBRARY := $(BUILD_SYSTEM)/build-host-static-library.mk
+  BUILD_STATIC_LIBRARY      := $(BUILD_SYSTEM)/build-static-library.mk
+  BUILD_SHARED_LIBRARY      := $(BUILD_SYSTEM)/build-shared-library.mk
+  BUILD_EXECUTABLE          := $(BUILD_SYSTEM)/build-executable.mk
+  PREBUILT_SHARED_LIBRARY   := $(BUILD_SYSTEM)/prebuilt-shared-library.mk
+  PREBUILT_STATIC_LIBRARY   := $(BUILD_SYSTEM)/prebuilt-static-library.mk
+  $(call import-init)
+  $(foreach 1,$(subst $(HOST_DIRSEP),$(space),$(NDK_MODULE_PATH)),\
+      $(call import-add-path,$1))
+  $(call import-add-path-optional,$(NDK_ROOT)/sources)
+  $(call import-add-path-optional,$(NDK_ROOT)/../development/ndk/sources)
+  ##################################################
 endif
 
 # Some usefull variables from init.mk:

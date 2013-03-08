@@ -9,27 +9,21 @@ smart~sufixes~c := .c
 smart~sufixes~c++ := .C .cc .cpp
 
 smart~sources := $(patsubst $(ROOT)/%,%,$(SOURCES:%=$(SRCDIR)/%))
-OBJECTS :=
 
-#$(warning $(smart~sources))
+$(call smart~unique,smart~CFLAGS)
+$(call smart~unique,smart~CXXFLAGS)
+$(call smart~unique,smart~CPPFLAGS)
+$(call smart~unique,smart~DEFINES)
+$(call smart~unique,smart~INCLUDES)
 
-CFLAGS := $(TARGET_CFLAGS) $(CFLAGS)
-CXXFLAGS := $(TARGET_CFLAGS) $(CXXFLAGS)
-INCLUDES := $(TARGET_C_INCLUDES) $(INCLUDES)
+smart~INCLUDES := $(patsubst %,-I%,$(smart~INCLUDES:-I%=%))
 
-$(call smart~unique,CFLAGS)
-$(call smart~unique,CXXFLAGS)
-$(call smart~unique,DEFINES)
-$(call smart~unique,INCLUDES)
-
-INCLUDES := $(patsubst %,-I%,$(INCLUDES:-I%=%))
-
-COMPILE.c++ = $(TARGET_CXX) -o $$@ $(strip $(CXXFLAGS) $(DEFINES) $(INCLUDES) -c) $$<
-COMPILE.c   = $(TARGET_CC) -o $$@ $(strip $(CFLAGS) $(DEFINES) $(INCLUDES) -c) $$<
+COMPILE.c++ = $(TARGET_CXX) -o $$@ $(smart~CXXFLAGS) $(smart~CPPFLAGS) $(smart~DEFINES) $(smart~INCLUDES) -c $$<
+COMPILE.c   = $(TARGET_CC) -o $$@ $(smart~CFLAGS) $(smart~DEFINES) $(smart~INCLUDES) -c $$<
 
 define smart~compile~rules
 $(eval SOURCES$2 := $(filter %$2, $(smart~sources)))\
-$(eval OBJECTS += $(SOURCES$2:%$2=$~%.o))\
+$(eval smart~OBJECTS += $(SOURCES$2:%$2=$~%.o))\
 $(eval \
   ifdef SOURCES$2
   $(SOURCES$2:%$2=$~%.o) : $~%.o : %$2
@@ -41,8 +35,7 @@ endef #smart~compile~rules
 
 ifdef  smart~sources
   ~ := $(OUT)/objs/$(TARGET_ABI)/
-  $(foreach 1,c c++,\
-    $(foreach 2,$(smart~sufixes~$1),$(smart~compile~rules)))
+  $(foreach 1,c c++,$(foreach 2,$(smart~sufixes~$1),$(smart~compile~rules)))
 endif #smart~sources
 
-#$(warning $(NAME): $(OBJECTS))
+smart~OBJECTS := $(strip $(smart~OBJECTS))

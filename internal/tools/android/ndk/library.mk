@@ -13,21 +13,19 @@ ifneq ($(filter-out $(smart~library),$(smart~library.a) $(smart~library.so)),)
   $(error unregonized libraries "$(filter-out $(smart~library),$(smart~library.a) $(smart~library.so))")
 endif
 
-$(call smart~unique,ARFLAGS)
-$(call smart~unique,LDFLAGS)
-
+## Static library
 ifdef smart~library.a
-$(dir $(smart~library.a)): ; mkdir -p $@
-$(eval $(smart~library.a): $(OBJECTS) ; \
-	$(TARGET_AR) $(ARFLAGS) $$@ $(OBJECTS))
+$(call smart~unique,smart~ARFLAGS)
+$(eval $(smart~library.a): $(smart~OBJECTS) ; \
+	$(TARGET_AR) $(smart~ARFLAGS) $$@ $(smart~OBJECTS))
 endif #smart~library.a
 
+## Shared library
 ifdef smart~library.so
-LDFLAGS := $(TARGET_LDFLAGS) $(filter-out -shared,$(LDFLAGS))
-
-$(eval $(smart~library.so): $(OBJECTS) $(dir $(smart~library.so)) ; \
-	$(TARGET_CXX) -shared $(LDFLAGS) \
-	-Wl,-soname,$$(@F) --sysroot=$(SYSROOT) \
-	-o $$@ $(OBJECTS) $(LDLIBS))
+$(call smart~unique,smart~LDFLAGS)
+$(call smart~unique,smart~LDLIBS)
+$(eval $(smart~library.so): $(smart~OBJECTS) $(dir $(smart~library.so)) ; \
+	$(TARGET_CXX) -shared -Wl,-soname,$$(@F) --sysroot=$(SYSROOT) \
+	$(smart~LDFLAGS) -o $$@ $(smart~OBJECTS) $(smart~LDLIBS))
 $(eval $(OUT)/$(NAME).native: NATIVE_LIST += $(smart~library.so))
 endif #smart~library.so

@@ -20,7 +20,7 @@ ifndef smart.scripts.$(@name)
 else
 
 smart~names := $(filter-out \
-  SCRIPT NAME SRCDIR SUBDIRS REQUIRES PROGRAM LIBRARY,\
+  NAME SCRIPT SRCDIR SUBDIRS REQUIRES,\
   $(smart.context.names))
 
 #$(warning info: "$(NAME)" requires "$(@name), $(smart.scripts.$(@name))")
@@ -34,8 +34,6 @@ $(eval \
   endif
  )
 endef #smart~require
-
-#$$(warning $(NAME), $(@name), $(smart~name), $(smart.context.EXPORT.$(smart~name)-$(smart~script)))
 
 #module-$(SCRIPT): module-$(smart.context.SCRIPT-$(smart.scripts.$(@name)))
 
