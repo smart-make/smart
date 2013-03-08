@@ -4,20 +4,20 @@
 #
 $(smart.internal)
 
-#$(warning info: $(NAME), $(SRCDIR), $(SM.MK))
+#$(warning info: $(NAME), $(SRCDIR), $(SCRIPT))
 
 ifndef SRCDIR
   smart~error := SRCDIR is undefined
   $(error $(smart~error))
 endif #!SRCDIR
 
-module-$(SM.MK):
+module-$(SCRIPT):
 
 ifdef REQUIRES
   $(foreach @name, $(REQUIRES),\
     $(eval include $(smart.root)/funs/smart.require)\
     $(foreach smart~sm, $(smart.scripts.$(@name)),\
-      $(eval module-$(SM.MK): module-$(smart~sm))\
+      $(eval module-$(SCRIPT): module-$(smart~sm))\
      ))
 
   #$(info $(NAME): $(REQUIRES))
@@ -32,15 +32,15 @@ endif #TOOL
 ifdef TARGETS
   include $(smart.root)/internal/targets.mk
   ifdef TARGETS
-    module-$(SM.MK): $(TARGETS)
-    modules: module-$(SM.MK)
+    module-$(SCRIPT): $(TARGETS)
+    modules: module-$(SCRIPT)
   endif #TARGETS
 endif #TARGETS
 
 ifdef SETTLE
   include $(smart.root)/internal/settle.mk
-  settle: settle-$(SM.MK)
-  PHONY += settle-$(SM.MK)
+  settle: settle-$(SCRIPT)
+  PHONY += settle-$(SCRIPT)
 endif #SETTLE
 
 ifeq ($(SETTLE_ROOT),true)
@@ -48,7 +48,7 @@ ifeq ($(SETTLE_ROOT),true)
   smart.settle_root := $(SRCDIR)
 endif #SETTLE_ROOT
 
-$(eval clean-$(SM.MK):; $(if $(LIBRARY)$(PROGRAM)$(OBJECTS),@rm -vf $(strip $(LIBRARY) $(PROGRAM) $(OBJECTS))))
-clean: clean-$(SM.MK)
+$(eval clean-$(SCRIPT):; $(if $(LIBRARY)$(PROGRAM)$(OBJECTS),@rm -vf $(strip $(LIBRARY) $(PROGRAM) $(OBJECTS))))
+clean: clean-$(SCRIPT)
 
-PHONY += module-$(SM.MK) clean-$(SM.MK)
+PHONY += module-$(SCRIPT) clean-$(SCRIPT)

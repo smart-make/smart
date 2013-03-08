@@ -5,13 +5,12 @@
 #
 $(smart.internal)
 
-NATIVE_LIBS :=
 PLATFORM := $(or $(PLATFORM),android-14)
 CLASSPATH := $(ANDROID_PLATFORM_LIB)
 $(foreach 1,$(SUPPORTS),$(eval LIBS += $(ANDROID.root)/android-compatibility/$1/android-support-$1.jar))
 
-#$(foreach 1,$(REQUIRES),$(warning $(call smart.get,$1,LIBS)))
-$(warning $(LIBS))
+#$(foreach 1,$(REQUIRES),$(warning $(call smart.get,$1,LIBRARY)))
+#$(warning $(LIBS))
 
 LIBS.local :=
 LIBS.native :=
@@ -44,7 +43,7 @@ ifdef SOURCES.java
 endif #SOURCES.java
 
 ifdef LIBS.native
-  include $(smart.tooldir)/so.mk
+  include $(smart.tooldir)/native.mk
 endif #LIBS.native
 
 ifdef PACKAGE
@@ -53,6 +52,6 @@ endif #PACKAGE
 
 ifdef APK
   include $(smart.tooldir)/apk.mk
-  module-$(SM.MK): $(APK)
-  modules: module-$(SM.MK)
+  module-$(SCRIPT): $(APK)
+  modules: module-$(SCRIPT)
 endif #APK

@@ -25,5 +25,5 @@ else
   include test.mk
 endif #smart.list
 
-$(eval module-$(SM.MK): $(SM.MK) ; @echo "$(SMART.MK)")
-modules: module-$(SM.MK)
+$(eval module-$(SCRIPT): $(SCRIPT) ; @echo "$(SMART.MK)")
+modules: module-$(SCRIPT)

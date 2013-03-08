@@ -5,20 +5,22 @@
 #
 $(smart.internal)
 
+smart~native :=
+
 define smart~rule
-  NATIVE_LIBS += $(OUT)/$(NAME)/lib/$(1:$(SRCDIR)/libs/%=%)
+  smart~native += $(OUT)/$(NAME)/lib/$(1:$(SRCDIR)/libs/%=%)
   $(OUT)/$(NAME)/lib/$(1:$(SRCDIR)/libs/%=%) : $1
 	mkdir -p $$(@D) && cp -f $$< $$@
 endef #smart~rule
 
 $(foreach 1,$(LIBS.native),$(eval $(smart~rule)))
 
-ifdef NATIVE_LIBS
+ifdef smart~native
 define smart~rule
-  $(OUT)/$(NAME)/_.pack: PACK_COMMANDS += && cd "$$(@D)" && zip -r $$(@F) $(NATIVE_LIBS:$(OUT)/$(NAME)/%=%)
-  $(OUT)/$(NAME)/_.pack: $(NATIVE_LIBS)
+  $(OUT)/$(NAME)/_.pack: PACK_COMMANDS += && cd "$$(@D)" && zip -r $$(@F) $(smart~native:$(OUT)/$(NAME)/%=%)
+  $(OUT)/$(NAME)/_.pack: $(smart~native)
 endef #smart~rule
 $(eval $(smart~rule))
-endif #NATIVE_LIBS
+endif #smart~native
 
 smart~rule =

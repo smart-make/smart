@@ -21,15 +21,15 @@ endif #FULLLIBS
 ifdef LIBRARY
   include $(smart.tooldir)/libraries.mk
   ifdef LIBRARY
-    module-$(SM.MK): $(LIBRARY)
-    modules: module-$(SM.MK)
+    module-$(SCRIPT): $(LIBRARY)
+    modules: module-$(SCRIPT)
   endif #LIBRARY
 endif #LIBRARY
 
 ifdef PROGRAM
   include $(smart.tooldir)/programs.mk
   ifdef PROGRAM
-    module-$(SM.MK): $(PROGRAM)
-    modules: module-$(SM.MK)
+    module-$(SCRIPT): $(PROGRAM)
+    modules: module-$(SCRIPT)
   endif #PROGRAM
 endif #PROGRAM

@@ -10,7 +10,7 @@ smart.list :=
 smart.export :=
 smart.settle_root :=
 smart.context.names = this.% export.% THIS.% EXPORT.% \
-  SM.MK TOOL TOOL_FILE NAME SRCDIR REQUIRES SUBDIRS MODULES TARGETS \
+  SCRIPT TOOL TOOL_FILE NAME SRCDIR REQUIRES SUBDIRS MODULES TARGETS \
   SETTLE_ROOT SETTLE $(smart.context.$(TOOL))
 
 define smart.internal
@@ -57,7 +57,8 @@ $(eval \
  )
 endef #smart.test.assert.equal
 
-SMART.MK = $(SM.MK)
+SM.MK = $(error SM.MK is replaced by SCRIPT)
+SMART.MK = $(SCRIPT)
 SMART.DECLARE := $(smart.root)/declare.mk
 SMART.RULES := $(smart.root)/pend.mk
 

@@ -4,7 +4,7 @@
 #
 $(smart.internal)
 
-#$(warning $(NAME), $(TOOL), $(SRCDIR), $(SM.MK))
+#$(warning $(NAME), $(TOOL), $(SRCDIR), $(SCRIPT))
 
 ifdef TOOL
   -include $(wildcard $(smart.tooldir)/declare.mk)

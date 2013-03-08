@@ -1,2 +1,2 @@
 $(smart.internal)
-$(eval settle-$(SM.MK): module-$(SM.MK); @echo TODO: settle "$(OUT)/$(SRCDIR:$(or $(ROOT),$(smart.settle_root))/%=%)/$(NAME)")
+$(eval settle-$(SCRIPT): module-$(SCRIPT); @echo TODO: settle "$(OUT)/$(SRCDIR:$(or $(ROOT),$(smart.settle_root))/%=%)/$(NAME)")

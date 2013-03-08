@@ -39,7 +39,7 @@ $(foreach 1,$(filter $(smart.context.names),$(.VARIABLES)),$(eval $1 :=))
 $(foreach smart~name,TOOL,$(smart~restore))
 $(foreach smart~name,$(filter-out TOOL,$(filter $(smart.context.names),$(.VARIABLES))),$(smart~restore))
 
-ifneq ($(smart~script),$(SM.MK))
+ifneq ($(smart~script),$(SCRIPT))
   $(error smart build system crashed!)
 endif
 

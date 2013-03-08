@@ -19,15 +19,15 @@ endif #SOURCES
 ifdef LIBRARY
   include $(smart.tooldir)/library.mk
   ifdef smart~library
-    module-$(SM.MK): $(smart~library)
-    modules: module-$(SM.MK)
+    module-$(SCRIPT): $(smart~library)
+    modules: module-$(SCRIPT)
   endif #smart~library
 endif #LIBRARY
 
 ifdef PROGRAM
   include $(smart.tooldir)/program.mk
   ifdef smart~program
-    module-$(SM.MK): $(smart~program)
-    modules: module-$(SM.MK)
+    module-$(SCRIPT): $(smart~program)
+    modules: module-$(SCRIPT)
   endif #smart~program
 endif #PROGRAM
