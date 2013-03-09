@@ -19,6 +19,8 @@ $(smart.internal)
 # Which platform/abi/toolchain are we going to use?
 TARGET_PLATFORM := $(strip $(or $(APP_PLATFORM),\
     android-$(NDK_MAX_PLATFORM_LEVEL)))
+TARGET_ARCH_ABI :=
+TARGET_TOOLCHAIN :=
 
 $(foreach abi,$(or $(APP_ABI),armeabi),\
     $(eval TARGET_ARCH_ABI := $(abi))\

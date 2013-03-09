@@ -30,12 +30,17 @@ smart.context.android/ndk := \
   ASFLAGS \
   CFLAGS \
   CXXFLAGS \
+  CPPFLAGS \
   LDFLAGS \
+  LDLIBS \
   LOADLIBS \
   LIBADD \
   LIBS \
   \
   TOOLCHAIN_VERSION \
+  ARM_MODE \
+  ARM_NEON \
+  ALLOW_UNDEFINED_SYMBOLS \
   \
   MODULE_PATH \
   IMPORTS \

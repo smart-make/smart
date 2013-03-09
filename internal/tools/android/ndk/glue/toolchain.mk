@@ -143,29 +143,46 @@ endif
 
 ##################################################
 ## Initializs flags
-smart~CFLAGS := $(TARGET_CFLAGS) $(CFLAGS)
-smart~CXXFLAGS := $(TARGET_CFLAGS) $(CXXFLAGS)
+smart~CFLAGS   := $(TARGET_CFLAGS) $(CFLAGS)
+smart~CXXFLAGS := $(TARGET_CXXFLAGS) $(CXXFLAGS)
 smart~CPPFLAGS := $(TARGET_CPPFLAGS) $(CPPFLAGS)
 smart~INCLUDES := $(TARGET_C_INCLUDES) $(INCLUDES)
-smart~DEFINES := $(DEFINES)
-smart~ARFLAGS := $(ARFLAGS)
-smart~LDFLAGS := $(TARGET_LDFLAGS) $(TARGET_NO_UNDEFINED_LDFLAGS) \
-  $(filter-out -shared,$(LDFLAGS))
-smart~LDLIBS  := $(LDLIBS)
-smart~OBJECTS := $(OBJECTS)
+smart~DEFINES  := -DANDROID $(DEFINES)
+smart~ARFLAGS  := $(TARGET_ARFLAGS) $(ARFLAGS)
+smart~LDFLAGS  := $(TARGET_LDFLAGS) $(LDFLAGS)
+smart~LDLIBS   := $(TARGET_LDLIBS) $(LDLIBS)
+smart~OBJS     := $(OBJECTS)
+smart~LIBS     :=
+
+ifneq ($(ALLOW_UNDEFINED_SYMBOLS),true)
+  smart~LDFLAGS += $(TARGET_NO_UNDEFINED_LDFLAGS)
+endif
 
 define smart~use
 $(eval \
-  smart~CFLAGS   += $(call module-get-export,$(smart~m),CFLAGS)
-  smart~CXXFLAGS += $(call module-get-export,$(smart~m),CXXFLAGS)
-  smart~CPPFLAGS += $(call module-get-export,$(smart~m),CPPFLAGS)
-  smart~LDFLAGS  += $(call module-get-export,$(smart~m),LDFLAGS)
-  smart~LDLIBS   += $(call module-get-export,$(smart~m),LDLIBS)
-  smart~INCLUDES += $(call module-get-export,$(smart~m),C_INCLUDES)
-  smart~OBJECTS += $(call module-get-export,$(smart~m),OBJECTS)
- )
+  smart~CFLAGS   += $(call smart~mexport,CFLAGS)
+  smart~CXXFLAGS += $(call smart~mexport,CXXFLAGS)
+  smart~CPPFLAGS += $(call smart~mexport,CPPFLAGS)
+  smart~LDFLAGS  += $(call smart~mexport,LDFLAGS)
+  smart~LDLIBS   += $(call smart~mexport,LDLIBS)
+  smart~INCLUDES += $(call smart~mexport,C_INCLUDES)
+  smart~OBJS     += $(call smart~mexport,OBJECTS)
+  smart~LIBS     += $(addprefix $~,$(call smart.get,$(smart~m),LIBRARY))
+ )$(foreach smart~m,$(call smart.get,$(smart~m),USE_MODULES),\
+      $(call smart~use))
 endef #smart~use
+smart~mexport = $(call module-get-export,$(smart~m),$(strip $1))
 $(foreach smart~m,$(USE_MODULES) $(APP_STL),$(smart~use))
+smart~mexport =
 smart~use :=
 
-smart~LDLIBS += $(TARGET_LDLIBS) $(TARGET_LIBGCC)
+smart~LIBS := $(strip $(smart~LIBS))
+smart~LDFLAGS := $(filter-out -shared,$(smart~LDFLAGS))
+smart~LDLIBS := $(strip $(smart~LDLIBS) $(TARGET_LDLIBS))
+
+## TODO: should only link against libsupc++ if rtti, exceptions are enabled
+ifeq (system,$(APP_STL))
+  smart~LDLIBS += $(call host-path,$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(TOOLCHAIN_VERSION)/libs/$(TARGET_ARCH_ABI)/libsupc++.a)
+endif
+
+smart~LDLIBS += $(TARGET_LIBGCC)

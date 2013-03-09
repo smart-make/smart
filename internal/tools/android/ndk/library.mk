@@ -13,19 +13,23 @@ ifneq ($(filter-out $(smart~library),$(smart~library.a) $(smart~library.so)),)
   $(error unregonized libraries "$(filter-out $(smart~library),$(smart~library.a) $(smart~library.so))")
 endif
 
+##
 ## Static library
+## 
 ifdef smart~library.a
 $(call smart~unique,smart~ARFLAGS)
-$(eval $(smart~library.a): $(smart~OBJECTS) ; \
-	$(TARGET_AR) $(smart~ARFLAGS) $$@ $(smart~OBJECTS))
+$(eval $(smart~library.a): $(smart~OBJS) ; \
+	$(TARGET_AR) $(smart~ARFLAGS) $$@ $(smart~OBJS))
 endif #smart~library.a
 
+##
 ## Shared library
+## 
 ifdef smart~library.so
 $(call smart~unique,smart~LDFLAGS)
 $(call smart~unique,smart~LDLIBS)
-$(eval $(smart~library.so): $(smart~OBJECTS) $(dir $(smart~library.so)) ; \
+$(eval $(smart~library.so): $(smart~OBJS) $(smart~LIBS) $(dir $(smart~library.so)) ; \
 	$(TARGET_CXX) -shared -Wl,-soname,$$(@F) --sysroot=$(SYSROOT) \
-	$(smart~LDFLAGS) -o $$@ $(smart~OBJECTS) $(smart~LDLIBS))
+	-o $$@ $(smart~OBJS) $(smart~LIBS) $(smart~LDFLAGS) $(smart~LDLIBS))
 $(eval $(OUT)/$(NAME).native: NATIVE_LIST += $(smart~library.so))
 endif #smart~library.so

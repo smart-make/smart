@@ -5,8 +5,6 @@
 #
 $(smart.internal)
 
-$(warning $(NAME), $(SCRIPT))
-
 ifeq ($(and $(NDK_ROOT),$(BUILD_SYSTEM),$(NDK_ALL_TOOLCHAINS),$(NDK_ALL_ABIS),$(NDK_ALL_ARCHS)),)
   include $(smart.tooldir)/glue/init.mk
 endif

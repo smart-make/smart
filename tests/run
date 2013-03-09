@@ -156,8 +156,10 @@ function run-tests ()
 ensure-internal-test-utilities
 
 run-tests \
-    modules \
-    targets \
-    tree \
-    requires \
-    tools \
+    tools
+
+    # modules \
+    # targets \
+    # tree \
+    # requires \
+    # tools \

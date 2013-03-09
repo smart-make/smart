@@ -22,11 +22,12 @@ COMPILE.c++ = $(TARGET_CXX) -o $$@ $(smart~CXXFLAGS) $(smart~CPPFLAGS) $(smart~D
 COMPILE.c   = $(TARGET_CC) -o $$@ $(smart~CFLAGS) $(smart~DEFINES) $(smart~INCLUDES) -c $$<
 
 define smart~compile~rules
-$(eval SOURCES$2 := $(filter %$2, $(smart~sources)))\
-$(eval smart~OBJECTS += $(SOURCES$2:%$2=$~%.o))\
+$(eval smart~s := $(filter %$2, $(smart~sources)))\
+$(eval smart~o := $(smart~s:%$2=$~%.o))\
+$(eval smart~OBJS += $(smart~o))\
 $(eval \
-  ifdef SOURCES$2
-  $(SOURCES$2:%$2=$~%.o) : $~%.o : %$2
+  ifdef smart~o
+  $(smart~o) : $~%.o : %$2
 	@mkdir -p $$(@D)
 	$(COMPILE.$1)
   endif
@@ -38,4 +39,4 @@ ifdef  smart~sources
   $(foreach 1,c c++,$(foreach 2,$(smart~sufixes~$1),$(smart~compile~rules)))
 endif #smart~sources
 
-smart~OBJECTS := $(strip $(smart~OBJECTS))
+smart~OBJS := $(strip $(smart~OBJS))

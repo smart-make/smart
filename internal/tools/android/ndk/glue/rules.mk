@@ -6,7 +6,7 @@
 $(smart.internal)
 
 #$(info smart: Android NDK: Build "$(NAME)" for $(TARGET_PLATFORM) using ABI "$(TARGET_ARCH_ABI)")
-$(warning TODO: LOCAL_ARM_MODE, LOCAL_ARM_NEON)
+#$(warning TODO: $(NAME): LOCAL_ARM_MODE, LOCAL_ARM_NEON)
 
 ifdef SOURCES
   include $(smart.tooldir)/sources.mk
@@ -16,7 +16,7 @@ endif #SOURCES
 # ./default-build-commands.mk:76:define cmd-build-executable
 # ./default-build-commands.mk:87:define cmd-build-static-library
 
-~ := $(OUT)/libs/$(TARGET_ARCH_ABI)/
+~ = $(OUT)/libs/$(TARGET_ARCH_ABI)/
 ifndef smart.has.$~
   smart.has.$~ := yes
   $~: ; @mkdir -p $@

@@ -5,6 +5,8 @@
 #
 $(smart.internal)
 
+#$(warning $(NAME), $(APP_ABI), $(APP_PLATFORM))
+
 ## Setup toolchain version, and default to 4.6..
 NDK_TOOLCHAIN_VERSION := $(or $(TOOLCHAIN_VERSION),4.6)
 

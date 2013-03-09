@@ -14,7 +14,7 @@ smart~get = $(__ndk_modules.$(smart~m).$(strip $1))
 smart~get~export = $(call module-get-export,$(smart~m),$(strip $1))
 
 ifneq ($(call smart~get,MODULE),$(smart~m))
-  $(error smart: internal build system error)
+  $(error smart: internal build system error: $(call smart~get,MODULE) != $(smart~m))
 endif
 
 ifdef smart~
@@ -29,7 +29,7 @@ $(call smart.push)
 $(call smart.test.load.after.push)
 
 include $(SMART.DECLARE)
-include $(smart~convert)/$(call smart~get,MODULE_CLASS).mk
+include $(smart~convert)/smart.mk
 include $(SMART.RULES)
 
 $(call smart.test.load.before.pop)

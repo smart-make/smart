@@ -3,19 +3,40 @@ function run ()
 {
     local files=( \
 	"out/objs/android-14-armeabi/a1.o" \
+	"out/objs/android-14-armeabi/android_main.o" \
 	"out/objs/android-14-armeabi-v7a/a2.o" \
+	"out/objs/android-14-armeabi-v7a/android_main.o" \
 	"out/objs/android-9-mips/a3.o" \
+	"out/objs/android-9-mips/a4.o" \
+	"out/objs/android-9-mips/a5.o" \
+	"out/objs/android-9-mips/android_main.o" \
 	"out/objs/android-9-x86/a3.o" \
+	"out/objs/android-9-x86/a4.o" \
+	"out/objs/android-9-x86/a5.o" \
+	"out/objs/android-9-x86/android_main.o" \
+	"out/objs/android-9-armeabi/a5.o" \
 	"out/libs/armeabi/ndk.so" \
 	"out/libs/armeabi-v7a/ndk.so" \
 	"out/libs/mips/ndk.so" \
 	"out/libs/x86/ndk.so" \
+	"out/libs/mips/foo_app.a" \
+	"out/libs/mips/foo_app_main.so" \
 	"out/libs/mips/ndktest" \
+	"out/libs/mips/ndktest2" \
+	"out/libs/x86/foo_app.a" \
+	"out/libs/x86/foo_app_main.so" \
 	"out/libs/x86/ndktest" \
+	"out/libs/x86/ndktest2" \
+	"out/libs/armeabi/foo_app.a" \
+	"out/libs/armeabi/foo_app_main.so" \
+	"out/libs/armeabi/ndktest2" \
 	"out/a1.native" \
 	"out/a2.native" \
 	"out/a3.native" \
 	"out/a4.native" \
+	"out/a5.native" \
+	"out/foo_app.native" \
+	"out/foo_app_main.native" \
 	)
 
     rm -rf ${files[@]} out
@@ -28,6 +49,26 @@ function run ()
     fi
 
     check-files files
+
+    local objs check1 check2
+
+    objs=$(find "out/objs/android-9-armeabi" -type f -name '*.o')
+    check1=$(grep -F "tests/tools/android/modules/foo_app_glue/foo_app_glue.o" <<< $objs)
+    check2=$(grep -F "tests/tools/android/modules/foo_app_main/android_main.o" <<< $objs)
+    [[ "x$check1" != "x" ]] || error "file not found"
+    [[ "x$check2" != "x" ]] || error "file not found"
+
+    objs=$(find "out/objs/android-9-mips" -type f -name '*.o')
+    check1=$(grep -F "tests/tools/android/modules/foo_app_glue/foo_app_glue.o" <<< $objs)
+    check2=$(grep -F "tests/tools/android/modules/foo_app_main/android_main.o" <<< $objs)
+    [[ "x$check1" != "x" ]] || error "file not found"
+    [[ "x$check2" != "x" ]] || error "file not found"
+
+    objs=$(find "out/objs/android-9-x86" -type f -name '*.o')
+    check1=$(grep -F "tests/tools/android/modules/foo_app_glue/foo_app_glue.o" <<< $objs)
+    check2=$(grep -F "tests/tools/android/modules/foo_app_main/android_main.o" <<< $objs)
+    [[ "x$check1" != "x" ]] || error "file not found"
+    [[ "x$check2" != "x" ]] || error "file not found"
 
     files=( \
 	"./out/libs/armeabi/ndk.so" \
