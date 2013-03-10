@@ -18,19 +18,17 @@ $(call smart~unique,smart~INCLUDES)
 
 smart~INCLUDES := $(patsubst %,-I%,$(smart~INCLUDES:-I%=%))
 
-COMPILE.c++ = $(TARGET_CXX) -o $$@ $(smart~CXXFLAGS) $(smart~CPPFLAGS) $(smart~DEFINES) $(smart~INCLUDES) -c $$<
 COMPILE.c   = $(TARGET_CC) -o $$@ $(smart~CFLAGS) $(smart~DEFINES) $(smart~INCLUDES) -c $$<
+COMPILE.c++ = $(TARGET_CXX) -o $$@ $(smart~CFLAGS) $(smart~CXXFLAGS) $(smart~CPPFLAGS) $(smart~DEFINES) $(smart~INCLUDES) -c $$<
 
 define smart~compile~rules
 $(eval smart~s := $(filter %$2, $(smart~sources)))\
 $(eval smart~o := $(smart~s:%$2=$~%.o))\
-$(eval smart~OBJS += $(smart~o))\
-$(if $(smart~s),$(eval \
-  ifdef smart~o
+$(if $(and $(smart~s),$(smart~o)),$(eval \
+  smart~OBJS += $(smart~o)
   $(smart~o) : $~%.o : %$2
 	@mkdir -p $$(@D)
 	$(COMPILE.$1)
-  endif
  ))
 endef #smart~compile~rules
 

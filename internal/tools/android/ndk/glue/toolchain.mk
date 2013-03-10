@@ -141,6 +141,8 @@ ifdef APP_STL
   #$(call modules-dump-database)
 endif
 
+smart~app~stl := $(or $(APP_STL),$(smart~app~stl))
+
 ##################################################
 ## Initializs flags
 smart~CFLAGS   := $(TARGET_CFLAGS) $(CFLAGS)
@@ -172,17 +174,49 @@ $(eval \
       $(call smart~use))
 endef #smart~use
 smart~mexport = $(call module-get-export,$(smart~m),$(strip $1))
-$(foreach smart~m,$(USE_MODULES) $(APP_STL),$(smart~use))
+$(foreach smart~m,$(USE_MODULES) $(smart~app~stl),$(smart~use))
 smart~mexport =
 smart~use :=
+
+ifneq (,$(call module-has-c++-features,$(NAME),rtti))
+  smart~CXXFLAGS := $(filter-out -fno-rtti,$(smart~CXXFLAGS))
+  smart~CPPFLAGS := $(filter-out -fno-rtti,$(smart~CPPFLAGS))
+  smart~CPPFLAGS += -frtti
+endif
+ifneq (,$(call module-has-c++-features,$(NAME),exceptions))
+  smart~CXXFLAGS := $(filter-out -fno-exceptions,$(smart~CXXFLAGS))
+  smart~CPPFLAGS := $(filter-out -fno-exceptions,$(smart~CPPFLAGS))
+  smart~CPPFLAGS += -fexceptions
+endif
 
 smart~LIBS := $(strip $(smart~LIBS))
 smart~LDFLAGS := $(filter-out -shared,$(smart~LDFLAGS))
 smart~LDLIBS := $(strip $(smart~LDLIBS) $(TARGET_LDLIBS))
 
 ## TODO: should only link against libsupc++ if rtti, exceptions are enabled
-ifeq (system,$(APP_STL))
-  smart~LDLIBS += $(call host-path,$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(TOOLCHAIN_VERSION)/libs/$(TARGET_ARCH_ABI)/libsupc++.a)
+ifneq (,$(call module-has-c++-features,$(NAME),rtti exceptions))
+  ifeq (system,$(APP_STL))
+    smart~LDLIBS += $(call host-path,$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(TOOLCHAIN_VERSION)/libs/$(TARGET_ARCH_ABI)/libsupc++.a)
+  endif
 endif
 
 smart~LDLIBS += $(TARGET_LIBGCC)
+
+$(foreach 1,\
+	smart~CFLAGS \
+	smart~CXXFLAGS \
+	smart~CPPFLAGS \
+	smart~INCLUDES \
+	smart~DEFINES \
+	smart~ARFLAGS \
+	smart~LDFLAGS \
+	smart~LDLIBS \
+	smart~OBJS \
+	smart~LIBS \
+ ,$(eval $1 := $(foreach 2,$($1),$2)))
+
+#ifeq ($(NAME),boost_thread)
+#$(warning $(NAME): $(smart~app~stl): $(smart~CXXFLAGS))
+#endif
+#$(warning $(NAME): $(smart~app~stl): $(smart~INCLUDES))
+#$(warning $(NAME): $(smart~app~stl): $(smart~LIBS))
