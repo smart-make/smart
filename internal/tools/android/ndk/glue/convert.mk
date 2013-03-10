@@ -4,6 +4,7 @@
 #    All rights reserved.
 #
 $(smart.internal)
+
 ifeq ($(and $(smart.scripts.$(smart~m))),)
   include $(smart~convert)/go.mk
 else

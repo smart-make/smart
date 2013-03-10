@@ -14,6 +14,10 @@ TOOL	 := android/ndk
 NAME     := $(call smart~get,MODULE)
 SRCDIR   := $(call smart~get,PATH)
 SCRIPT   := $(call smart~get,MAKEFILE)
+#$(warning $(smart~m): $(NAME): $(SCRIPT), $(smart.scripts.$(NAME)))
+#ifeq ($(SCRIPT),$(smart.scripts.$(NAME)))
+#  SCRIPT := $(SCRIPT)-$(NAME)
+#endif
 SOURCES  := $(call smart~get,SRC_FILES)
 INCLUDES := $(call smart~get,C_INCLUDES)
 CFLAGS   := $(call smart~get,CFLAGS)
@@ -27,6 +31,8 @@ smart~set~target~STATIC_LIBRARY = LIBRARY := $(call smart~get,MODULE).a
 smart~set~target~SHARED_LIBRARY = LIBRARY := $(call smart~get,MODULE).so
 smart~set~target~EXECUTABLE = PROGRAM := $(call smart~get,MODULE)
 $(eval $(smart~set~target~$(call smart~get,MODULE_CLASS)))
+
+#$(warning $(NAME): $(SCRIPT), $(lastword $(MAKEFILE_LIST)))
 
 ## Pretends that we're loading from the Android.mk script
 MAKEFILE_LIST += $(SCRIPT)

@@ -18,7 +18,7 @@ endif
 ## 
 ifdef smart~library.a
 $(call smart~unique,smart~ARFLAGS)
-$(eval $(smart~library.a): $(smart~OBJS) ; \
+$(eval $(smart~library.a): $(smart~OBJS) $(dir $(smart~library.a)) ; \
 	$(TARGET_AR) $(smart~ARFLAGS) $$@ $(smart~OBJS))
 endif #smart~library.a
 

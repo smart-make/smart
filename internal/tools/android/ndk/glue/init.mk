@@ -6,7 +6,7 @@
 $(smart.internal)
 
 #
-# The android/ndk/setup subdirectory is used to glue Android NDK build
+# The android/ndk/glue subdirectory is used to glue Android NDK build
 # system with smart build system. And it's tarting with the init.mk.
 #
 ifeq ($(and $(BUILD_SYSTEM),$(NDK_ALL_ABIS),$(NDK_ALL_ARCHS),$(NDK_ALL_TOOLCHAINS),$(NDK_ALL_PLATFORMS)),)
