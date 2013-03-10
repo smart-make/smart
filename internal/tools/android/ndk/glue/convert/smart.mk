@@ -14,9 +14,8 @@ TOOL	 := android/ndk
 NAME     := $(call smart~get,MODULE)
 SRCDIR   := $(call smart~get,PATH)
 SCRIPT   := $(call smart~get,MAKEFILE)
-#$(warning $(smart~m): $(NAME): $(SCRIPT), $(smart.scripts.$(NAME)))
 #ifeq ($(SCRIPT),$(smart.scripts.$(NAME)))
-#  SCRIPT := $(SCRIPT)-$(NAME)
+  SCRIPT := $(SCRIPT)-$(NAME)
 #endif
 SOURCES  := $(call smart~get,SRC_FILES)
 INCLUDES := $(call smart~get,C_INCLUDES)

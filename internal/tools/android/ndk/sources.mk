@@ -25,6 +25,7 @@ define smart~compile~rules
 $(eval smart~s := $(filter %$2, $(smart~sources)))\
 $(eval smart~o := $(smart~s:%$2=$~%.o))\
 $(eval smart~OBJS += $(smart~o))\
+$(info $(NAME): $(smart~s) -> $(smart~o))\
 $(eval \
   ifdef smart~o
   $(smart~o) : $~%.o : %$2

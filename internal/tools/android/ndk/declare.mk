@@ -10,7 +10,8 @@ ifeq ($(and $(NDK_ROOT),$(BUILD_SYSTEM),$(NDK_ALL_TOOLCHAINS),$(NDK_ALL_ABIS),$(
 endif
 
 ## Free the dictionary of LOCAL_MODULE definitions
-$(call modules-clear)
+##   BUG: clear modules will affect other modules, so don't do this here
+#$(call modules-clear)
 
 GCC_Werrors := \
   -Werror=declaration-after-statement \

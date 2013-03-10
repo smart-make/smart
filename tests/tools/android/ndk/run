@@ -9,40 +9,63 @@ function run ()
 	"out/objs/android-9-mips/a3.o" \
 	"out/objs/android-9-mips/a4.o" \
 	"out/objs/android-9-mips/a5.o" \
+	"out/objs/android-9-mips/a6.o" \
 	"out/objs/android-9-mips/android_main.o" \
 	"out/objs/android-9-x86/a3.o" \
 	"out/objs/android-9-x86/a4.o" \
 	"out/objs/android-9-x86/a5.o" \
+	"out/objs/android-9-x86/a6.o" \
 	"out/objs/android-9-x86/android_main.o" \
 	"out/objs/android-9-armeabi/a5.o" \
-	"out/libs/armeabi/ndk.so" \
-	"out/libs/armeabi-v7a/ndk.so" \
-	"out/libs/mips/ndk.so" \
-	"out/libs/x86/ndk.so" \
+	"out/objs/android-9-armeabi/a6.o" \
 	"out/libs/mips/foo_app.a" \
 	"out/libs/mips/foo_app_main.so" \
+	"out/libs/mips/module0.so" \
+	"out/libs/mips/module1.so" \
+	"out/libs/mips/module2.a" \
+	"out/libs/mips/module3.a" \
+	"out/libs/mips/ndk.so" \
 	"out/libs/mips/ndktest" \
 	"out/libs/mips/ndktest2" \
+	"out/libs/mips/ndktest3" \
 	"out/libs/x86/foo_app.a" \
 	"out/libs/x86/foo_app_main.so" \
+	"out/libs/x86/module0.so" \
+	"out/libs/x86/module1.so" \
+	"out/libs/x86/module2.a" \
+	"out/libs/x86/module3.a" \
+	"out/libs/x86/ndk.so" \
 	"out/libs/x86/ndktest" \
 	"out/libs/x86/ndktest2" \
+	"out/libs/x86/ndktest3" \
 	"out/libs/armeabi/foo_app.a" \
 	"out/libs/armeabi/foo_app_main.so" \
+	"out/libs/armeabi/module0.so" \
+	"out/libs/armeabi/module1.so" \
+	"out/libs/armeabi/module2.a" \
+	"out/libs/armeabi/module3.a" \
+	"out/libs/armeabi/ndk.so" \
 	"out/libs/armeabi/ndktest2" \
+	"out/libs/armeabi/ndktest3" \
+	"out/libs/armeabi-v7a/ndk.so" \
 	"out/a1.native" \
 	"out/a2.native" \
 	"out/a3.native" \
 	"out/a4.native" \
 	"out/a5.native" \
+	"out/a6.native" \
 	"out/foo_app.native" \
 	"out/foo_app_main.native" \
+	"out/module0.native" \
+	"out/module1.native" \
+	"out/module2.native" \
+	"out/module3.native" \
 	)
 
     rm -rf ${files[@]} out
 
     local lines=$(smart)
-    if false; then
+    if true; then
 	echo "========================================"
 	echo "$lines"
 	echo "========================================"
@@ -50,25 +73,32 @@ function run ()
 
     check-files files
 
-    local objs check1 check2
+    function check-more-objects ()
+    {
+	local check1=$(grep -F "tests/tools/android/modules/foo_app_glue/foo_app_glue.o" <<< "$1")
+	local check2=$(grep -F "tests/tools/android/modules/foo_app_main/android_main.o" <<< "$1")
+	local check3=$(grep -F "tests/tools/android/modules/multi-modules/module0.o" <<< "$1")
+	local check4=$(grep -F "tests/tools/android/modules/multi-modules/module1.o" <<< "$1")
+	local check5=$(grep -F "tests/tools/android/modules/multi-modules/module2.o" <<< "$1")
+	local check6=$(grep -F "tests/tools/android/modules/multi-modules/module3.o" <<< "$1")
+	[[ "x$check1" != "x" ]] || error "file not found"
+	[[ "x$check2" != "x" ]] || error "file not found"
+	[[ "x$check3" != "x" ]] || error "file not found"
+	[[ "x$check4" != "x" ]] || error "file not found"
+	[[ "x$check5" != "x" ]] || error "file not found"
+	[[ "x$check6" != "x" ]] || error "file not found"
+    }
+
+    local objs
 
     objs=$(find "out/objs/android-9-armeabi" -type f -name '*.o')
-    check1=$(grep -F "tests/tools/android/modules/foo_app_glue/foo_app_glue.o" <<< $objs)
-    check2=$(grep -F "tests/tools/android/modules/foo_app_main/android_main.o" <<< $objs)
-    [[ "x$check1" != "x" ]] || error "file not found"
-    [[ "x$check2" != "x" ]] || error "file not found"
+    check-more-objects "$objs"
 
     objs=$(find "out/objs/android-9-mips" -type f -name '*.o')
-    check1=$(grep -F "tests/tools/android/modules/foo_app_glue/foo_app_glue.o" <<< $objs)
-    check2=$(grep -F "tests/tools/android/modules/foo_app_main/android_main.o" <<< $objs)
-    [[ "x$check1" != "x" ]] || error "file not found"
-    [[ "x$check2" != "x" ]] || error "file not found"
+    check-more-objects "$objs"
 
     objs=$(find "out/objs/android-9-x86" -type f -name '*.o')
-    check1=$(grep -F "tests/tools/android/modules/foo_app_glue/foo_app_glue.o" <<< $objs)
-    check2=$(grep -F "tests/tools/android/modules/foo_app_main/android_main.o" <<< $objs)
-    [[ "x$check1" != "x" ]] || error "file not found"
-    [[ "x$check2" != "x" ]] || error "file not found"
+    check-more-objects "$objs"
 
     files=( \
 	"./out/libs/armeabi/ndk.so" \
@@ -94,5 +124,57 @@ function run ()
 	"./out/libs/mips/ndktest" \
 	)
     lines=($(cat "out/a4.native"))
+    check-same-set files lines
+
+    files=( \
+	"./out/libs/x86/ndktest2" \
+	"./out/libs/mips/ndktest2" \
+	"./out/libs/armeabi/ndktest2" \
+	)
+    lines=($(cat "out/a5.native"))
+    check-same-set files lines
+
+    files=( \
+	"./out/libs/x86/ndktest3" \
+	"./out/libs/mips/ndktest3" \
+	"./out/libs/armeabi/ndktest3" \
+	)
+    lines=($(cat "out/a6.native"))
+    check-same-set files lines
+
+    files=()
+    lines=($(cat "out/foo_app.native"))
+    check-same-set files lines
+
+    files=( \
+	"./out/libs/x86/foo_app_main.so" \
+	"./out/libs/mips/foo_app_main.so" \
+	"./out/libs/armeabi/foo_app_main.so" \
+	)
+    lines=($(cat "out/foo_app_main.native"))
+    check-same-set files lines
+
+    files=( \
+	"./out/libs/x86/module0.so" \
+	"./out/libs/mips/module0.so" \
+	"./out/libs/armeabi/module0.so" \
+	)
+    lines=($(cat "out/module0.native"))
+    check-same-set files lines
+
+    files=( \
+	"./out/libs/x86/module1.so" \
+	"./out/libs/mips/module1.so" \
+	"./out/libs/armeabi/module1.so" \
+	)
+    lines=($(cat "out/module1.native"))
+    check-same-set files lines
+
+    files=()
+    lines=($(cat "out/module2.native"))
+    check-same-set files lines
+
+    files=()
+    lines=($(cat "out/module3.native"))
     check-same-set files lines
 }
