@@ -25,14 +25,13 @@ define smart~compile~rules
 $(eval smart~s := $(filter %$2, $(smart~sources)))\
 $(eval smart~o := $(smart~s:%$2=$~%.o))\
 $(eval smart~OBJS += $(smart~o))\
-$(info $(NAME): $(smart~s) -> $(smart~o))\
-$(eval \
+$(if $(smart~s),$(eval \
   ifdef smart~o
   $(smart~o) : $~%.o : %$2
 	@mkdir -p $$(@D)
 	$(COMPILE.$1)
   endif
- )
+ ))
 endef #smart~compile~rules
 
 ifdef  smart~sources
