@@ -20,7 +20,7 @@ function debug ()
     local source=${BASH_SOURCE[$(($n+1))]}
     local funcname=${FUNCNAME[$(($n+1))]}
     local lineno=${BASH_LINENO[$n]}
-    echo "$source:$lineno:debug: $funcname: $@"
+    echo "$source:$lineno:debug: $funcname: $@" > /dev/stderr
 }
 
 function error ()
@@ -38,7 +38,7 @@ function error ()
     local source=${BASH_SOURCE[$(($n+1))]}
     local funcname=${FUNCNAME[$(($n+1))]}
     local lineno=${BASH_LINENO[$n]}
-    echo "$source:$lineno:error: $@ ($funcname)"
+    echo "$source:$lineno:error: $@ ($funcname)" > /dev/stderr
     exit $lineno
 }
 

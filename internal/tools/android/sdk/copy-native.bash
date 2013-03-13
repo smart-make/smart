@@ -5,15 +5,16 @@ file="$3"
 
 function extract-abi ()
 {
-    local abi=$(basename $(dirname $1))
+    local target_abi=$(basename $(dirname $1))
+    local abi=$(sed -e 's/^android\-[0-9]*\-//' <<< "$target_abi")
     case $abi in
 	armeabi|armeabi-v7a|mips|x86)
 	    echo "$abi"
 	    ;;
 	*)
-	    echo "smart:error: invalid native lib \"$1\"" > /dev/stderr
-	    echo "smart:error: found in \"$file\"" > /dev/stderr
-	    echo "smart:error: abi is $abi" > /dev/stderr
+	    echo "smart: ERROR: Invalid native lib \"$1\"" > /dev/stderr
+	    echo "smart: ERROR: Found in \"$file\"" > /dev/stderr
+	    echo "smart: ERROR: The ABI is $abi" > /dev/stderr
 	    ;;
     esac
 }
@@ -21,6 +22,8 @@ function extract-abi ()
 for lib in `cat "$file"`; do
     abi=$(extract-abi $lib)
     mkdir -p "$out/lib/$abi" && cp -f "$lib" "$out/lib/$abi" && {
-	cd "$out" && zip -r "$package" "lib/$abi/$(basename $lib)"
+	cd "$out" || exit 1
+	zip -r "$package" "lib/$abi/$(basename $lib)" || exit 2
+	cd -
     }
 done
