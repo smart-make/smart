@@ -16,10 +16,9 @@ endif #SOURCES
 # ./default-build-commands.mk:76:define cmd-build-executable
 # ./default-build-commands.mk:87:define cmd-build-static-library
 
-~ = $(OUT)/libs/$(TARGET_ARCH_ABI)/
-ifndef smart.has.$~
-  smart.has.$~ := yes
-  $~: ; @mkdir -p $@
+ifndef smart.has.$(TARGET_OUT)
+  smart.has.$(TARGET_OUT) := yes
+  $(TARGET_OUT): ; @mkdir -p $@
 endif
 
 ifndef smart.has.$(OUT)/$(NAME).native

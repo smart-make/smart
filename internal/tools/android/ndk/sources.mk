@@ -23,17 +23,16 @@ COMPILE.c++ = $(TARGET_CXX) -o $$@ $(smart~CFLAGS) $(smart~CXXFLAGS) $(smart~CPP
 
 define smart~compile~rules
 $(eval smart~s := $(filter %$2, $(smart~sources)))\
-$(eval smart~o := $(smart~s:%$2=$~%.o))\
+$(eval smart~o := $(smart~s:%$2=$(TARGET_OBJS)/%.o))\
 $(if $(and $(smart~s),$(smart~o)),$(eval \
   smart~OBJS += $(smart~o)
-  $(smart~o) : $~%.o : %$2
+  $(smart~o) : $(TARGET_OBJS)/%.o : %$2
 	@mkdir -p $$(@D)
 	$(COMPILE.$1)
  ))
 endef #smart~compile~rules
 
 ifdef  smart~sources
-  ~ := $(OUT)/objs/$(TARGET_ABI)/
   $(foreach 1,c c++,$(foreach 2,$(smart~sufixes~$1),$(smart~compile~rules)))
 endif #smart~sources
 

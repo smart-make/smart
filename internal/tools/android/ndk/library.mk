@@ -5,7 +5,7 @@
 #
 $(smart.internal)
 
-smart~library := $(addprefix $~,$(LIBRARY:$~%=%))
+smart~library := $(addprefix $(TARGET_OUT)/,$(LIBRARY:$(TARGET_OUT)/%=%))
 smart~library.a := $(filter %.a,$(smart~library))
 smart~library.so := $(filter %.so,$(smart~library))
 

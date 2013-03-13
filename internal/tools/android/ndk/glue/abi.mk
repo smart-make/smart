@@ -11,6 +11,6 @@ $(smart.internal)
 ## 
 
 TARGET_ARCH := $(strip $(NDK_ABI.$(TARGET_ARCH_ABI).arch))
-TARGET_OUT := $(OUT)/libs/$(TARGET_ABI)
-TARGET_OBJS := $(OUT)/objs/$(TARGET_ABI)
-TARGET_GDB_SETUP := $(TARGET_OUT)/setup.gdb
+TARGET_OUT = $(OUT)/libs/$(TARGET_ABI)
+TARGET_OBJS = $(OUT)/objs/$(TARGET_ABI)
+TARGET_GDB_SETUP = $(TARGET_OUT)/setup.gdb
