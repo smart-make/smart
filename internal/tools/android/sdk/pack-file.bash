@@ -1,6 +1,10 @@
 # -*- shell-script -*-
 out="$1"
 package="$2"
-file="$3"
+files="$3"
 
-cd "$out" && zip -r "$package" "$file"
+cd "$out" || exit 1
+for file in $files ; do
+    zip -r "$package" "$file" || exit 2
+done
+cd -

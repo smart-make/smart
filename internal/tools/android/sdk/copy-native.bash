@@ -24,6 +24,6 @@ for lib in `cat "$file"`; do
     mkdir -p "$out/lib/$abi" && cp -f "$lib" "$out/lib/$abi" && {
 	cd "$out" || exit 1
 	zip -r "$package" "lib/$abi/$(basename $lib)" || exit 2
-	cd -
+	cd - > /dev/null
     }
 done
