@@ -2,9 +2,7 @@
 function run ()
 {
     run-tests \
+	sdk \
 	ndk \
-
-#	sdk \
-#	ndk \
 
 }
