@@ -3,6 +3,5 @@ APP_ABI := armeabi mips x86
 APP_STL := gabi++_static
 PROGRAM := teststl-gabi++
 SOURCES := test.cpp
-LDLIBS :=
 CPPFLAGS += -frtti -fexceptions
 CPP_FEATURES += rtti exceptions

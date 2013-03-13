@@ -3,4 +3,3 @@ APP_ABI := armeabi mips x86
 APP_STL := system
 PROGRAM := teststl-system
 SOURCES := test.cpp
-LDLIBS :=

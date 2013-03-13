@@ -25,6 +25,7 @@ CXXFLAGS := $(call smart~get,CXXFLAGS)
 CPPFLAGS := $(call smart~get,CPPFLAGS)
 LDFLAGS  := $(call smart~get,LDFLAGS)
 LDLIBS   := $(call smart~get,LDLIBS)
+CPP_FEATURES := $(call smart~get,CPP_FEATURES)
 
 #ifeq ($(NAME),gnustl_static)
 #$(warning $(NAME): $(SOURCES))

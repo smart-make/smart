@@ -41,7 +41,12 @@ function run ()
 
     rm -rf ${files[@]} out
 
-    local lines=$(smart)
+    local lines
+    if true; then
+	lines=$(smart)
+    else
+	smart
+    fi
 
     check-files files
 

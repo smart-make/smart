@@ -31,6 +31,7 @@ smart.context.android/ndk := \
   CFLAGS \
   CXXFLAGS \
   CPPFLAGS \
+  CPP_FEATURES \
   LDFLAGS \
   LDLIBS \
   LOADLIBS \
