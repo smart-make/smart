@@ -161,6 +161,7 @@ smart~LDFLAGS  := $(TARGET_LDFLAGS) $(LDFLAGS)
 smart~LDLIBS   := $(TARGET_LDLIBS) $(LDLIBS)
 smart~OBJS     := $(OBJECTS)
 smart~LIBS     :=
+smart~CPP_FEATURES := $(CPP_FEATURES)
 
 ifneq ($(ALLOW_UNDEFINED_SYMBOLS),true)
   smart~LDFLAGS += $(TARGET_NO_UNDEFINED_LDFLAGS)
@@ -203,6 +204,7 @@ $(eval \
   smart~INCLUDES += $(call smart~mexport,C_INCLUDES)
   smart~OBJS     += $(call smart~mexport,OBJECTS)
   smart~LIBS     += $(addprefix $~,$(call smart.get,$(smart~m),LIBRARY))
+  smart~CPP_FEATURES += $(__ndk_modules.$(smart~m).CPP_FEATURES)
  )$(foreach smart~m,$(call smart.get,$(smart~m),USE_MODULES),\
       $(call smart~use))
 endef #smart~use
@@ -218,18 +220,30 @@ smart~use :=
 #$(warning $(NDK_STL.$(smart~app~stl).STATIC_LIBS))
 #$(warning $(NDK_STL.$(smart~app~stl).SHARED_LIBS))
 
-ifneq (,$(call module-has-c++-features,$(NAME),rtti))
+smart~CPP_FEATURES := $(sort $(smart~CPP_FEATURES))
+
+smart~has~rtti := $(strip $(or \
+  $(call module-has-c++-features,$(NAME),rtti),\
+  $(if $(filter rtti,$(smart~CPP_FEATURES)),true)))
+
+smart~has~exceptions := $(strip $(or \
+  $(call module-has-c++-features,$(NAME),exceptions),\
+  $(if $(filter exceptions,$(smart~CPP_FEATURES)),true)))
+
+ifneq (,$(smart~has~rtti))
   smart~CFLAGS := $(filter-out -fno-rtti,$(smart~CFLAGS))
   smart~CXXFLAGS := $(filter-out -fno-rtti,$(smart~CXXFLAGS))
   smart~CPPFLAGS := $(filter-out -fno-rtti,$(smart~CPPFLAGS))
   smart~CPPFLAGS += -frtti
 endif
-ifneq (,$(call module-has-c++-features,$(NAME),exceptions))
+ifneq (,$(smart~has~exceptions))
   smart~CFLAGS := $(filter-out -fno-exceptions,$(smart~CFLAGS))
   smart~CXXFLAGS := $(filter-out -fno-exceptions,$(smart~CXXFLAGS))
   smart~CPPFLAGS := $(filter-out -fno-exceptions,$(smart~CPPFLAGS))
   smart~CPPFLAGS += -fexceptions
 endif
+
+#$(warning $(NAME): $(smart~has~rtti) $(smart~has~exceptions))
 
 smart~LIBS := $(strip $(smart~LIBS))
 smart~LDFLAGS := $(filter-out -shared,$(smart~LDFLAGS))
