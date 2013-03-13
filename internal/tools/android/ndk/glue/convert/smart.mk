@@ -18,12 +18,17 @@ SCRIPT   := $(call smart~get,MAKEFILE)
   SCRIPT := $(SCRIPT)-$(NAME)
 #endif
 SOURCES  := $(call smart~get,SRC_FILES)
+OBJECTS  := $(call smart~get,OBJECTS)
 INCLUDES := $(call smart~get,C_INCLUDES)
 CFLAGS   := $(call smart~get,CFLAGS)
 CXXFLAGS := $(call smart~get,CXXFLAGS)
 CPPFLAGS := $(call smart~get,CPPFLAGS)
 LDFLAGS  := $(call smart~get,LDFLAGS)
 LDLIBS   := $(call smart~get,LDLIBS)
+
+#ifeq ($(NAME),gnustl_static)
+#$(warning $(NAME): $(SOURCES))
+#endif
 
 ## Set target library/program
 smart~set~target~STATIC_LIBRARY = LIBRARY := $(call smart~get,MODULE).a

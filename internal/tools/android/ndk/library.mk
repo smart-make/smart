@@ -28,6 +28,7 @@ endif #smart~library.a
 ifdef smart~library.so
 $(call smart~unique,smart~LDFLAGS)
 $(call smart~unique,smart~LDLIBS)
+$(call smart~unique,smart~LIBS)
 $(eval $(smart~library.so): $(smart~OBJS) $(smart~LIBS) | $(dir $(smart~library.so)) ; \
 	$(TARGET_CXX) -shared -Wl,-soname,$$(@F) --sysroot=$(SYSROOT) \
 	-o $$@ $(smart~OBJS) $(smart~LIBS) $(smart~LDFLAGS) $(smart~LDLIBS))

@@ -1,0 +1,9 @@
+APP_PLATFORM := android-14
+APP_ABI := armeabi mips x86
+APP_STL := gnustl_static
+PROGRAM := teststl-gnustl
+SOURCES := test.cpp
+DEFINES :=
+CFLAGS := -pthread
+CPPFLAGS := -std=c++11
+LDLIBS :=

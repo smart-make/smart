@@ -1,0 +1,92 @@
+# -*- shell-script -*-
+function run ()
+{
+    local files=( \
+	"out/objs/android-14-armeabi/none/test.o" \
+	"out/objs/android-14-armeabi/gabi++/test.o" \
+	"out/objs/android-14-armeabi/gnustl/test.o" \
+	"out/objs/android-14-armeabi/stlport/test.o" \
+	"out/objs/android-14-armeabi/system/test.o" \
+	"out/objs/android-14-mips/none/test.o" \
+	"out/objs/android-14-mips/gabi++/test.o" \
+	"out/objs/android-14-mips/gnustl/test.o" \
+	"out/objs/android-14-mips/stlport/test.o" \
+	"out/objs/android-14-mips/system/test.o" \
+	"out/objs/android-14-x86/none/test.o" \
+	"out/objs/android-14-x86/gabi++/test.o" \
+	"out/objs/android-14-x86/gnustl/test.o" \
+	"out/objs/android-14-x86/stlport/test.o" \
+	"out/objs/android-14-x86/system/test.o" \
+	"out/libs/armeabi/teststl-none" \
+	"out/libs/armeabi/teststl-gabi++" \
+	"out/libs/armeabi/teststl-gnustl" \
+	"out/libs/armeabi/teststl-stlport" \
+	"out/libs/armeabi/teststl-system" \
+	"out/libs/mips/teststl-none" \
+	"out/libs/mips/teststl-gabi++" \
+	"out/libs/mips/teststl-gnustl" \
+	"out/libs/mips/teststl-stlport" \
+	"out/libs/mips/teststl-system" \
+	"out/libs/x86/teststl-none" \
+	"out/libs/x86/teststl-gabi++" \
+	"out/libs/x86/teststl-gnustl" \
+	"out/libs/x86/teststl-stlport" \
+	"out/libs/x86/teststl-system" \
+	"out/none.native" \
+	"out/gabi++.native" \
+	"out/gnustl.native" \
+	"out/stlport.native" \
+	"out/system.native" \
+	)
+
+    rm -rf ${files[@]} out
+
+    local lines=$(smart)
+
+    check-files files
+
+    files=( \
+	"./out/libs/x86/teststl-none" \
+	"./out/libs/mips/teststl-none" \
+	"./out/libs/armeabi/teststl-none" \
+	)
+    lines=($(cat "out/none.native"))
+    check-same-set files lines
+    check-files files
+
+    files=( \
+	"./out/libs/x86/teststl-gabi++" \
+	"./out/libs/mips/teststl-gabi++" \
+	"./out/libs/armeabi/teststl-gabi++" \
+	)
+    lines=($(cat "out/gabi++.native"))
+    check-same-set files lines
+    check-files files
+
+    files=( \
+	"./out/libs/x86/teststl-gnustl" \
+	"./out/libs/mips/teststl-gnustl" \
+	"./out/libs/armeabi/teststl-gnustl" \
+	)
+    lines=($(cat "out/gnustl.native"))
+    check-same-set files lines
+    check-files files
+
+    files=( \
+	"./out/libs/x86/teststl-stlport" \
+	"./out/libs/mips/teststl-stlport" \
+	"./out/libs/armeabi/teststl-stlport" \
+	)
+    lines=($(cat "out/stlport.native"))
+    check-same-set files lines
+    check-files files
+
+    files=( \
+	"./out/libs/x86/teststl-system" \
+	"./out/libs/mips/teststl-system" \
+	"./out/libs/armeabi/teststl-system" \
+	)
+    lines=($(cat "out/system.native"))
+    check-same-set files lines
+    check-files files
+}

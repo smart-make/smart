@@ -65,7 +65,7 @@ function run ()
     rm -rf ${files[@]} out
 
     local lines=$(smart)
-    if true; then
+    if false; then
 	echo "========================================"
 	echo "$lines"
 	echo "========================================"
@@ -177,4 +177,7 @@ function run ()
     files=()
     lines=($(cat "out/module3.native"))
     check-same-set files lines
+
+    ## test C++ STL supports
+    run-tests C++STL
 }

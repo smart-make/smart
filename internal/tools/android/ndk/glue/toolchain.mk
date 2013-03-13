@@ -134,14 +134,20 @@ TARGET_GDBSERVER := $(NDK_ROOT)/prebuilt/android-$(TARGET_ARCH)/gdbserver/gdbser
 #NDK_APP_GDBSERVER := $(NDK_APP_DST_DIR)/gdbserver
 #NDK_APP_GDBSETUP := $(NDK_APP_DST_DIR)/gdb.setup
 
-ifdef APP_STL
-  $(call ndk-stl-select,$(APP_STL))
-  #$(call ndk-stl-add-dependencies,$(APP_STL))
-  #$(call modules-compute-dependencies)
-  #$(call modules-dump-database)
-endif
-
 smart~app~stl := $(or $(APP_STL),$(smart~app~stl))
+ifdef smart~app~stl
+  smart~stl~mods := $(NDK_STL.$(smart~app~stl).STATIC_LIBS) $(NDK_STL.$(smart~app~stl).SHARED_LIBS)
+  __ndk_import_list := $(call set_remove,$(NDK_STL.$(smart~app~stl).IMPORT_MODULE),$(__ndk_import_list))
+  __ndk_modules := $(call set_remove,$(smart~stl~mods),$(__ndk_import_list))
+  $(foreach 1,$(smart~stl~mods),$(foreach 2,\
+       $(filter __ndk_modules.$1.%,$(.VARIABLES)),$(eval $2 :=)))
+  $(call ndk-stl-check,$(smart~app~stl))
+  $(call ndk-stl-select,$(smart~app~stl))
+  $(call ndk-stl-add-dependencies,$(smart~app~stl))
+  $(call modules-compute-dependencies)
+  #$(call modules-dump-database)
+  #$(warning info: $(__ndk_modules.$(smart~app~stl).OBJECTS), $(__ndk_modules.$(smart~app~stl).BUILT_MODULE))
+endif
 
 ##################################################
 ## Initializs flags
@@ -149,7 +155,7 @@ smart~CFLAGS   := $(TARGET_CFLAGS) $(CFLAGS)
 smart~CXXFLAGS := $(TARGET_CXXFLAGS) $(CXXFLAGS)
 smart~CPPFLAGS := $(TARGET_CPPFLAGS) $(CPPFLAGS)
 smart~INCLUDES := $(TARGET_C_INCLUDES) $(INCLUDES)
-smart~DEFINES  := -DANDROID $(DEFINES)
+smart~DEFINES  := -DANDROID -D__ANDROID__ $(DEFINES)
 smart~ARFLAGS  := $(TARGET_ARFLAGS) $(ARFLAGS)
 smart~LDFLAGS  := $(TARGET_LDFLAGS) $(LDFLAGS)
 smart~LDLIBS   := $(TARGET_LDLIBS) $(LDLIBS)
@@ -160,7 +166,34 @@ ifneq ($(ALLOW_UNDEFINED_SYMBOLS),true)
   smart~LDFLAGS += $(TARGET_NO_UNDEFINED_LDFLAGS)
 endif
 
+#$(warning $(smart~m): $(__ndk_modules.$(smart~m).BUILT_MODULE))
+
+define smart~use~STATIC_LIBRARY
+$(eval \
+  #smart~LDLIBS += $(__ndk_modules.$(smart~m).BUILT_MODULE)
+ )
+endef #smart~use~STATIC_LIBRARY
+
+define smart~use~SHARED_LIBRARY
+$(eval \
+  #smart~LDLIBS += $(__ndk_modules.$(smart~m).BUILT_MODULE)
+ )
+endef #smart~use~SHARED_LIBRARY
+
+define smart~use~PREBUILT_STATIC_LIBRARY
+$(eval \
+  smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
+ )
+endef #smart~use~PREBUILT_STATIC_LIBRARY
+
+define smart~use~PREBUILT_SHARED_LIBRARY
+$(eval \
+  smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
+ )
+endef #smart~use~PREBUILT_SHARED_LIBRARY
+
 define smart~use
+$(call smart~use~$(call module-get-class,$(smart~m)))\
 $(eval \
   smart~CFLAGS   += $(call smart~mexport,CFLAGS)
   smart~CXXFLAGS += $(call smart~mexport,CXXFLAGS)
@@ -174,16 +207,25 @@ $(eval \
       $(call smart~use))
 endef #smart~use
 smart~mexport = $(call module-get-export,$(smart~m),$(strip $1))
-$(foreach smart~m,$(USE_MODULES) $(smart~app~stl),$(smart~use))
+$(foreach smart~m,$(USE_MODULES) \
+    $(NDK_STL.$(smart~app~stl).STATIC_LIBS:lib%=%) \
+    $(NDK_STL.$(smart~app~stl).SHARED_LIBS:lib%=%) \
+  ,$(smart~use))
 smart~mexport =
 smart~use :=
 
+#$(warning $(NDK_STL.$(smart~app~stl).IMPORT_MODULE))
+#$(warning $(NDK_STL.$(smart~app~stl).STATIC_LIBS))
+#$(warning $(NDK_STL.$(smart~app~stl).SHARED_LIBS))
+
 ifneq (,$(call module-has-c++-features,$(NAME),rtti))
+  smart~CFLAGS := $(filter-out -fno-rtti,$(smart~CFLAGS))
   smart~CXXFLAGS := $(filter-out -fno-rtti,$(smart~CXXFLAGS))
   smart~CPPFLAGS := $(filter-out -fno-rtti,$(smart~CPPFLAGS))
   smart~CPPFLAGS += -frtti
 endif
 ifneq (,$(call module-has-c++-features,$(NAME),exceptions))
+  smart~CFLAGS := $(filter-out -fno-exceptions,$(smart~CFLAGS))
   smart~CXXFLAGS := $(filter-out -fno-exceptions,$(smart~CXXFLAGS))
   smart~CPPFLAGS := $(filter-out -fno-exceptions,$(smart~CPPFLAGS))
   smart~CPPFLAGS += -fexceptions
@@ -193,9 +235,8 @@ smart~LIBS := $(strip $(smart~LIBS))
 smart~LDFLAGS := $(filter-out -shared,$(smart~LDFLAGS))
 smart~LDLIBS := $(strip $(smart~LDLIBS) $(TARGET_LDLIBS))
 
-## TODO: should only link against libsupc++ if rtti, exceptions are enabled
 ifneq (,$(call module-has-c++-features,$(NAME),rtti exceptions))
-  ifeq (system,$(APP_STL))
+  ifeq (system,$(smart~app~stl))
     smart~LDLIBS += $(call host-path,$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(TOOLCHAIN_VERSION)/libs/$(TARGET_ARCH_ABI)/libsupc++.a)
   endif
 endif

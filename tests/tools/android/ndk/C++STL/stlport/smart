@@ -1,0 +1,6 @@
+APP_PLATFORM := android-14
+APP_ABI := armeabi mips x86
+APP_STL := stlport_static
+PROGRAM := teststl-stlport
+SOURCES := test.cpp
+LDLIBS :=
