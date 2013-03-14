@@ -14,19 +14,27 @@ function run ()
 	out/sdk/classes/org/smart/test/ASDK/R\$attr.class \
 	out/sdk/classes/org/smart/test/ASDK/R\$layout.class \
 	out/sdk/classes/org/smart/test/ASDK/R\$string.class \
+	out/sdk/lib/armeabi-v7a/jni.so \
+	out/sdk/lib/armeabi-v7a/gdbserver \
+	out/sdk/lib/armeabi-v7a/gdb.setup \
 	out/objs/android-14-armeabi-v7a/jni/jni.o \
-	out/libs/armeabi-v7a/jni.so \
+	out/libs/android-14-armeabi-v7a/jni.so \
+	out/libs/android-14-armeabi-v7a/gdbserver \
+	out/libs/android-14-armeabi-v7a/gdb.setup \
 	)
 
     rm -rf ${files[@]} out
 
-    local lines=$(smart)
-    check-files files
+    local lines
+    if true; then
+	lines=$(smart)
+    else
+	smart
+    fi
 
-    if false; then
-	echo "=================================================="
-	echo "$lines"
-	echo "=================================================="
+    check-files files
+    if [[ ! -x out/libs/android-14-armeabi-v7a/gdbserver ]]; then
+	error "gdbserver is not executible!"
     fi
 
     lines=( $(jar -t < sdk.apk) )
@@ -39,7 +47,12 @@ function run ()
 	resources.arsc \
 	classes.dex \
 	lib/armeabi-v7a/jni.so \
+	lib/armeabi-v7a/gdbserver \
+	lib/armeabi-v7a/gdb.setup \
 	)
 
+    if [[ ! -x out/sdk/lib/armeabi-v7a/gdbserver ]]; then
+	error "gdbserver is not executible!"
+    fi
     is-same-set lines files || error "wrong APK"
 }

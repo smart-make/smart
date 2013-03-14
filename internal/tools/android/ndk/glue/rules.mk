@@ -6,7 +6,15 @@
 $(smart.internal)
 
 #$(info smart: Android NDK: Build "$(NAME)" for $(TARGET_PLATFORM) using ABI "$(TARGET_ARCH_ABI)")
-#$(warning TODO: $(NAME): LOCAL_ARM_MODE, LOCAL_ARM_NEON)
+
+define smart~make~target~dir
+$(eval \
+  ifneq ($(smart.has.$(dir $1)),yes)
+    smart.has.$(dir $1) := yes
+    $(dir $1): ; @mkdir -p $$@
+  endif
+ )
+endef #smart~make~target~dir
 
 ifdef SOURCES
   include $(smart.tooldir)/sources.mk
@@ -16,23 +24,16 @@ endif #SOURCES
 # ./default-build-commands.mk:76:define cmd-build-executable
 # ./default-build-commands.mk:87:define cmd-build-static-library
 
-ifndef smart.has.$(TARGET_OUT)
-  smart.has.$(TARGET_OUT) := yes
-  $(TARGET_OUT): ; @mkdir -p $@
-endif
-
 ifndef smart.has.$(OUT)/$(NAME).native
   smart.has.$(OUT)/$(NAME).native := yes
-  $(OUT)/$(NAME).native: NATIVE_LIST :=
   $(OUT)/$(NAME).native:
 	@rm -f $@ && touch $@
-	@for n in $(NATIVE_LIST) ; do echo $$n >> $@ ; done
+	@for n in $(filter-out %.a,$^) ; do echo $$n >> $@ ; done
 endif
 
 ifdef LIBRARY
   include $(smart.tooldir)/library.mk
   ifdef smart~library
-    $(OUT)/$(NAME).native: $(smart~library)
     module-$(SCRIPT): $(OUT)/$(NAME).native
     modules: module-$(SCRIPT)
   endif #smart~library
@@ -41,8 +42,9 @@ endif #LIBRARY
 ifdef PROGRAM
   include $(smart.tooldir)/program.mk
   ifdef smart~program
-    $(OUT)/$(NAME).native: $(smart~program)
     module-$(SCRIPT): $(OUT)/$(NAME).native
     modules: module-$(SCRIPT)
   endif #smart~program
 endif #PROGRAM
+
+smart~make~target~dir :=

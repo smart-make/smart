@@ -26,10 +26,9 @@ $(eval smart~s := $(filter %$2, $(smart~sources)))\
 $(eval smart~o := $(smart~s:%$2=$(TARGET_OBJS)/%.o))\
 $(if $(and $(smart~s),$(smart~o)),$(eval \
   smart~OBJS += $(smart~o)
-  $(smart~o) : $(TARGET_OBJS)/%.o : %$2
-	@mkdir -p $$(@D)
+  $(smart~o) : $(TARGET_OBJS)/%.o : %$2 | $(dir $(sort $(smart~o)))
 	$(COMPILE.$1)
- ))
+ )$(foreach o,$(smart~o),$(call smart~make~target~dir,$o)))
 endef #smart~compile~rules
 
 ifdef  smart~sources

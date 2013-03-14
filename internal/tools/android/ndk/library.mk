@@ -18,6 +18,7 @@ endif
 ## 
 ifdef smart~library.a
 $(call smart~unique,smart~ARFLAGS)
+$(call smart~make~target~dir,$(smart~library.a))
 $(eval $(smart~library.a): $(smart~OBJS) | $(dir $(smart~library.a)); \
 	$(TARGET_AR) $(smart~ARFLAGS) $$@ $(smart~OBJS))
 endif #smart~library.a
@@ -29,8 +30,9 @@ ifdef smart~library.so
 $(call smart~unique,smart~LDFLAGS)
 $(call smart~unique,smart~LDLIBS)
 $(call smart~unique,smart~LIBS)
+$(call smart~make~target~dir,$(smart~library.so))
 $(eval $(smart~library.so): $(smart~OBJS) $(smart~LIBS) | $(dir $(smart~library.so)) ; \
 	$(TARGET_CXX) -shared -Wl,-soname,$$(@F) --sysroot=$(SYSROOT) \
 	-o $$@ $(smart~OBJS) $(smart~LIBS) $(smart~LDFLAGS) $(smart~LDLIBS))
-$(eval $(OUT)/$(NAME).native: NATIVE_LIST += $(smart~library.so))
+$(OUT)/$(NAME).native: $(smart~library.so)
 endif #smart~library.so

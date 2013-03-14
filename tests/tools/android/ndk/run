@@ -18,36 +18,46 @@ function run ()
 	"out/objs/android-9-x86/android_main.o" \
 	"out/objs/android-9-armeabi/a5.o" \
 	"out/objs/android-9-armeabi/a6.o" \
-	"out/libs/mips/foo_app.a" \
-	"out/libs/mips/foo_app_main.so" \
-	"out/libs/mips/module0.so" \
-	"out/libs/mips/module1.so" \
-	"out/libs/mips/module2.a" \
-	"out/libs/mips/module3.a" \
-	"out/libs/mips/ndk.so" \
-	"out/libs/mips/ndktest" \
-	"out/libs/mips/ndktest2" \
-	"out/libs/mips/ndktest3" \
-	"out/libs/x86/foo_app.a" \
-	"out/libs/x86/foo_app_main.so" \
-	"out/libs/x86/module0.so" \
-	"out/libs/x86/module1.so" \
-	"out/libs/x86/module2.a" \
-	"out/libs/x86/module3.a" \
-	"out/libs/x86/ndk.so" \
-	"out/libs/x86/ndktest" \
-	"out/libs/x86/ndktest2" \
-	"out/libs/x86/ndktest3" \
-	"out/libs/armeabi/foo_app.a" \
-	"out/libs/armeabi/foo_app_main.so" \
-	"out/libs/armeabi/module0.so" \
-	"out/libs/armeabi/module1.so" \
-	"out/libs/armeabi/module2.a" \
-	"out/libs/armeabi/module3.a" \
-	"out/libs/armeabi/ndk.so" \
-	"out/libs/armeabi/ndktest2" \
-	"out/libs/armeabi/ndktest3" \
-	"out/libs/armeabi-v7a/ndk.so" \
+	"out/libs/android-9-mips/foo_app.a" \
+	"out/libs/android-9-mips/foo_app_main.so" \
+	"out/libs/android-9-mips/module0.so" \
+	"out/libs/android-9-mips/module1.so" \
+	"out/libs/android-9-mips/module2.a" \
+	"out/libs/android-9-mips/module3.a" \
+	"out/libs/android-9-mips/ndk.so" \
+	"out/libs/android-9-mips/ndktest" \
+	"out/libs/android-9-mips/ndktest2" \
+	"out/libs/android-9-mips/ndktest3" \
+	"out/libs/android-9-mips/gdbserver" \
+	"out/libs/android-9-mips/gdb.setup" \
+	"out/libs/android-9-x86/foo_app.a" \
+	"out/libs/android-9-x86/foo_app_main.so" \
+	"out/libs/android-9-x86/module0.so" \
+	"out/libs/android-9-x86/module1.so" \
+	"out/libs/android-9-x86/module2.a" \
+	"out/libs/android-9-x86/module3.a" \
+	"out/libs/android-9-x86/ndk.so" \
+	"out/libs/android-9-x86/ndktest" \
+	"out/libs/android-9-x86/ndktest2" \
+	"out/libs/android-9-x86/ndktest3" \
+	"out/libs/android-9-x86/gdbserver" \
+	"out/libs/android-9-x86/gdb.setup" \
+	"out/libs/android-9-armeabi/foo_app.a" \
+	"out/libs/android-9-armeabi/foo_app_main.so" \
+	"out/libs/android-9-armeabi/module0.so" \
+	"out/libs/android-9-armeabi/module1.so" \
+	"out/libs/android-9-armeabi/module2.a" \
+	"out/libs/android-9-armeabi/module3.a" \
+	"out/libs/android-9-armeabi/ndktest2" \
+	"out/libs/android-9-armeabi/ndktest3" \
+	"out/libs/android-9-armeabi/gdbserver" \
+	"out/libs/android-9-armeabi/gdb.setup" \
+	"out/libs/android-14-armeabi/gdbserver" \
+	"out/libs/android-14-armeabi/gdb.setup" \
+	"out/libs/android-14-armeabi/ndk.so" \
+	"out/libs/android-14-armeabi-v7a/gdbserver" \
+	"out/libs/android-14-armeabi-v7a/gdb.setup" \
+	"out/libs/android-14-armeabi-v7a/ndk.so" \
 	"out/a1.native" \
 	"out/a2.native" \
 	"out/a3.native" \
@@ -64,14 +74,30 @@ function run ()
 
     rm -rf ${files[@]} out
 
-    local lines=$(smart)
-    if false; then
-	echo "========================================"
-	echo "$lines"
-	echo "========================================"
+    local lines
+    if true; then
+	lines=$(smart)
+    else
+	smart
     fi
 
     check-files files
+
+    function check-executible ()
+    {
+	for file in $@; do
+	    if [[ ! -x $file ]]; then
+		error "$file is not executible!"
+	    fi
+	done
+    }
+
+    check-executible \
+	"out/libs/android-9-mips/gdbserver" \
+	"out/libs/android-9-x86/gdbserver" \
+	"out/libs/android-9-armeabi/gdbserver" \
+	"out/libs/android-14-armeabi/gdbserver" \
+	"out/libs/android-14-armeabi-v7a/gdbserver" \
 
     function check-more-objects ()
     {
@@ -101,43 +127,67 @@ function run ()
     check-more-objects "$objs"
 
     files=( \
-	"./out/libs/armeabi/ndk.so" \
+	"out/libs/android-14-armeabi/ndk.so" \
+	"out/libs/android-14-armeabi/gdbserver" \
+	"out/libs/android-14-armeabi/gdb.setup" \
 	)
     lines=($(cat "out/a1.native"))
     check-same-set files lines
 
     files=( \
-	"./out/libs/armeabi-v7a/ndk.so" \
+	"out/libs/android-14-armeabi-v7a/ndk.so" \
+	"out/libs/android-14-armeabi-v7a/gdbserver" \
+	"out/libs/android-14-armeabi-v7a/gdb.setup" \
 	)
     lines=($(cat "out/a2.native"))
     check-same-set files lines
 
     files=( \
-	"./out/libs/x86/ndk.so" \
-	"./out/libs/mips/ndk.so" \
+	"out/libs/android-9-x86/ndk.so" \
+	"out/libs/android-9-x86/gdbserver" \
+	"out/libs/android-9-x86/gdb.setup" \
+	"out/libs/android-9-mips/ndk.so" \
+	"out/libs/android-9-mips/gdbserver" \
+	"out/libs/android-9-mips/gdb.setup" \
 	)
     lines=($(cat "out/a3.native"))
     check-same-set files lines
 
     files=( \
-	"./out/libs/x86/ndktest" \
-	"./out/libs/mips/ndktest" \
+	"out/libs/android-9-x86/ndktest" \
+	"out/libs/android-9-x86/gdbserver" \
+	"out/libs/android-9-x86/gdb.setup" \
+	"out/libs/android-9-mips/ndktest" \
+	"out/libs/android-9-mips/gdbserver" \
+	"out/libs/android-9-mips/gdb.setup" \
 	)
     lines=($(cat "out/a4.native"))
     check-same-set files lines
 
     files=( \
-	"./out/libs/x86/ndktest2" \
-	"./out/libs/mips/ndktest2" \
-	"./out/libs/armeabi/ndktest2" \
+	"out/libs/android-9-x86/ndktest2" \
+	"out/libs/android-9-x86/gdbserver" \
+	"out/libs/android-9-x86/gdb.setup" \
+	"out/libs/android-9-mips/ndktest2" \
+	"out/libs/android-9-mips/gdbserver" \
+	"out/libs/android-9-mips/gdb.setup" \
+	"out/libs/android-9-armeabi/ndktest2" \
+	"out/libs/android-9-armeabi/gdbserver" \
+	"out/libs/android-9-armeabi/gdb.setup" \
 	)
     lines=($(cat "out/a5.native"))
     check-same-set files lines
 
     files=( \
-	"./out/libs/x86/ndktest3" \
-	"./out/libs/mips/ndktest3" \
-	"./out/libs/armeabi/ndktest3" \
+	"out/libs/android-9-x86/ndktest3" \
+	"out/libs/android-9-x86/gdbserver" \
+	"out/libs/android-9-x86/gdb.setup" \
+	"out/libs/android-9-mips/ndktest3" \
+	"out/libs/android-9-mips/gdbserver" \
+	"out/libs/android-9-mips/gdb.setup" \
+	"out/libs/android-9-armeabi/ndktest3" \
+	"out/libs/android-9-armeabi/gdbserver" \
+	"out/libs/android-9-armeabi/gdb.setup" \
 	)
     lines=($(cat "out/a6.native"))
     check-same-set files lines
@@ -147,25 +197,25 @@ function run ()
     check-same-set files lines
 
     files=( \
-	"./out/libs/x86/foo_app_main.so" \
-	"./out/libs/mips/foo_app_main.so" \
-	"./out/libs/armeabi/foo_app_main.so" \
+	"out/libs/android-9-x86/foo_app_main.so" \
+	"out/libs/android-9-mips/foo_app_main.so" \
+	"out/libs/android-9-armeabi/foo_app_main.so" \
 	)
     lines=($(cat "out/foo_app_main.native"))
     check-same-set files lines
 
     files=( \
-	"./out/libs/x86/module0.so" \
-	"./out/libs/mips/module0.so" \
-	"./out/libs/armeabi/module0.so" \
+	"out/libs/android-9-x86/module0.so" \
+	"out/libs/android-9-mips/module0.so" \
+	"out/libs/android-9-armeabi/module0.so" \
 	)
     lines=($(cat "out/module0.native"))
     check-same-set files lines
 
     files=( \
-	"./out/libs/x86/module1.so" \
-	"./out/libs/mips/module1.so" \
-	"./out/libs/armeabi/module1.so" \
+	"out/libs/android-9-x86/module1.so" \
+	"out/libs/android-9-mips/module1.so" \
+	"out/libs/android-9-armeabi/module1.so" \
 	)
     lines=($(cat "out/module1.native"))
     check-same-set files lines

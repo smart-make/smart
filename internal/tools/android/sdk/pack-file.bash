@@ -7,4 +7,4 @@ cd "$out" || exit 1
 for file in $files ; do
     zip -r "$package" "$file" || exit 2
 done
-cd -
+cd - > /dev/null

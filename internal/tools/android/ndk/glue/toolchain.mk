@@ -130,10 +130,28 @@ include $(NDK_TOOLCHAIN.$(TARGET_TOOLCHAIN).setup)
 TARGET_GDBSERVER := $(NDK_ROOT)/prebuilt/android-$(TARGET_ARCH)/gdbserver/gdbserver
 
 # compute NDK_APP_DST_DIR as the destination directory for the generated files
-#NDK_APP_DST_DIR := $(NDK_APP_PROJECT_PATH)/libs/$(TARGET_ARCH_ABI)
-#NDK_APP_GDBSERVER := $(NDK_APP_DST_DIR)/gdbserver
-#NDK_APP_GDBSETUP := $(NDK_APP_DST_DIR)/gdb.setup
+APP_GDBSERVER := $(TARGET_OUT)/gdbserver
+APP_GDBSETUP := $(TARGET_OUT)/gdb.setup
+ifeq ($(APP_OPTIM),debug)
+  $(OUT)/$(NAME).native: $(APP_GDBSERVER) $(APP_GDBSETUP)
+  ifneq ($(smart.has.$(APP_GDBSERVER)),yes)
+    smart.has.$(APP_GDBSERVER) := yes
+    $(call smart~make~target~dir,$(APP_GDBSERVER))
+    $(call smart~make~target~dir,$(APP_GDBSETUP))
+    $(APP_GDBSERVER): $(TARGET_GDBSERVER) | $(dir $(APP_GDBSERVER))
+	@echo "install $@"
+	@install $< $@
+    $(APP_GDBSETUP): PRIVATE_SOLIB_PATH := $(TARGET_OUT)
+    $(APP_GDBSETUP): PRIVATE_SRC_DIRS := $(SYSROOT)/usr/include
+    $(APP_GDBSETUP): | $(dir $(APP_GDBSETUP))
+	@echo "install $@"
+	@echo "set solib-search-path $(call host-path,$(PRIVATE_SOLIB_PATH))" > $@
+	@echo "directory $(call host-path,$(call remove-duplicates,$(PRIVATE_SRC_DIRS)))" >> $@
+  endif
+endif #$(APP_OPTIM)==debug
 
+##
+## Setting up STL
 smart~app~stl := $(or $(APP_STL),$(smart~app~stl))
 ifdef smart~app~stl
   smart~stl~mods := $(NDK_STL.$(smart~app~stl).STATIC_LIBS) $(NDK_STL.$(smart~app~stl).SHARED_LIBS)
@@ -219,6 +237,16 @@ smart~use :=
 #$(warning $(NDK_STL.$(smart~app~stl).IMPORT_MODULE))
 #$(warning $(NDK_STL.$(smart~app~stl).STATIC_LIBS))
 #$(warning $(NDK_STL.$(smart~app~stl).SHARED_LIBS))
+
+smart~optimize~debug := $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
+smart~optimize~release := $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
+$(foreach v,smart~CPPFLAGS smart~CXXFLAGS smart~CFLAGS,\
+    $(eval $v := $(filter-out -O% -g -ggdb,$($v))))
+smart~CFLAGS := $(smart~optimize~$(APP_OPTIM)) $(smart~CFLAGS)
+
+ifeq ($(ARM_NEON),true)
+  smart~CFLAGS := $(TARGET_CFLAGS.neon) $(smart~CFLAGS)
+endif
 
 smart~CPP_FEATURES := $(sort $(smart~CPP_FEATURES))
 
