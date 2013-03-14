@@ -4,4 +4,5 @@
 #    All rights reserved.
 #
 $(smart.internal)
-smart.context.go := GOPATH COMMANDS PACKAGES
+
+GOPATH := $(SRCDIR)

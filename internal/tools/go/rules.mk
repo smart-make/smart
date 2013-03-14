@@ -5,22 +5,14 @@
 #
 $(smart.internal)
 
-ifdef SOURCES
-  include $(smart.tooldir)/sources.mk
-endif #SOURCES
+export GOPATH := $(PWD)/$(GOPATH:$(ROOT)/%=%)
 
-ifdef PROGRAM
-  include $(smart.tooldir)/programs.mk
-  ifdef PROGRAM
-    module-$(SCRIPT): $(PROGRAM)
-    modules: module-$(SCRIPT)
-  endif #PROGRAM
-endif #PROGRAM
+ifdef PACKAGES
+  include $(smart.tooldir)/packages.mk
+endif #PACKAGES
 
-ifdef LIBRARY
-  include $(smart.tooldir)/libraries.mk
-  ifdef LIBRARY
-    module-$(SCRIPT): $(LIBRARY)
-    modules: module-$(SCRIPT)
-  endif #LIBRARY
-endif #LIBRARY
+ifdef COMMANDS
+  include $(smart.tooldir)/commands.mk
+endif #COMMANDS
+
+modules: module-$(SCRIPT)
