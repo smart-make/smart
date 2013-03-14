@@ -6,7 +6,7 @@ smart~outbin = $(GOPATH)/bin/$(notdir $(smart~cmd))
 define smart~build~command
 $(eval \
   module-$(SCRIPT): $(smart~outbin)
-  $(smart~outbin) : $(wildcard $(smart~srcdir)/*.go)
+  $(smart~outbin) : $(wildcard $(smart~srcdir)/*.go) $(smart~packages)
 	@bash $(smart.tooldir)/go.bash cmd $(smart~srcdir) $$(@F)
  )
 endef #smart~build~command
