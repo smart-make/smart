@@ -18,5 +18,5 @@ endif #LIBRARY.a
 
 ifdef LIBRARY.so
 $(eval $(LIBRARY.so): $(OBJECTS) ; \
-	$(CXX) $(LDFLAGS) -shared -o $$@ $$^ $(LDLIBS))
+	$(CXX) $(LDFLAGS) -shared -o $$@ $$^ $(smart~LDLIBS))
 endif #LIBRARY.so

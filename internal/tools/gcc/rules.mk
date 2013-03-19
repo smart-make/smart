@@ -11,11 +11,12 @@ ifdef SOURCES
   include $(smart.tooldir)/sources.mk
 endif #SOURCES
 
+smart~LDLIBS := $(LDLIBS)
 ifdef FULLLIBS
-  LDLIBS  = -Wl,--whole-archive $(sort $(FULLLIBS))
-  LDLIBS += -Wl,--no-whole-archive $(LOADLIBS) $(LIBADD)
+  smart~LDLIBS += -Wl,--whole-archive $(sort $(FULLLIBS))
+  smart~LDLIBS += -Wl,--no-whole-archive $(LOADLIBS) $(LIBADD)
 else
-  LDLIBS  = $(LOADLIBS) $(LIBADD)
+  smart~LDLIBS += $(LOADLIBS) $(LIBADD)
 endif #FULLLIBS
 
 ifdef LIBRARY
