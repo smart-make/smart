@@ -20,7 +20,7 @@ smart~INCLUDES := $(patsubst %,-I%,$(smart~INCLUDES:-I%=%))
 
 define smart~compile.c
 $(TARGET_CC) \
-  -MMD -MG -MP -MF $$(@:%.o=%.d) -MT $$@ \
+  -MMD -MP -MF $$(@:%.o=%.d) -MT $$@ \
   -o $$@ $(smart~CFLAGS) $(smart~DEFINES) $(smart~INCLUDES) \
   -c $$<
 endef #smart~compile.c
