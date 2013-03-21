@@ -6,6 +6,7 @@
 $(smart.internal)
 
 smart~sufixes~c := .c
+smart~sufixes~asm := .s .S
 smart~sufixes~c++ := .C .cc .cpp
 
 smart~sources := $(patsubst $(ROOT)/%,%,$(SOURCES:%=$(SRCDIR)/%))
@@ -24,6 +25,8 @@ $(TARGET_CC) \
   -o $$@ $(smart~CFLAGS) $(smart~DEFINES) $(smart~INCLUDES) \
   -c $$<
 endef #smart~compile.c
+
+smart~compile.asm = $(smart~compile.c)
 
 define smart~compile.c++
 $(TARGET_CXX) \
@@ -45,7 +48,7 @@ $(if $(and $(smart~s),$(smart~o)),$(eval \
 endef #smart~compile~rules
 
 ifdef  smart~sources
-  $(foreach 1,c c++,$(foreach 2,$(smart~sufixes~$1),$(smart~compile~rules)))
+  $(foreach 1,asm c c++,$(foreach 2,$(smart~sufixes~$1),$(smart~compile~rules)))
 endif #smart~sources
 
 smart~OBJS := $(strip $(smart~OBJS))

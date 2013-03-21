@@ -10,10 +10,5 @@ $(smart.internal)
 ## Setup toolchain version, and default to 4.6..
 NDK_TOOLCHAIN_VERSION := $(or $(TOOLCHAIN_VERSION),4.6)
 
-## Prepare sources..
-#ifndef SOURCES
-#  SOURCES := $(call smart.find,$(SRCDIR),%.c %.C %.cpp %.cc %.CC)
-#endif #SOURCES
-
 ## Build it as a new app..
-include $(smart.tooldir)/glue/app.mk
+$(foreach smart~app,rules,$(eval include $(smart.tooldir)/glue/app.mk))

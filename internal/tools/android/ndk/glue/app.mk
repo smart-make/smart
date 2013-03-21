@@ -5,6 +5,10 @@
 #
 $(smart.internal)
 
+ifndef smart~app
+  $(error smart: internal error)
+endif
+
 ##
 ## References: (where BUILD_SYSTEM = $(NDK_ROOT)/build/core)
 ##      0.  $(BUILD_SYSTEM)/main.mk
@@ -26,4 +30,4 @@ $(foreach abi,$(or $(APP_ABI),armeabi),\
     $(eval TARGET_ARCH_ABI := $(abi))\
     $(eval include $(smart.tooldir)/glue/abi.mk)\
     $(eval include $(smart.tooldir)/glue/toolchain.mk)\
-    $(eval include $(smart.tooldir)/glue/rules.mk))
+    $(eval include $(smart.tooldir)/glue/$(smart~app).mk))
