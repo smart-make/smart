@@ -101,12 +101,24 @@ smart~fun :=
 
 .SUFFIXES:
 
+define smart~sync~smart~e
+$(if $(and $1,$(wildcard $1.e)),$(if $(wildcard $1),\
+ $(info $(shell $(smart.root)/scripts/sync-smart-e -save $1))\
+ $(if $(shell ls $1.e),,$(error failed to save "$1"))\
+ ,\
+ $(info $(shell $(smart.root)/scripts/sync-smart-e -restore $1))\
+ $(if $(shell ls $1),,$(error failed to prepare "$1"))))
+endef #smart~sync~smart~e
+
 PHONY := modules settle clean
 ROOT.MK := $(wildcard $(ROOT)/sm.mk)
 ifdef ROOT.MK
   include $(ROOT.MK)
 else
-  ROOT.MK := $(or $(wildcard $(ROOT)/smart),$(wildcard $(ROOT)/smart.mk))
+  $(call smart~sync~smart~e,$(ROOT)/smart)
+  ROOT.MK := $(strip $(or \
+    $(or $(wildcard $(ROOT)/smart),$(shell ls $(ROOT)/smart)),\
+    $(or $(wildcard $(ROOT)/smart.mk),$(shell ls $(ROOT)/smart.mk))))
   ifdef ROOT.MK
     MAKEFILE_LIST += $(ROOT.MK)
     include $(SMART.DECLARE)

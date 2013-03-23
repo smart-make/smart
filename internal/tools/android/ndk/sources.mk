@@ -52,3 +52,7 @@ ifdef  smart~sources
 endif #smart~sources
 
 smart~OBJS := $(strip $(smart~OBJS))
+
+ifdef smart~OBJS
+  clean-$(SCRIPT): smart~clean~files += $(smart~OBJS)
+endif

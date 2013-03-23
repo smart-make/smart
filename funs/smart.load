@@ -23,7 +23,10 @@ smart~sm.mk := $(wildcard $(SRCDIR)/$(@loadee)/sm.mk)
 smart~smart :=
 
 ifndef smart~sm.mk
-  smart~sm.mk := $(or $(wildcard $(SRCDIR)/$(@loadee)/smart),$(wildcard $(SRCDIR)/$(@loadee)/smart.mk))
+  $(call smart~sync~smart~e,$(SRCDIR)/$(@loadee)/smart)
+  smart~sm.mk := $(strip $(or \
+    $(or $(wildcard $(SRCDIR)/$(@loadee)/smart),$(shell ls $(SRCDIR)/$(@loadee)/smart)),\
+    $(or $(wildcard $(SRCDIR)/$(@loadee)/smart.mk),$(shell ls $(SRCDIR)/$(@loadee)/smart.mk))))
   ifdef smart~sm.mk
     smart~smart := $(notdir $(smart~sm.mk))
   else

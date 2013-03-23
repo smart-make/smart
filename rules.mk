@@ -12,6 +12,7 @@ ifndef SRCDIR
 endif #!SRCDIR
 
 module-$(SCRIPT):
+clean-$(SCRIPT): smart~clean~files :=
 
 ifdef REQUIRES
   $(foreach @name, $(REQUIRES),\
@@ -48,7 +49,7 @@ ifeq ($(SETTLE_ROOT),true)
   smart.settle_root := $(SRCDIR)
 endif #SETTLE_ROOT
 
-$(eval clean-$(SCRIPT):; $(if $(LIBRARY)$(PROGRAM)$(OBJECTS),@rm -vf $(strip $(LIBRARY) $(PROGRAM) $(OBJECTS))))
 clean: clean-$(SCRIPT)
+clean-$(SCRIPT): ; @rm -vf $(smart~clean~files)
 
 PHONY += module-$(SCRIPT) clean-$(SCRIPT)

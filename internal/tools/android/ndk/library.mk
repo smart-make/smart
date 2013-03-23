@@ -21,6 +21,7 @@ $(call smart~unique,smart~ARFLAGS)
 $(call smart~make~target~dir,$(smart~library.a))
 $(eval $(smart~library.a): $(smart~OBJS) | $(dir $(smart~library.a)); \
 	$(TARGET_AR) $(smart~ARFLAGS) $$@ $(smart~OBJS))
+clean-$(SCRIPT): smart~clean~files += $(smart~library.a)
 endif #smart~library.a
 
 ##
@@ -35,4 +36,5 @@ $(eval $(smart~library.so): $(smart~OBJS) $(smart~LIBS) | $(dir $(smart~library.
 	$(TARGET_CXX) -shared -Wl,-soname,$$(@F) --sysroot=$(SYSROOT) \
 	-o $$@ $(smart~OBJS) $(smart~LIBS) $(smart~LDFLAGS) $(smart~LDLIBS))
 $(OUT)/$(NAME).native: $(smart~library.so)
+clean-$(SCRIPT): smart~clean~files += $(smart~library.so)
 endif #smart~library.so
