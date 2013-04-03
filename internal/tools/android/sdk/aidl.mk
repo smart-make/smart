@@ -9,9 +9,8 @@ define smart~rule
   $(OUT)/$(NAME)/classes/.list : $(OUT)/$(NAME)/sources/.list
   $(OUT)/$(NAME)/sources/.list : $(SOURCES.aidl)
 	@mkdir -p "$$(@D)"
-	@for f in $$^ ; do echo "compile $$$$f"; \
-	$(ANDROID.aidl) -I"$(SRCDIR)/src" -I"$(ANDROID_PLATFORM_LIB)" \
-	$(addprefix -I,$(LIBS.java)) -p"$(ANDROID_PREPROCESS_IMPORT)" \
+	@for f in $$^ ; do echo "aidl $$$$f"; \
+	$(ANDROID.aidl) -I"$(SRCDIR)/src" -p"$(ANDROID_PREPROCESS_IMPORT)" \
 	-o"$(OUT)/$(NAME)/sources" -b $$$$f ; done
 	@find "$$(@D)" -type f -name '*.java' > $$@
 endef #smart~rule
