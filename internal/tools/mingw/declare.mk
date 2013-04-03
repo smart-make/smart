@@ -16,14 +16,16 @@ GCC_Werrors := \
   -Werror=unused-variable \
   -Werror=unused-result \
 
+CC := $(TOOLPREFIX)gcc
+CPP := $(TOOLPREFIX)cpp
+CXX := $(TOOLPREFIX)g++
 CFLAGS := $(GCC_Werrors) -Werror=declaration-after-statement
 CXXFLAGS := $(GCC_Werrors)
 INCLUDES :=
 DEFINES :=
 ARFLAGS := cru
 LDFLAGS :=
-LIBADD :=
-LOADLIBS := \
+LIBADD := \
   -lkernel32\
   -luser32\
   -lgdi32\

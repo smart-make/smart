@@ -120,6 +120,8 @@ function gitignore ()
     fi
     if [[ "x$s" == "x" ]]; then
 	echo "$ignore" >> $gitignore
+	echo "$ignore.backup.*" >> $gitignore
+	echo "$ignore.e.backup.*" >> $gitignore
 	if [[ "x$addignore" == "xyes" ]]; then
 	    cd $d && {
 		git add .gitignore

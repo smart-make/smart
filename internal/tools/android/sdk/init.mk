@@ -34,3 +34,4 @@ ifndef ANDROID.jarsigner
 endif #ANDROID.jarsigner
 
 ANDROID_PLATFORM_LIB = $(ANDROID.root)/platforms/$(PLATFORM)/android.jar
+ANDROID_PREPROCESS_IMPORT = $(ANDROID.root)/platforms/$(PLATFORM)/framework.aidl

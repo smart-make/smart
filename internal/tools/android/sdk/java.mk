@@ -9,7 +9,8 @@ define smart~rule
   $(OUT)/$(NAME)/classes/.list : $(SOURCES.java) | $(LIBS.java)
 	@mkdir -p $$(@D)
 	javac -d $$(@D) -cp "$(CLASSPATH)" \
-	`cat $(OUT)/$(NAME)/res/.sources` $(SOURCES.java)
+	`cat $(OUT)/$(NAME)/res/.sources` \
+	$(SOURCES.java) $(SOURCES.java_from_aidl)
 	@cd $$(@D) && find . -type f -name '*.class' > $$(@F)
 endef #smart~rule
 
