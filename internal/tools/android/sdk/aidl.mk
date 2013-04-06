@@ -5,7 +5,7 @@
 #
 
 define smart~rule
-  SOURCES.java_from_aidl := `cat $(OUT)/$(NAME)/sources/.list`
+  SOURCES.java_from_aidl := @$(OUT)/$(NAME)/sources/.list
   $(OUT)/$(NAME)/classes/.list : $(OUT)/$(NAME)/sources/.list
   $(OUT)/$(NAME)/sources/.list : $(SOURCES.aidl)
 	@mkdir -p "$$(@D)"
