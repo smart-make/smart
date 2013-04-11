@@ -25,7 +25,7 @@ STOREPASS := $(or \
 define smart~rule
   $(OUT)/$(NAME)/_.pack:
 	$$(PACK_COMMANDS) || rm -f $$@
-  $(OUT)/$(NAME)/_.unsigned : $(OUT)/$(NAME)/classes.dex $(OUT)/$(NAME)/_.pack
+  $(OUT)/$(NAME)/_.unsigned : $(CLASSES.DEX) $(OUT)/$(NAME)/_.pack
 	@cp -f $(OUT)/$(NAME)/_.pack $$@
 	$(ANDROID.aapt) add -k $$@ $$< || rm -f $$@
 endef #smart~rule

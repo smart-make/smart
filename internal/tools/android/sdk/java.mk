@@ -25,12 +25,17 @@ $(eval $(smart~rule))
 
 # `cat $$(<F) | sed 's|^\./||'`
 define smart~rule
+  CLASSES.DEX := $(OUT)/$(NAME)/classes.dex
   $(OUT)/$(NAME)/classes.dex: $(OUT)/$(NAME)/classes/.list
 	cd $(OUT)/$(NAME)/classes && $(ANDROID.dx) \
 	$(if $(findstring windows,$(sm.os.name)),,-JXms16M -JXmx1536M)\
 	--dex --output ../$$(@F) $(LIBS.java) .
 endef #smart~rule
 
-$(eval $(smart~rule))
+ifneq ($(SOURCES.java),)
+  $(eval $(smart~rule))
+else
+  CLASSES.DEX :=
+endif
 
 smart~rule =

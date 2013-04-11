@@ -27,6 +27,7 @@ $(eval $(smart~rule))
 
 define smart~rule
   $(OUT)/$(NAME)/res/.packed: $(LIBS.java) $(smart~res.all)
+	@mkdir -p $$(@D)
 	$(ANDROID.aapt) package -u -F $$@ \
         $(addprefix -I ,"$(ANDROID_PLATFORM_LIB)") \
 	$(foreach 1,$(LIBS.java),-I "$1") $(if $(PACKAGE),-x) \
