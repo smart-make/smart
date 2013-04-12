@@ -10,7 +10,7 @@ smart~program := $(addprefix $(TARGET_OUT)/,$(PROGRAM:$(TARGET_OUT)/%=%))
 $(call smart~unique,smart~LDFLAGS)
 $(call smart~unique,smart~LDLIBS)
 $(call smart~make~target~dir,$(smart~program))
-$(eval $(smart~program): $(smart~OBJS) $(smart~LIBS) | $(dir $(smart~program)) ; \
+$(eval $(smart~program): $(smart~OBJS) $(smart~LIBS) $(smart~DEPS) | $(dir $(smart~program)) ; \
 	$(TARGET_CXX) --sysroot=$(SYSROOT) -Wl,--gc-sections -Wl,-z,nocopyreloc \
 	-o $$@ $(smart~OBJS) $(smart~LIBS) $(smart~LDFLAGS) $(smart~LDLIBS))
 $(OUT)/$(NAME).native: $(smart~program)

@@ -32,7 +32,7 @@ $(call smart~unique,smart~LDFLAGS)
 $(call smart~unique,smart~LDLIBS)
 $(call smart~unique,smart~LIBS)
 $(call smart~make~target~dir,$(smart~library.so))
-$(eval $(smart~library.so): $(smart~OBJS) $(smart~LIBS) | $(dir $(smart~library.so)) ; \
+$(eval $(smart~library.so): $(smart~OBJS) $(smart~LIBS) $(smart~DEPS) | $(dir $(smart~library.so)) ; \
 	$(TARGET_CXX) -shared -Wl,-soname,$$(@F) --sysroot=$(SYSROOT) \
 	-o $$@ $(smart~OBJS) $(smart~LIBS) $(smart~LDFLAGS) $(smart~LDLIBS))
 $(OUT)/$(NAME).native: $(smart~library.so)

@@ -27,14 +27,27 @@ LDFLAGS  := $(call smart~get,LDFLAGS)
 LDLIBS   := $(call smart~get,LDLIBS)
 CPP_FEATURES := $(call smart~get,CPP_FEATURES)
 
+EXPORT.CFLAGS   := $(call smart~get~export,CFLAGS)
+EXPORT.CXXFLAGS := $(call smart~get~export,CXXFLAGS)
+EXPORT.CPPFLAGS := $(call smart~get~export,CPPFLAGS)
+EXPORT.LDFLAGS  := $(call smart~get~export,LDFLAGS)
+EXPORT.LDLIBS   := $(call smart~get~export,LDLIBS)
+EXPORT.INCLUDES := $(call smart~get~export,C_INCLUDES)
+
 #ifeq ($(NAME),gnustl_static)
 #$(warning $(NAME): $(SOURCES))
 #endif
 
 ## Set target library/program
-smart~set~target~STATIC_LIBRARY = LIBRARY := $(call smart~get,MODULE).a
-smart~set~target~SHARED_LIBRARY = LIBRARY := $(call smart~get,MODULE).so
-smart~set~target~EXECUTABLE = PROGRAM := $(call smart~get,MODULE)
+ifneq ($(filter -l$(NAME),$(EXPORT.LDLIBS)),)
+  smart~set~target~STATIC_LIBRARY = LIBRARY := lib$(NAME:lib%=%).a
+  smart~set~target~SHARED_LIBRARY = LIBRARY := lib$(NAME:lib%=%).so
+  smart~set~target~EXECUTABLE = PROGRAM := $(NAME)
+else
+  smart~set~target~STATIC_LIBRARY = LIBRARY := $(NAME).a
+  smart~set~target~SHARED_LIBRARY = LIBRARY := $(NAME).so
+  smart~set~target~EXECUTABLE = PROGRAM := $(NAME)
+endif
 $(eval $(smart~set~target~$(call smart~get,MODULE_CLASS)))
 
 #$(warning $(NAME): $(SCRIPT), $(lastword $(MAKEFILE_LIST)))
@@ -53,10 +66,3 @@ ifneq ($(call smart~get,WHOLE_STATIC_LIBRARIES),)
 endif
 
 #$(warning $(NAME): $(USE_MODULES) ($(APP_ABI)))
-
-EXPORT.CFLAGS   := $(call smart~get~export,CFLAGS)
-EXPORT.CXXFLAGS := $(call smart~get~export,CXXFLAGS)
-EXPORT.CPPFLAGS := $(call smart~get~export,CPPFLAGS)
-EXPORT.LDFLAGS  := $(call smart~get~export,LDFLAGS)
-EXPORT.LDLIBS   := $(call smart~get~export,LDLIBS)
-EXPORT.INCLUDES := $(call smart~get~export,C_INCLUDES)

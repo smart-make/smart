@@ -179,6 +179,7 @@ smart~LDFLAGS  := $(TARGET_LDFLAGS) $(LDFLAGS)
 smart~LDLIBS   := $(TARGET_LDLIBS) $(LDLIBS)
 smart~OBJS     := $(OBJECTS)
 smart~LIBS     := $(TARGET_LIBS) $(LIBS)
+smart~DEPS     :=
 smart~CPP_FEATURES := $(CPP_FEATURES)
 
 ifneq ($(ALLOW_UNDEFINED_SYMBOLS),true)
@@ -221,7 +222,12 @@ $(eval \
   smart~LDLIBS   += $(call smart~mexport,LDLIBS)
   smart~INCLUDES += $(call smart~mexport,C_INCLUDES)
   smart~OBJS     += $(call smart~mexport,OBJECTS)
-  smart~LIBS     += $(addprefix $(TARGET_OUT)/,$(call smart.get,$(smart~m),LIBRARY))
+  ifneq ($(filter -l$(smart~m),$(call smart~mexport,LDLIBS)),)
+    smart~LDFLAGS += -L$(TARGET_OUT)
+    smart~DEPS   += $(addprefix $(TARGET_OUT)/,$(call smart.get,$(smart~m),LIBRARY))
+  else
+    smart~LIBS   += $(addprefix $(TARGET_OUT)/,$(call smart.get,$(smart~m),LIBRARY))
+  endif
   smart~CPP_FEATURES += $(__ndk_modules.$(smart~m).CPP_FEATURES)
  )$(foreach smart~m,$(call smart.get,$(smart~m),USE_MODULES),\
       $(call smart~use))
