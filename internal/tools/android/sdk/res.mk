@@ -5,7 +5,7 @@
 #
 $(smart.internal)
 
-smart~res.all := \
+smart~res.all := $(SRCDIR)/AndroidManifest.xml \
   $(wildcard $(SRCDIR)/res $(SRCDIR)/assets) \
   $(call smart.find,$(SRCDIR)/res,%.xml %.png %.jpg) \
   $(call smart.find,$(SRCDIR)/assets,,%~)
