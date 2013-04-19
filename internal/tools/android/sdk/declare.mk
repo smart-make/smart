@@ -14,3 +14,6 @@ ANDROID_EXTRAS = $(ANDROID.root)/extras
 APK := $(NAME).apk
 CLASSPATH :=
 LIBS :=
+
+#PROGUARD := $(wildcard $(SRCDIR)/proguard.cfg)
+PROGUARD := $(wildcard $(SRCDIR)/obfuscate.pro)

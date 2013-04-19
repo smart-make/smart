@@ -29,6 +29,11 @@ ifndef ANDROID.zipalign
   ANDROID.zipalign = $(ANDROID.root)/tools/zipalign
 endif #ANDROID.zipalign
 
+ifndef ANDROID.proguard
+  ## This is a directory!
+  ANDROID.proguard = $(ANDROID.root)/tools/proguard
+endif #ANDROID.proguard
+
 ifndef ANDROID.jarsigner
   ANDROID.jarsigner = jarsigner
 endif #ANDROID.jarsigner

@@ -42,5 +42,3 @@ endef #smart~rule
 $(eval $(smart~rule))
 
 smart~rule =
-
-$(OUT)/$(NAME)/classes/.list : $(OUT)/$(NAME)/res/.sources
