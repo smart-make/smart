@@ -10,6 +10,8 @@ $(smart.internal)
 # system with smart build system. And it's tarting with the init.mk.
 #
 ifeq ($(and $(BUILD_SYSTEM),$(NDK_ALL_ABIS),$(NDK_ALL_ARCHS),$(NDK_ALL_TOOLCHAINS),$(NDK_ALL_PLATFORMS)),)
+  NDK_HOST_AWK := $(shell which awk)
+
   # NDK_ROOT *must* be defined and point to the root of the NDK installation
   # before init.mk
   NDK_ROOT := /store/open/android-ndk
