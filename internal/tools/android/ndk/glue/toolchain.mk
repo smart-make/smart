@@ -244,11 +244,17 @@ smart~use :=
 #$(warning $(NDK_STL.$(smart~app~stl).STATIC_LIBS))
 #$(warning $(NDK_STL.$(smart~app~stl).SHARED_LIBS))
 
-smart~optimize~debug := $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
-smart~optimize~release := $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
+smart~optimize~debug~CFLAGS := $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
+smart~optimize~release~CFLAGS := -O2 \
+    $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
+
+smart~optimize~debug~LDFLAGS := $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_LDFLAGS)
+smart~optimize~release~LDFLAGS := -Wl,--strip-all \
+    $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_LDFLAGS)
+
 $(foreach v,smart~CPPFLAGS smart~CXXFLAGS smart~CFLAGS,\
     $(eval $v := $(filter-out -O% -g -ggdb,$($v))))
-smart~CFLAGS := $(smart~optimize~$(APP_OPTIM)) $(smart~CFLAGS)
+smart~CFLAGS := $(smart~optimize~$(APP_OPTIM)~CFLAGS) $(smart~CFLAGS)
 
 ifeq ($(ARM_NEON),true)
   smart~CFLAGS := $(TARGET_CFLAGS.neon) $(smart~CFLAGS)
@@ -280,7 +286,8 @@ endif
 #$(warning $(NAME): $(smart~has~rtti) $(smart~has~exceptions))
 
 smart~LIBS := $(strip $(smart~LIBS))
-smart~LDFLAGS := $(filter-out -shared,$(smart~LDFLAGS))
+smart~LDFLAGS := $(filter-out -shared,$(smart~LDFLAGS)) \
+    $(smart~optimize~$(APP_OPTIM)~LDFLAGS)
 smart~LDLIBS := $(strip $(smart~LDLIBS) $(TARGET_LDLIBS))
 
 ifneq (,$(call module-has-c++-features,$(NAME),rtti exceptions))
