@@ -14,8 +14,9 @@ define smart~rule
   $(OUT)/$(NAME)/.classes : \
     $(OUT)/$(NAME)/.sources $(OUT)/$(NAME)/res/.sources \
     $(OUT)/$(NAME)/.classpath | $(LIBS.java)
-	@mkdir -p $(OUT)/$(NAME)/classes
+	@rm -rf $(OUT)/$(NAME)/classes
 	@rm -vf $(OUT)/$(NAME)/classes.dex
+	@mkdir -p $(OUT)/$(NAME)/classes
 	javac -d $(OUT)/$(NAME)/classes "@$(OUT)/$(NAME)/.classpath" \
 	"@$(OUT)/$(NAME)/res/.sources" "@$(OUT)/$(NAME)/.sources" \
 	$(SOURCES.java_from_aidl)

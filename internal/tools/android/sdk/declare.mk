@@ -11,6 +11,7 @@ endif #ANDROID.root
 
 ANDROID_ROOT = $(ANDROID.root)
 ANDROID_EXTRAS = $(ANDROID.root)/extras
+MANIFEST := $(SRCDIR)/AndroidManifest.xml
 APK := $(NAME).apk
 CLASSPATH :=
 LIBS :=

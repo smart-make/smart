@@ -15,9 +15,11 @@ define smart~rule
 	@echo "-injars classes" >> $$@
 	@echo "-outjars classes-obfuscated.jar" >> $$@
 	@echo "-printmapping classes-obfuscated.map" >> $$@
+	@echo "-include res.pro" >> $$@
 	@echo "-include ../../$(PROGUARD)" >> $$@
   $(OUT)/$(NAME)/classes-obfuscated.jar: $(PROGUARD) \
-     $(OUT)/$(NAME)/proguard.cfg $(OUT)/$(NAME)/.classes
+     $(OUT)/$(NAME)/res.pro $(OUT)/$(NAME)/proguard.cfg \
+     $(OUT)/$(NAME)/.classes
 	@java -jar $(ANDROID.proguard)/lib/proguard.jar @$(OUT)/$(NAME)/proguard.cfg
 endef #smart~rule
 
