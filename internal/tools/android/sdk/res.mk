@@ -6,15 +6,16 @@
 $(smart.internal)
 
 smart~res.all := $(MANIFEST) \
-  $(wildcard $(RES) $(SRCDIR)/res $(SRCDIR)/assets) \
-  $(foreach 1,$(RES) $(SRCDIR)/res,\
+  $(wildcard $(SRCDIR)/res $(SRCDIR)/assets $(RES) $(ASSETS)) \
+  $(foreach 1,$(SRCDIR)/res $(RES),\
       $(call smart.find,$1,%.xml %.png %.jpg,%~)) \
-  $(call smart.find,$(SRCDIR)/assets,,%~)
+  $(foreach 1,$(SRCDIR)/assets $(RES) $(ASSETS),\
+      $(call smart.find,$1,,%~))
 
 define smart~rule
   $(OUT)/$(NAME)/res.pro:
 	@echo "Gen $$@.."
-	@touch $$@
+	@mkdir -p $$(@D) && touch $$@
   $(OUT)/$(NAME)/public.xml \
   $(OUT)/$(NAME)/res/.sources: $(LIBS.java) $(smart~res.all)
 	@mkdir -p $$(@D)
@@ -24,8 +25,8 @@ define smart~rule
 	$(addprefix -M ,$(wildcard $(MANIFEST))) \
         $(addprefix -I ,"$(ANDROID_PLATFORM_LIB)") \
 	$(foreach 1,$(LIBS.java),-I "$1") \
-	$(foreach 1,$(RES) $(SRCDIR)/res,$(addprefix -S ,$(wildcard $1))) \
-	$(foreach 1,$(RES) $(SRCDIR)/assets,$(addprefix -A ,$(wildcard $1)))
+	$(foreach 1,$(SRCDIR)/res $(RES),$(addprefix -S ,$(wildcard $1))) \
+	$(foreach 1,$(SRCDIR)/assets $(ASSETS),$(addprefix -A ,$(wildcard $1)))
 	@find $(OUT)/$(NAME)/res -type f -name R.java > $$@
 endef #smart~rule
 
@@ -38,8 +39,8 @@ define smart~rule
 	$(addprefix -M ,$(wildcard $(MANIFEST))) \
         $(addprefix -I ,"$(ANDROID_PLATFORM_LIB)") \
 	$(foreach 1,$(LIBS.java),-I "$1") \
-	$(foreach 1,$(RES) $(SRCDIR)/res,$(addprefix -S ,$(wildcard $1))) \
-	$(foreach 1,$(RES) $(SRCDIR)/assets,$(addprefix -A ,$(wildcard $1)))
+	$(foreach 1,$(SRCDIR)/res $(RES),$(addprefix -S ,$(wildcard $1))) \
+	$(foreach 1,$(SRCDIR)/assets $(ASSETS),$(addprefix -A ,$(wildcard $1)))
 
   $(OUT)/$(NAME)/_.pack: PACK_COMMANDS = cp -f "$(OUT)/$(NAME)/res/.packed" "$$@"
   $(OUT)/$(NAME)/_.pack: $(OUT)/$(NAME)/res/.packed
