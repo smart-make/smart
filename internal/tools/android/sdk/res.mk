@@ -21,9 +21,9 @@ define smart~rule
 	@mkdir -p $$(@D)
 	$(ANDROID.aapt) package -f -m -J "$(OUT)/$(NAME)/res" \
 	-P "$(OUT)/$(NAME)/public.xml" \
-	$(addprefix --custom-package ,"$(R_PACKAGE)") \
+	$(addprefix --custom-package ,$(R_PACKAGE)) \
 	$(addprefix -M ,$(wildcard $(MANIFEST))) \
-        $(addprefix -I ,"$(ANDROID_PLATFORM_LIB)") \
+        $(addprefix -I ,$(ANDROID_PLATFORM_LIB)) \
 	$(foreach 1,$(LIBS.java),-I "$1") \
 	$(foreach 1,$(SRCDIR)/res $(RES),$(addprefix -S ,$(wildcard $1))) \
 	$(foreach 1,$(SRCDIR)/assets $(ASSETS),$(addprefix -A ,$(wildcard $1)))
@@ -37,7 +37,7 @@ define smart~rule
 	@mkdir -p $$(@D)
 	$(ANDROID.aapt) package -u -F $$@ $(if $(PACKAGE),-x) \
 	$(addprefix -M ,$(wildcard $(MANIFEST))) \
-        $(addprefix -I ,"$(ANDROID_PLATFORM_LIB)") \
+        $(addprefix -I ,$(ANDROID_PLATFORM_LIB)) \
 	$(foreach 1,$(LIBS.java),-I "$1") \
 	$(foreach 1,$(SRCDIR)/res $(RES),$(addprefix -S ,$(wildcard $1))) \
 	$(foreach 1,$(SRCDIR)/assets $(ASSETS),$(addprefix -A ,$(wildcard $1)))
