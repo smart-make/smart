@@ -26,6 +26,10 @@ TARGET_PLATFORM := $(strip $(or $(APP_PLATFORM),\
 TARGET_ARCH_ABI :=
 TARGET_TOOLCHAIN :=
 
+## Ensure we're having APP_OPTIM for all modules!
+smart~app~optim := $(or $(APP_OPTIM),$(smart~app~optim))
+APP_OPTIM := $(smart~app~optim)
+
 $(foreach abi,$(or $(APP_ABI),armeabi),\
     $(eval TARGET_ARCH_ABI := $(abi))\
     $(eval include $(smart.tooldir)/glue/abi.mk)\

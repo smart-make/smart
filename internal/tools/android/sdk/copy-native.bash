@@ -19,6 +19,9 @@ function extract-abi ()
     esac
 }
 
+## First remove the old lib directory!
+rm -rf "$out/lib"
+
 for lib in `cat "$file"`; do
     abi=$(extract-abi $lib)
     mkdir -p "$out/lib/$abi" && cp -f "$lib" "$out/lib/$abi" && {

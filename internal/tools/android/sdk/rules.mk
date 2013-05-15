@@ -16,6 +16,8 @@ ifneq ($(wildcard $(SRCDIR)/libs),)
   LIBS.native += $(call smart.find,$(SRCDIR)/libs,%.so %/gdbserver %/gdb.setup)
 endif
 
+$(info $(NAME): $(LIBS.native))
+
 CLASSPATH := $(ANDROID_PLATFORM_LIB):$(CLASSPATH)
 $(foreach 1,$(LIBS.java),$(eval CLASSPATH := $(CLASSPATH):$1))
 

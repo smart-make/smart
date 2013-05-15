@@ -9,6 +9,9 @@ ifeq ($(and $(NDK_ROOT),$(BUILD_SYSTEM),$(NDK_ALL_TOOLCHAINS),$(NDK_ALL_ABIS),$(
   include $(smart.tooldir)/glue/init.mk
 endif
 
+## Use debug version by defalult
+APP_OPTIM := debug
+
 ## Free the dictionary of LOCAL_MODULE definitions
 ##   BUG: clear modules will affect other modules, so don't do this here
 #$(call modules-clear)
