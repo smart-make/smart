@@ -5,6 +5,13 @@
 #
 $(smart.internal)
 
+ANDROID.get-platform-tools = $(or \
+	$(wildcard $(ANDROID.root)/build-tools/17.0.0/$1),\
+	$(wildcard $(ANDROID.root)/platform-tools/$1),\
+	$(wildcard $(ANDROID.root)/platforms/android-4/tools/$1),\
+	$(wildcard $(ANDROID.root)/platforms/android-3/tools/$1),\
+	)
+
 ifndef ANDROID.root
   ANDROID.root := $(patsubst %/tools/,%,$(dir $(shell which android)))
 endif #ANDROID.root
@@ -14,15 +21,17 @@ ifndef ANDROID.root
 endif #ANDROID.root
 
 ifndef ANDROID.dx
-  ANDROID.dx = $(ANDROID.root)/platform-tools/dx
+  #ANDROID.dx = $(ANDROID.root)/platform-tools/dx
+  ANDROID.dx = $(call ANDROID.get-platform-tools,dx)
 endif #ANDROID.dx
 
 ifndef ANDROID.aapt
-  ANDROID.aapt = $(ANDROID.root)/platform-tools/aapt
+  ANDROID.aapt = $(call ANDROID.get-platform-tools,aapt)
 endif #ANDROID.aapt
 
 ifndef ANDROID.aidl
-  ANDROID.aidl = $(ANDROID.root)/platform-tools/aidl
+  #ANDROID.aidl = $(ANDROID.root)/platform-tools/aidl
+  ANDROID.aidl = $(call ANDROID.get-platform-tools,aidl)
 endif #ANDROID.aidl
 
 ifndef ANDROID.zipalign
