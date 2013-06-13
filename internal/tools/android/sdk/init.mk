@@ -49,3 +49,16 @@ endif #ANDROID.jarsigner
 
 ANDROID_PLATFORM_LIB = $(ANDROID.root)/platforms/$(PLATFORM)/android.jar
 ANDROID_PREPROCESS_IMPORT = $(ANDROID.root)/platforms/$(PLATFORM)/framework.aidl
+
+
+android-new-app:
+	@if test -f $(SRCDIR)/AndroidManifest.xml; then \
+	    echo "Already has an AndroidManifest.xml!"; \
+	    false; \
+	fi
+	$(ANDROID.root)/tools/android create project \
+	    -n $(NAME) -p $(SRCDIR) -k $(PACKAGE) -a Main -t 1
+
+android-new-lib:
+	echo $(SRCDIR), $(smart.tooldir) 
+

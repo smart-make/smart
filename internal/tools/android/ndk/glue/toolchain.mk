@@ -82,22 +82,27 @@ endif
 
 TARGET_ABI := $(TARGET_PLATFORM)-$(TARGET_ARCH_ABI)
 
-# setup sysroot-related variables. The SYSROOT point to a directory
-# that contains all public header files for a given platform, plus
-# some libraries and object files used for linking the generated
-# target files properly.
+# setup sysroot variable.
+# SYSROOT_INC points to a directory that contains all public header
+# files for a given platform, and
+# SYSROOT_LIB points to libraries and object files used for linking
+# the generated target files properly.
 #
+# NOTE: synce r8e, SYSROOT is removed, use SYSROOT_* instead
+# 
 SYSROOT := $(NDK_PLATFORMS_ROOT)/$(TARGET_PLATFORM)/arch-$(TARGET_ARCH)
+SYSROOT_INC := $(NDK_PLATFORMS_ROOT)/$(TARGET_PLATFORM)/arch-$(TARGET_ARCH)
+SYSROOT_LINK := $(SYSROOT_INC)
 
-TARGET_CRTBEGIN_STATIC_O  := $(SYSROOT)/usr/lib/crtbegin_static.o
-TARGET_CRTBEGIN_DYNAMIC_O := $(SYSROOT)/usr/lib/crtbegin_dynamic.o
-TARGET_CRTEND_O           := $(SYSROOT)/usr/lib/crtend_android.o
+#TARGET_CRTBEGIN_STATIC_O  := $(SYSROOT)/usr/lib/crtbegin_static.o
+#TARGET_CRTBEGIN_DYNAMIC_O := $(SYSROOT)/usr/lib/crtbegin_dynamic.o
+#TARGET_CRTEND_O           := $(SYSROOT)/usr/lib/crtend_android.o
 
 # crtbegin_so.o and crtend_so.o are not available for all platforms, so
 # only define them if they are in the sysroot
 #
-TARGET_CRTBEGIN_SO_O := $(strip $(wildcard $(SYSROOT)/usr/lib/crtbegin_so.o))
-TARGET_CRTEND_SO_O   := $(strip $(wildcard $(SYSROOT)/usr/lib/crtend_so.o))
+#TARGET_CRTBEGIN_SO_O := $(strip $(wildcard $(SYSROOT)/usr/lib/crtbegin_so.o))
+#TARGET_CRTEND_SO_O   := $(strip $(wildcard $(SYSROOT)/usr/lib/crtend_so.o))
 
 TARGET_PREBUILT_SHARED_LIBRARIES :=
 
@@ -110,7 +115,8 @@ TOOLCHAIN_VERSION := $(call last,$(subst -,$(space),$(TARGET_TOOLCHAIN)))
 TOOLCHAIN_ROOT   := $(NDK_ROOT)/toolchains/$(TOOLCHAIN_NAME)
 
 # Define the root path where toolchain prebuilts are stored
-TOOLCHAIN_PREBUILT_ROOT := $(TOOLCHAIN_ROOT)/prebuilt/$(HOST_TAG)
+#TOOLCHAIN_PREBUILT_ROOT := $(TOOLCHAIN_ROOT)/prebuilt/$(HOST_TAG)
+TOOLCHAIN_PREBUILT_ROOT := $(call host-prebuilt-tag,$(TOOLCHAIN_ROOT))
 
 # Do the same for TOOLCHAIN_PREFIX. Note that we must chop the version
 # number from the toolchain name, e.g. arm-eabi-4.4.0 -> path/bin/arm-eabi-
@@ -142,7 +148,7 @@ ifeq ($(APP_OPTIM),debug)
 	@echo "install $@"
 	@install $< $@
     $(APP_GDBSETUP): PRIVATE_SOLIB_PATH := $(TARGET_OUT)
-    $(APP_GDBSETUP): PRIVATE_SRC_DIRS := $(SYSROOT)/usr/include
+    $(APP_GDBSETUP): PRIVATE_SRC_DIRS := $(SYSROOT_INC)/usr/include
     $(APP_GDBSETUP): | $(dir $(APP_GDBSETUP))
 	@echo "install $@"
 	@echo "set solib-search-path $(call host-path,$(PRIVATE_SOLIB_PATH))" > $@
@@ -202,13 +208,15 @@ endef #smart~use~SHARED_LIBRARY
 
 define smart~use~PREBUILT_STATIC_LIBRARY
 $(eval \
-  smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
+  #smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
+  smart~LDLIBS += $(call module-get-built,$(smart~app~stl))
  )
 endef #smart~use~PREBUILT_STATIC_LIBRARY
 
 define smart~use~PREBUILT_SHARED_LIBRARY
 $(eval \
-  smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
+  #smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
+  smart~LDLIBS += $(call module-get-built,$(smart~app~stl))
  )
 endef #smart~use~PREBUILT_SHARED_LIBRARY
 
@@ -243,6 +251,8 @@ smart~use :=
 #$(warning $(NDK_STL.$(smart~app~stl).IMPORT_MODULE))
 #$(warning $(NDK_STL.$(smart~app~stl).STATIC_LIBS))
 #$(warning $(NDK_STL.$(smart~app~stl).SHARED_LIBS))
+#$(warning $(__ndk_modules.$(smart~app~stl).OBJECTS))
+#$(warning $(call module-get-built,$(smart~app~stl)))
 
 smart~optimize~debug~CFLAGS := $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
 smart~optimize~release~CFLAGS := -O2 \
@@ -292,7 +302,7 @@ smart~LDLIBS := $(strip $(smart~LDLIBS) $(TARGET_LDLIBS))
 
 ifneq (,$(call module-has-c++-features,$(NAME),rtti exceptions))
   ifeq (system,$(smart~app~stl))
-    smart~LDLIBS += $(call host-path,$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(TOOLCHAIN_VERSION)/libs/$(TARGET_ARCH_ABI)/libsupc++.a)
+    smart~LDLIBS += $(call host-path,$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(TOOLCHAIN_VERSION)/libs/$(TARGET_ARCH_ABI)/libsupc++$(TARGET_LIB_EXTENSION))
   endif
 endif
 

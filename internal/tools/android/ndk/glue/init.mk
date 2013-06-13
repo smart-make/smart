@@ -35,6 +35,8 @@ ifeq ($(and $(BUILD_SYSTEM),$(NDK_ALL_ABIS),$(NDK_ALL_ARCHS),$(NDK_ALL_TOOLCHAIN
   ##################################################
 endif
 
+#$(warning $(HOST_OS), $(HOST_OS_BASE), $(HOST_ARCH), $(HOST_ARCH64))
+
 # Some usefull variables from init.mk:
 #   HOST_OS
 #   HOST_OS_BASE

@@ -38,6 +38,7 @@ smart.context.android/ndk := \
   LIBADD \
   LIBS \
   \
+  TOOLCHAIN_NAME \
   TOOLCHAIN_VERSION \
   ARM_MODE \
   ARM_NEON \
