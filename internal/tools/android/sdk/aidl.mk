@@ -10,8 +10,9 @@ define smart~rule
   $(OUT)/$(NAME)/.sources_aidl : $(SOURCES.aidl)
 	@mkdir -p "$$(@D)"
 	@for f in $$^ ; do echo "aidl $$$$f"; \
+	if grep "^parcelable\s.*;" $$$$f > /dev/null ; then true; else \
 	$(ANDROID.aidl) -I"$(SRCDIR)/src" -p"$(ANDROID_PREPROCESS_IMPORT)" \
-	-o"$(OUT)/$(NAME)/sources" -b $$$$f ; done
+	-o"$(OUT)/$(NAME)/sources" -b $$$$f ; fi ; done
 	@find "$(OUT)/$(NAME)/sources" -type f -name '*.java' > $$@
 endef #smart~rule
 
