@@ -137,20 +137,24 @@ TARGET_GDBSERVER := $(NDK_ROOT)/prebuilt/android-$(TARGET_ARCH)/gdbserver/gdbser
 
 # compute NDK_APP_DST_DIR as the destination directory for the generated files
 APP_GDBSERVER := $(TARGET_OUT)/gdbserver
+APP_GDBCLIENT := $(TARGET_OUT)/gdbclient
 APP_GDBSETUP := $(TARGET_OUT)/gdb.setup
 ifeq ($(APP_OPTIM),debug)
-  $(OUT)/$(NAME).native: $(APP_GDBSERVER) $(APP_GDBSETUP)
+  $(OUT)/$(NAME).native: $(APP_GDBSERVER) $(APP_GDBCLIENT) $(APP_GDBSETUP)
   ifneq ($(smart.has.$(APP_GDBSERVER)),yes)
     smart.has.$(APP_GDBSERVER) := yes
     $(call smart~make~target~dir,$(APP_GDBSERVER))
     $(call smart~make~target~dir,$(APP_GDBSETUP))
     $(APP_GDBSERVER): $(TARGET_GDBSERVER) | $(dir $(APP_GDBSERVER))
-	@echo "install $@"
-	@install $< $@
+	@install -v $< $@
+    $(APP_GDBCLIENT): | $(dir $(APP_GDBCLIENT))
+	@echo "generate $@" && test $(TOOLCHAIN_PREFIX)gdb
+	@echo "exec $(TOOLCHAIN_PREFIX)gdb \"\$$@\"" > $@
+	@chmod +x $@
     $(APP_GDBSETUP): PRIVATE_SOLIB_PATH := $(TARGET_OUT)
     $(APP_GDBSETUP): PRIVATE_SRC_DIRS := $(SYSROOT_INC)/usr/include
     $(APP_GDBSETUP): | $(dir $(APP_GDBSETUP))
-	@echo "install $@"
+	@echo "generate $@"
 	@echo "set solib-search-path $(call host-path,$(PRIVATE_SOLIB_PATH))" > $@
 	@echo "directory $(call host-path,$(call remove-duplicates,$(PRIVATE_SRC_DIRS)))" >> $@
   endif
@@ -254,11 +258,13 @@ smart~use :=
 #$(warning $(__ndk_modules.$(smart~app~stl).OBJECTS))
 #$(warning $(call module-get-built,$(smart~app~stl)))
 
-smart~optimize~debug~CFLAGS := $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
+smart~optimize~debug~CFLAGS := -g -ggdb \
+    $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
 smart~optimize~release~CFLAGS := -O2 \
     $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
 
-smart~optimize~debug~LDFLAGS := $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_LDFLAGS)
+smart~optimize~debug~LDFLAGS := \
+    $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_LDFLAGS)
 smart~optimize~release~LDFLAGS := -Wl,--strip-all \
     $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_LDFLAGS)
 

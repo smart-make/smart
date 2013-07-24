@@ -4,6 +4,8 @@ ifeq ($(filter shared,$($(sm._this).toolset.args)),shared)
   .PHONY: ndk-libs
   ndk-libs: ndk-libs-$($(sm._this).name)
 
+  $(warning ndk-libs: $(sm.temp._libs))
+
   define android-ndk-prepare-libs
   $(eval \
     sm.temp._libs := $(filter %.so, $($(sm._this).targets))
