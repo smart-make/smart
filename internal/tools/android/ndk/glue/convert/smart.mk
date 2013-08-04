@@ -7,9 +7,6 @@ $(smart.internal)
 
 $(info smart: convert "$(call smart~get,MODULE)" into smart)
 
-APP_ABI      := $(smart~app~abi)
-APP_PLATFORM := $(smart~app~platform)
-
 TOOL	 := android/ndk
 NAME     := $(call smart~get,MODULE)
 SRCDIR   := $(call smart~get,PATH)

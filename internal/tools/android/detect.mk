@@ -6,5 +6,5 @@
 $(smart.internal)
 include $(smart.root)/internal/tools/android/sdk/detect.mk
 ifndef TOOL
-include $(smart.root)/internal/tools/android/ndk/detect.mk
+  include $(smart.root)/internal/tools/android/ndk/detect.mk
 endif

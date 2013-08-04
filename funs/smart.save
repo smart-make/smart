@@ -7,30 +7,24 @@ $(smart.internal)
 
 #$(warning info: save $(NAME), $(SRCDIR), $(@script))
 
-define smart~save.simple
-$(eval \
-  ifdef $(smart~name)
-    smart.context.$(smart~name)-$(@script) := $($(smart~name))
-  endif
- )
-endef #smart~save.simple
+define smart~save~simple
+$(eval smart.context.$(@var)-$(@script) := $($(@var)))
+endef #smart~save~simple
 
-define smart~save.recursive
-$(eval \
-  ifdef $(smart~name)
-    smart.context.$(smart~name)-$(@script) = $(value $(smart~name))
-  endif
- )
-endef #smart~save.recursive
+define smart~save~recursive
+$(eval smart.context.$(@var)-$(@script) = $(value $(@var)))
+endef #smart~save~recursive
 
-#define smart~save.undefined
-#endef #smart~save.undefined
+define smart~save~undefined
+$(eval smart.context.$(@var)-$(@script) =)
+endef #smart~save~undefined
 
 define smart~save
-$(smart~save.$(flavor $(smart~name)))
+$(smart~save~$(flavor $(@var)))
 endef #smart~save
 
-$(foreach smart~name,$(filter $(smart.context.names),$(.VARIABLES)),$(smart~save))
+$(foreach @var,$(filter $(smart.context.names),$(.VARIABLES)),$(smart~save))
+$(foreach @var,$(filter-out TOOL,$(filter $(smart.context.names.global),$(.VARIABLES))),$(smart~save))
 
 ifdef smart.scripts.$(NAME)
   smart.scripts.$(NAME) += $(@script)
@@ -41,7 +35,7 @@ endif
 smart.names-$(@script) := $(NAME)
 smart.list += $(@script)
 
-smart~save.simple :=
-smart~save.recursive :=
+smart~save~simple :=
+smart~save~recursive :=
 smart~save :=
-smart~name :=
+

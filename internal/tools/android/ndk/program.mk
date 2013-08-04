@@ -7,6 +7,12 @@ $(smart.internal)
 
 smart~program := $(addprefix $(TARGET_OUT)/,$(PROGRAM:$(TARGET_OUT)/%=%))
 
+#$(warning $(NAME): LDFLAGS: $(smart~LDFLAGS))
+#$(warning $(NAME): LDLIBS: $(smart~LDLIBS))
+#$(warning $(NAME): LIBS: $(smart~LIBS))
+
+#smart~LIBS := $(filter %.so %.a,$(smart~LIBS))
+
 $(call smart~unique,smart~LDFLAGS)
 $(call smart~unique,smart~LDLIBS)
 $(call smart~make~target~dir,$(smart~program))

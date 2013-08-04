@@ -136,10 +136,10 @@ include $(NDK_TOOLCHAIN.$(TARGET_TOOLCHAIN).setup)
 TARGET_GDBSERVER := $(NDK_ROOT)/prebuilt/android-$(TARGET_ARCH)/gdbserver/gdbserver
 
 # compute NDK_APP_DST_DIR as the destination directory for the generated files
-APP_GDBSERVER := $(TARGET_OUT)/gdbserver
-APP_GDBCLIENT := $(TARGET_OUT)/gdbclient
-APP_GDBSETUP := $(TARGET_OUT)/gdb.setup
 ifeq ($(APP_OPTIM),debug)
+  APP_GDBSERVER := $(TARGET_OUT)/gdbserver
+  APP_GDBCLIENT := $(TARGET_OUT)/gdbclient
+  APP_GDBSETUP := $(TARGET_OUT)/gdb.setup
   $(OUT)/$(NAME).native: $(APP_GDBSERVER) $(APP_GDBCLIENT) $(APP_GDBSETUP)
   ifneq ($(smart.has.$(APP_GDBSERVER)),yes)
     smart.has.$(APP_GDBSERVER) := yes
@@ -160,175 +160,21 @@ ifeq ($(APP_OPTIM),debug)
   endif
 endif #$(APP_OPTIM)==debug
 
+#$(warning $(NAME): $(APP_OPTIM), $(USE_MODULES))
+
 ##
 ## Setting up STL
-smart~app~stl := $(or $(APP_STL),$(smart~app~stl))
-ifdef smart~app~stl
-  smart~stl~mods := $(NDK_STL.$(smart~app~stl).STATIC_LIBS) $(NDK_STL.$(smart~app~stl).SHARED_LIBS)
-  __ndk_import_list := $(call set_remove,$(NDK_STL.$(smart~app~stl).IMPORT_MODULE),$(__ndk_import_list))
+#smart~app~stl := $(or $(APP_STL),$(smart~app~stl))
+ifdef APP_STL
+  smart~stl~mods := $(NDK_STL.$(APP_STL).STATIC_LIBS) $(NDK_STL.$(APP_STL).SHARED_LIBS)
+  __ndk_import_list := $(call set_remove,$(NDK_STL.$(APP_STL).IMPORT_MODULE),$(__ndk_import_list))
   __ndk_modules := $(call set_remove,$(smart~stl~mods),$(__ndk_import_list))
   $(foreach 1,$(smart~stl~mods),$(foreach 2,\
        $(filter __ndk_modules.$1.%,$(.VARIABLES)),$(eval $2 :=)))
-  $(call ndk-stl-check,$(smart~app~stl))
-  $(call ndk-stl-select,$(smart~app~stl))
-  $(call ndk-stl-add-dependencies,$(smart~app~stl))
+  $(call ndk-stl-check,$(APP_STL))
+  $(call ndk-stl-select,$(APP_STL))
+  $(call ndk-stl-add-dependencies,$(APP_STL))
   $(call modules-compute-dependencies)
   #$(call modules-dump-database)
-  #$(warning info: $(__ndk_modules.$(smart~app~stl).OBJECTS), $(__ndk_modules.$(smart~app~stl).BUILT_MODULE))
+  #$(warning info: $(__ndk_modules.$(APP_STL).OBJECTS), $(__ndk_modules.$(APP_STL).BUILT_MODULE))
 endif
-
-##################################################
-## Initializs flags
-smart~CFLAGS   := $(TARGET_CFLAGS) $(CFLAGS)
-smart~CXXFLAGS := $(TARGET_CXXFLAGS) $(CXXFLAGS)
-smart~CPPFLAGS := $(TARGET_CPPFLAGS) $(CPPFLAGS)
-smart~INCLUDES := $(TARGET_C_INCLUDES) $(INCLUDES)
-smart~DEFINES  := -DANDROID -D__ANDROID__ $(DEFINES)
-smart~ARFLAGS  := $(TARGET_ARFLAGS) $(ARFLAGS)
-smart~LDFLAGS  := $(TARGET_LDFLAGS) $(LDFLAGS)
-smart~LDLIBS   := $(TARGET_LDLIBS) $(LDLIBS)
-smart~OBJS     := $(OBJECTS)
-smart~LIBS     := $(TARGET_LIBS) $(LIBS)
-smart~DEPS     :=
-smart~CPP_FEATURES := $(CPP_FEATURES)
-
-ifneq ($(ALLOW_UNDEFINED_SYMBOLS),true)
-  smart~LDFLAGS += $(TARGET_NO_UNDEFINED_LDFLAGS)
-endif
-
-#$(warning $(smart~m): $(__ndk_modules.$(smart~m).BUILT_MODULE))
-
-define smart~use~STATIC_LIBRARY
-$(eval \
-  #smart~LDLIBS += $(__ndk_modules.$(smart~m).BUILT_MODULE)
- )
-endef #smart~use~STATIC_LIBRARY
-
-define smart~use~SHARED_LIBRARY
-$(eval \
-  #smart~LDLIBS += $(__ndk_modules.$(smart~m).BUILT_MODULE)
- )
-endef #smart~use~SHARED_LIBRARY
-
-define smart~use~PREBUILT_STATIC_LIBRARY
-$(eval \
-  #smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
-  smart~LDLIBS += $(call module-get-built,$(smart~app~stl))
- )
-endef #smart~use~PREBUILT_STATIC_LIBRARY
-
-define smart~use~PREBUILT_SHARED_LIBRARY
-$(eval \
-  #smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
-  smart~LDLIBS += $(call module-get-built,$(smart~app~stl))
- )
-endef #smart~use~PREBUILT_SHARED_LIBRARY
-
-define smart~use
-$(call smart~use~$(call module-get-class,$(smart~m)))\
-$(eval \
-  smart~CFLAGS   += $(call smart~mexport,CFLAGS)
-  smart~CXXFLAGS += $(call smart~mexport,CXXFLAGS)
-  smart~CPPFLAGS += $(call smart~mexport,CPPFLAGS)
-  smart~LDFLAGS  += $(call smart~mexport,LDFLAGS)
-  smart~LDLIBS   += $(call smart~mexport,LDLIBS)
-  smart~INCLUDES += $(call smart~mexport,C_INCLUDES)
-  smart~OBJS     += $(call smart~mexport,OBJECTS)
-  ifneq ($(filter -l$(smart~m),$(call smart~mexport,LDLIBS)),)
-    smart~LDFLAGS += -L$(TARGET_OUT)
-    smart~DEPS   += $(addprefix $(TARGET_OUT)/,$(call smart.get,$(smart~m),LIBRARY))
-  else
-    smart~LIBS   += $(addprefix $(TARGET_OUT)/,$(call smart.get,$(smart~m),LIBRARY))
-  endif
-  smart~CPP_FEATURES += $(__ndk_modules.$(smart~m).CPP_FEATURES)
- )$(foreach smart~m,$(call smart.get,$(smart~m),USE_MODULES),\
-      $(call smart~use))
-endef #smart~use
-smart~mexport = $(call module-get-export,$(smart~m),$(strip $1))
-$(foreach smart~m,$(USE_MODULES) \
-    $(NDK_STL.$(smart~app~stl).STATIC_LIBS:lib%=%) \
-    $(NDK_STL.$(smart~app~stl).SHARED_LIBS:lib%=%) \
-  ,$(smart~use))
-smart~mexport =
-smart~use :=
-
-#$(warning $(NDK_STL.$(smart~app~stl).IMPORT_MODULE))
-#$(warning $(NDK_STL.$(smart~app~stl).STATIC_LIBS))
-#$(warning $(NDK_STL.$(smart~app~stl).SHARED_LIBS))
-#$(warning $(__ndk_modules.$(smart~app~stl).OBJECTS))
-#$(warning $(call module-get-built,$(smart~app~stl)))
-
-smart~optimize~debug~CFLAGS := -g -ggdb \
-    $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
-smart~optimize~release~CFLAGS := -O2 \
-    $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_CFLAGS)
-
-smart~optimize~debug~LDFLAGS := \
-    $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_LDFLAGS)
-smart~optimize~release~LDFLAGS := -Wl,--strip-all \
-    $(TARGET_$(ARM_MODE)_$(APP_OPTIM)_LDFLAGS)
-
-$(foreach v,smart~CPPFLAGS smart~CXXFLAGS smart~CFLAGS,\
-    $(eval $v := $(filter-out -O% -g -ggdb,$($v))))
-smart~CFLAGS := $(smart~optimize~$(APP_OPTIM)~CFLAGS) $(smart~CFLAGS)
-
-ifeq ($(ARM_NEON),true)
-  smart~CFLAGS := $(TARGET_CFLAGS.neon) $(smart~CFLAGS)
-endif
-
-smart~CPP_FEATURES := $(sort $(smart~CPP_FEATURES))
-
-smart~has~rtti := $(strip $(or \
-  $(call module-has-c++-features,$(NAME),rtti),\
-  $(if $(filter rtti,$(smart~CPP_FEATURES)),true)))
-
-smart~has~exceptions := $(strip $(or \
-  $(call module-has-c++-features,$(NAME),exceptions),\
-  $(if $(filter exceptions,$(smart~CPP_FEATURES)),true)))
-
-ifneq (,$(smart~has~rtti))
-  smart~CFLAGS := $(filter-out -fno-rtti,$(smart~CFLAGS))
-  smart~CXXFLAGS := $(filter-out -fno-rtti,$(smart~CXXFLAGS))
-  smart~CPPFLAGS := $(filter-out -fno-rtti,$(smart~CPPFLAGS))
-  smart~CPPFLAGS += -frtti
-endif
-ifneq (,$(smart~has~exceptions))
-  smart~CFLAGS := $(filter-out -fno-exceptions,$(smart~CFLAGS))
-  smart~CXXFLAGS := $(filter-out -fno-exceptions,$(smart~CXXFLAGS))
-  smart~CPPFLAGS := $(filter-out -fno-exceptions,$(smart~CPPFLAGS))
-  smart~CPPFLAGS += -fexceptions
-endif
-
-#$(warning $(NAME): $(smart~has~rtti) $(smart~has~exceptions))
-
-smart~LIBS := $(strip $(smart~LIBS))
-smart~LDFLAGS := $(filter-out -shared,$(smart~LDFLAGS)) \
-    $(smart~optimize~$(APP_OPTIM)~LDFLAGS)
-smart~LDLIBS := $(strip $(smart~LDLIBS) $(TARGET_LDLIBS))
-
-ifneq (,$(call module-has-c++-features,$(NAME),rtti exceptions))
-  ifeq (system,$(smart~app~stl))
-    smart~LDLIBS += $(call host-path,$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(TOOLCHAIN_VERSION)/libs/$(TARGET_ARCH_ABI)/libsupc++$(TARGET_LIB_EXTENSION))
-  endif
-endif
-
-smart~LDLIBS += $(TARGET_LIBGCC)
-
-$(foreach 1,\
-	smart~CFLAGS \
-	smart~CXXFLAGS \
-	smart~CPPFLAGS \
-	smart~INCLUDES \
-	smart~DEFINES \
-	smart~ARFLAGS \
-	smart~LDFLAGS \
-	smart~LDLIBS \
-	smart~OBJS \
-	smart~LIBS \
- ,$(eval $1 := $(foreach 2,$($1),$2)))
-
-#ifeq ($(NAME),boost_thread)
-#$(warning $(NAME): $(smart~app~stl): $(smart~CXXFLAGS))
-#endif
-#$(warning $(NAME): $(smart~app~stl): $(smart~INCLUDES))
-#$(warning $(NAME): $(TARGET_OUT): $(smart~LIBS))

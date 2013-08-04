@@ -4,7 +4,7 @@
 #    All rights reserved.
 #
 $(smart.internal)
-smart.context.android/ndk := \
+smart.context.global.android/ndk := \
   APP_OPTIM \
   APP_CPPFLAGS \
   APP_CFLAGS \
@@ -20,13 +20,18 @@ smart.context.android/ndk := \
   APP_DEBUG \
   APP_DEBUGGABLE \
   APP_MANIFEST \
-  \
+  MODULE_PATH
+
+smart.context.private.android/ndk := \
+  IMPORTS USE_MODULES
+
+smart.context.android/ndk := \
   PROGRAM \
   LIBRARY \
   SOURCES \
   OBJECTS \
-  INCLUDES \
   DEFINES \
+  INCLUDES \
   ASFLAGS \
   CFLAGS \
   CXXFLAGS \
@@ -37,13 +42,11 @@ smart.context.android/ndk := \
   LOADLIBS \
   LIBADD \
   LIBS \
+  FULLLIBS \
   \
   TOOLCHAIN_NAME \
   TOOLCHAIN_VERSION \
   ARM_MODE \
   ARM_NEON \
-  ALLOW_UNDEFINED_SYMBOLS \
   \
-  MODULE_PATH \
-  IMPORTS \
-  USE_MODULES \
+  ALLOW_UNDEFINED_SYMBOLS \

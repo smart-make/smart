@@ -10,7 +10,9 @@ ifeq ($(and $(NDK_ROOT),$(BUILD_SYSTEM),$(NDK_ALL_TOOLCHAINS),$(NDK_ALL_ABIS),$(
 endif
 
 ## Use debug version by defalult
-APP_OPTIM := debug
+ifndef APP_OPTIM
+  APP_OPTIM := debug
+endif #!APP_OPTIM
 
 ## Free the dictionary of LOCAL_MODULE definitions
 ##   BUG: clear modules will affect other modules, so don't do this here

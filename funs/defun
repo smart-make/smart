@@ -1,0 +1,23 @@
+# -*- makefile-gmake -*-
+#
+#    Copyright (C) 2012, Duzy Chan <code@duzy.info>
+#    All rights reserved.
+#
+#
+define defun
+$(eval \
+define $1
+$$(eval \
+   smart~error :=
+   smart~result :=
+   include $(smart.root)/funs/$1
+   ifdef smart~error
+     $$$$(error $1: $$(smart~error))
+   endif
+  )$$(smart~result)
+endef)
+endef
+
+$(foreach @fun,\
+    $(notdir $(filter-out %~,$(wildcard $(smart.root)/funs/smart.*))),\
+    $(call defun,$(@fun)))

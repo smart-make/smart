@@ -5,17 +5,6 @@
 #
 $(smart.internal)
 
-#$(info smart: Android NDK: Build "$(NAME)" for $(TARGET_PLATFORM) using ABI "$(TARGET_ARCH_ABI)")
-
-define smart~make~target~dir
-$(eval \
-  ifneq ($(smart.has.$(dir $1)),yes)
-    smart.has.$(dir $1) := yes
-    $(dir $1): ; @mkdir -p $$@
-  endif
- )
-endef #smart~make~target~dir
-
 ifdef SOURCES
   include $(smart.tooldir)/sources.mk
 endif #SOURCES
@@ -31,10 +20,12 @@ ifndef smart.has.$(OUT)/$(NAME).native
 	@for n in $(filter-out %.a,$^) ; do echo $$n >> $@ ; done
 endif
 
+#$(warning $(NAME): $(SCRIPT): $(LIBRARY) $(PROGRAM) $(smart~OBJS))
+
 ifdef LIBRARY
   include $(smart.tooldir)/library.mk
   ifdef smart~library
-    module-$(SCRIPT): $(OUT)/$(NAME).native
+    module-$(SCRIPT): $(OUT)/$(NAME).native $(smart~library)
     modules: module-$(SCRIPT)
   endif #smart~library
 endif #LIBRARY
@@ -42,9 +33,7 @@ endif #LIBRARY
 ifdef PROGRAM
   include $(smart.tooldir)/program.mk
   ifdef smart~program
-    module-$(SCRIPT): $(OUT)/$(NAME).native
+    module-$(SCRIPT): $(OUT)/$(NAME).native $(smart~program)
     modules: module-$(SCRIPT)
   endif #smart~program
 endif #PROGRAM
-
-smart~make~target~dir :=

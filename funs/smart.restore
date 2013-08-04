@@ -5,36 +5,47 @@
 #
 $(smart.internal)
 
-define smart~restore.simple
-$(eval \
-  $(smart~name) := $(smart.context.$(smart~name)-$(@script))
- )
-endef #smart~restore.simple
+define smart~restore~simple
+$(eval $(@var) := $(smart.context.$(@var)-$(@script)))
+endef #smart~restore~simple
 
-define smart~restore.recursive
-$(eval \
-  $(smart~name) = $(value $(smart.context.$(smart~name)-$(@script)))
- )
-endef #smart~restore.recursive
+define smart~restore~recursive
+$(eval $(@var) = $(value $(smart.context.$(@var)-$(@script))))
+endef #smart~restore~recursive
+
+define smart~restore~undefined
+$(eval $(@var) =)
+endef #smart~restore~undefined
 
 define smart~restore
-$(smart~restore.$(flavor $(smart~name)))
+$(smart~restore~$(flavor $(@var)))
 endef #smart~restore
 
-## clear the current context
-$(foreach 1,$(filter $(smart.context.names),$(.VARIABLES)),$(eval $1 :=))
+## Clear the current context
+$(foreach @var,$(filter $(smart.context.names),$(.VARIABLES)),\
+    $(eval $(@var) :=))
 
-## must restore TOOL first for getting the right context names
-$(foreach smart~name,TOOL,$(smart~restore))
+smart~last~TOOL := $(TOOL)
+
+## Must restore TOOL first for getting the right $(smart.context.names).
+$(foreach @var,TOOL,$(smart~restore))
+
+## When TOOL changed, we need to restore $(smart.context.names.global) for
+## the current $(TOOL).
+ifneq ($(smart~last~TOOL),$(TOOL))
+  smart~restore~names := $(filter-out TOOL,$(filter $(smart.context.names.global),$(.VARIABLES)))
+  $(foreach @var,$(smart~restore~names),$(smart~restore))
+endif
 
 smart~restore~names := $(filter-out TOOL,$(filter $(smart.context.names),$(.VARIABLES)))
-$(foreach smart~name,$(smart~restore~names),$(smart~restore))
+$(foreach @var,$(smart~restore~names),$(smart~restore))
 
 smart~restore~names := $(filter-out EXPORT.%,$(smart~restore~names))
-$(foreach smart~name,$(smart~restore~names:%=EXPORT.%),$(smart~restore))
+$(foreach @var,$(smart~restore~names:%=EXPORT.%),$(smart~restore))
 
 smart~restore~names :=
-smart~restore.simple :=
-smart~restore.recursive :=
+smart~restore~simple :=
+smart~restore~recursive :=
 smart~restore :=
-smart~name :=
+
+

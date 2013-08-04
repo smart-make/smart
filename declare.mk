@@ -13,7 +13,8 @@ endif
 ifeq ($(NAME),.)
   NAME := $(notdir $(PWD))
 endif
-#$(warning $(NAME), $(SRCDIR), $(SCRIPT))
+
+#$(warning $(NAME), $(TOOL), $(SCRIPT))
 
 MAKEFILE_LIST.saved := $(MAKEFILE_LIST)
 TOOL :=
@@ -41,7 +42,7 @@ ifdef TOOL
 endif
 
 #$(warning $(smart.context.names))
-#$(warning $(NAME), $(TOOL), $(SRCDIR), $(SCRIPT))
+#$(warning $(NAME), $(TOOL), $(SCRIPT))
 
 MAKEFILE_LIST := $(MAKEFILE_LIST.saved)
 MAKEFILE_LIST.saved :=

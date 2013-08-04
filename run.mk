@@ -13,9 +13,29 @@ smart.stack :=
 smart.list :=
 smart.export :=
 smart.settle_root :=
+
+##
+## Note this is a "=" variable, some names are determined by TOOL specific
+## context. A TOOL can define it's own context names using:
+##     * smart.context.global.<tool-name> := ...
+##     * smart.context.private.<tool-name> := ...
+##     * smart.context.<tool-name> := ...
+##
+## Names appears in each list has special meanings:
+##     * smart.context.global.*
+##       Defines context names "global" to all modules using <tool-name>.
+##     * smart.context.private.*
+##       Defines context names "private" to the module, EXPORT.* is not
+##       performed on these names.
+##     * smart.context.*
+##       Defines regular context names, which can be exported using
+##       EXPORT.* or export.* grammar.
+smart.context.names.global = $(smart.context.global.$(TOOL))
+smart.context.names.private = NAME SCRIPT TOOL TOOL_FILE SRCDIR SUBDIRS \
+  REQUIRES MODULES TARGETS SETTLE_ROOT SETTLE \
+  $(smart.context.private.$(TOOL))
 smart.context.names = this.% export.% THIS.% EXPORT.% \
-  SCRIPT TOOL TOOL_FILE NAME SRCDIR REQUIRES SUBDIRS MODULES TARGETS \
-  SETTLE_ROOT SETTLE $(smart.context.$(TOOL))
+  $(smart.context.names.private) $(smart.context.$(TOOL))
 
 define smart.internal
 $(eval MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
@@ -24,13 +44,13 @@ endef #smart.internal
 ## Set module context variable.
 ## e.g. $(call smart.set,$(NAME),VAR,value)
 define smart.set
-$(eval smart.context.$(strip $2)-$(smart.scripts.$(strip $1)) := $(strip $3))
+$(foreach script,$(smart.scripts.$(strip $1)),$(eval smart.context.$(strip $2)-$(script) := $(strip $3)))
 endef #smart.set
 
 ## Get module context variable.
 ## e.g. $(call smart.get,$(NAME),VAR)
 define smart.get
-$(smart.context.$(strip $2)-$(smart.scripts.$(strip $1)))
+$(foreach script,$(smart.scripts.$(strip $1)),$(smart.context.$(strip $2)-$(script)))
 endef #smart.get
 
 smart.test.load.before.push :=
@@ -73,31 +93,12 @@ OUT = $(ROOT)/out
 smart~error :=
 
 #
-#  @param: smart~fun
+#  Define funs.
 #  
-define smart~defun
-$(eval \
-ifdef smart~fun
-define $(smart~fun)
-$$(eval \
-   smart~error :=
-   smart~result :=
-   include $(smart.root)/funs/$(smart~fun)
-   ifneq ($$(smart~error),)
-     $$$$(error $(smart~fun): $$(smart~error))
-   endif
-  )$$(smart~result)
-endef
+$(eval include $(smart.root)/funs/defun)
+ifneq ($(call smart.test,a,b,c),a-b-c)
+  $(error smart: defun errors)
 endif
- )
-endef #smart~defun
-
-$(foreach smart~fun,\
-    $(notdir $(filter-out %~,$(wildcard $(smart.root)/funs/smart.*))),\
-    $(smart~defun))
-
-smart~defun :=
-smart~fun :=
 
 .SUFFIXES:
 
@@ -141,15 +142,9 @@ $(eval \
  )
 endef #smart~unique
 
-define smart~rules
-$(smart.restore)$(eval \
-  include $(smart.root)/rules.mk
- )
-endef #smart~rules
-
-$(foreach @script,$(smart.list),$(smart~rules))
-
-smart~rules :=
+## Context is bound to each script.
+$(foreach @script,$(smart.list),$(call smart.restore)\
+    $(eval include $(smart.root)/rules.mk))
 
 .DEFAULT_GOAL := modules
 

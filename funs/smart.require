@@ -11,42 +11,34 @@
 #
 $(smart.internal)
 
+$(error smart.require is obsoluted)
+
+## @name is a module name
 ifndef @name
   smart~error := @name is undefined
 else
 
-ifndef smart.scripts.$(@name)
+## @script is 
+ifndef @script
   smart~error := no script for "$(@name) (by $(NAME), $(SCRIPT))"
 else
 
-smart~names := $(filter-out \
-  NAME SCRIPT SRCDIR SUBDIRS REQUIRES,\
-  $(smart.context.names))
-
-#$(warning info: "$(NAME)" requires "$(@name), $(smart.scripts.$(@name))")
-#$(warning info: EXPORTS: $(filter smart.context.EXPORT.%-$(smart.scripts.$(@name)),$(.VARIABLES)))
+#$(warning info: "$(NAME)" requires "$(@name), $(@script)")
+#$(warning info: EXPORTS: $(filter smart.context.EXPORT.%-$(@script),$(.VARIABLES)))
 #$(warning info: EXPORTS: $(filter smart.context.EXPORT.%,$(.VARIABLES)))
 
-define smart~require
-$(eval \
-  ifdef smart.context.EXPORT.$(smart~name)-$(smart~script)
-    $(smart~name) += $(smart.context.EXPORT.$(smart~name)-$(smart~script))
-  endif
- )
-endef #smart~require
+#module-$(SCRIPT): module-$(smart.context.SCRIPT-$(@script))
 
-#module-$(SCRIPT): module-$(smart.context.SCRIPT-$(smart.scripts.$(@name)))
+##
+## Import names EXPORTed by requirees - import variables from EXPORT.*
+## defined in $(@script)
+$(foreach @var,$(smart~import~names),$(call smart~require))
 
-$(foreach smart~script,$(smart.scripts.$(@name)),\
-  $(foreach smart~name,$(smart~names),$(smart~require)))
-
-$(foreach smart~script,$(smart.scripts.$(@name)),\
-  $(foreach @name, $(smart.context.REQUIRES-$(smart~script)),\
+##
+## Import recursively. 
+$(foreach @script,$(smart.scripts.$(@name)),\
+  $(foreach @name, $(smart.context.REQUIRES-$(@script)),\
     $(eval include $(smart.root)/funs/smart.require)))
 
-endif #smart.scripts.$(@name)
+endif #@script
 endif #@name
-
-smart~require :=
-smart~names :=
-smart~name :=
