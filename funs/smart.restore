@@ -30,12 +30,16 @@ smart~last~TOOL := $(TOOL)
 ## Must restore TOOL first for getting the right $(smart.context.names).
 $(foreach @var,TOOL,$(smart~restore))
 
+ifndef TOOL
+  TOOL := $(smart~last~TOOL)
+else
 ## When TOOL changed, we need to restore $(smart.context.names.global) for
 ## the current $(TOOL).
 ifneq ($(smart~last~TOOL),$(TOOL))
   smart~restore~names := $(filter-out TOOL,$(filter $(smart.context.names.global),$(.VARIABLES)))
   $(foreach @var,$(smart~restore~names),$(smart~restore))
 endif
+endif #ndef-else TOOL
 
 smart~restore~names := $(filter-out TOOL,$(filter $(smart.context.names),$(.VARIABLES)))
 $(foreach @var,$(smart~restore~names),$(smart~restore))

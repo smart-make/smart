@@ -10,18 +10,15 @@ $(smart.internal)
 ##	*) Say the list $(modules-get-list)
 ##  
 
-smart~get = $(__ndk_modules.$(smart~m).$(strip $1))
-smart~get~export = $(call module-get-export,$(smart~m),$(strip $1))
-
-ifneq ($(call smart~get,MODULE),$(smart~m))
-  $(error smart: internal build system error: $(call smart~get,MODULE) != $(smart~m))
+ifneq ($(call smart~ndk~get,MODULE),$(smart~m))
+  $(error smart: internal build system error: $(call smart~ndk~get,MODULE) != $(smart~m))
 endif
 
 ifdef smart~
 $(warning info: $(smart~m))
 $(foreach 1,$(modules-fields),\
-    $(if $(call smart~get,$1),\
-        $(info $(space4)$1: $(call smart~get,$1))))
+    $(if $(call smart~ndk~get,$1),\
+        $(info $(space4)$1: $(call smart~ndk~get,$1))))
 endif
 
 $(call smart.test.load.before.push)

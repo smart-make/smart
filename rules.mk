@@ -4,7 +4,11 @@
 #
 $(smart.internal)
 
-#$(warning info: $(NAME), $(SRCDIR), $(SCRIPT))
+#$(warning info: $(NAME), $(TOOL), $(SRCDIR), $(SOURCES))
+
+ifndef TOOL
+  #$(warning no TOOL for building $(NAME))
+endif #!TOOL
 
 ifndef SRCDIR
   $(error SRCDIR is undefined)

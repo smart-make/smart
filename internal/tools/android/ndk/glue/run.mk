@@ -9,6 +9,10 @@ ifndef smart~action
   $(error smart: internal error)
 endif
 
+## Shortcuts for getting NDK module variables
+smart~ndk~get = $(__ndk_modules.$(smart~m).$(strip $1))
+smart~ndk~get~export = $(call module-get-export,$(smart~m),$(strip $1))
+
 ##
 ## References: (where BUILD_SYSTEM = $(NDK_ROOT)/build/core)
 ##      0.  $(BUILD_SYSTEM)/main.mk

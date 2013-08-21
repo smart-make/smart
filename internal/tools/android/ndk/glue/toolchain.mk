@@ -164,17 +164,26 @@ endif #$(APP_OPTIM)==debug
 
 ##
 ## Setting up STL
-#smart~app~stl := $(or $(APP_STL),$(smart~app~stl))
 ifdef APP_STL
   smart~stl~mods := $(NDK_STL.$(APP_STL).STATIC_LIBS) $(NDK_STL.$(APP_STL).SHARED_LIBS)
   __ndk_import_list := $(call set_remove,$(NDK_STL.$(APP_STL).IMPORT_MODULE),$(__ndk_import_list))
   __ndk_modules := $(call set_remove,$(smart~stl~mods),$(__ndk_import_list))
+
   $(foreach 1,$(smart~stl~mods),$(foreach 2,\
        $(filter __ndk_modules.$1.%,$(.VARIABLES)),$(eval $2 :=)))
+
   $(call ndk-stl-check,$(APP_STL))
   $(call ndk-stl-select,$(APP_STL))
   $(call ndk-stl-add-dependencies,$(APP_STL))
   $(call modules-compute-dependencies)
   #$(call modules-dump-database)
+
   #$(warning info: $(__ndk_modules.$(APP_STL).OBJECTS), $(__ndk_modules.$(APP_STL).BUILT_MODULE))
+
+  ##
+  ## Convert STL modules into smart
+  $(foreach smart~convert,$(smart.tooldir)/glue/convert,\
+  $(foreach smart~m,$(smart~stl~mods:lib%=%),\
+    $(eval include $(smart.tooldir)/glue/convert.mk)))
+
 endif

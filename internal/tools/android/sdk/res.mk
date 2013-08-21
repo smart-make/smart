@@ -31,6 +31,7 @@ define smart~rule
 endef #smart~rule
 
 $(eval $(smart~rule))
+#$(warning $(RES), $(wildcard $(RES)))
 
 define smart~rule
   $(OUT)/$(NAME)/res/.packed: $(LIBS.java) $(smart~res.all)
@@ -49,3 +50,39 @@ endef #smart~rule
 $(eval $(smart~rule))
 
 smart~rule =
+
+
+# Executing '/store/open/android-sdk/build-tools/17.0.0/aapt' with arguments:
+# 'crunch'
+# '-v'
+# '-S'
+# '/store/open/ActionBarSherlock/actionbarsherlock/res'
+# '-C'
+# '/store/open/ActionBarSherlock/actionbarsherlock/bin/res'
+
+
+# Executing '/store/open/android-sdk/build-tools/17.0.0/aapt' with arguments:
+# 'package'
+# '-f'
+# '-m'
+# '--output-text-symbols'
+# '/store/open/CSipSimple/bin'
+# '--auto-add-overlay'
+# '-M'
+# '/store/open/CSipSimple/bin/AndroidManifest.xml'
+# '-S'
+# '/store/open/CSipSimple/bin/res'
+# '-S'
+# '/store/open/CSipSimple/res'
+# '-S'
+# '/store/open/ActionBarSherlock/actionbarsherlock/bin/res'
+# '-S'
+# '/store/open/ActionBarSherlock/actionbarsherlock/res'
+# '-I'
+# '/store/open/android-sdk/platforms/android-16/android.jar'
+# '-J'
+# '/store/open/CSipSimple/gen'
+# '--generate-dependencies'
+# '-G'
+# '/store/open/CSipSimple/bin/proguard.txt'
+

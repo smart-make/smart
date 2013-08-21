@@ -20,10 +20,10 @@ smart.context.global.android/ndk := \
   APP_DEBUG \
   APP_DEBUGGABLE \
   APP_MANIFEST \
-  MODULE_PATH
+  MODULE_PATH IMPORTS
 
 smart.context.private.android/ndk := \
-  IMPORTS USE_MODULES
+  USE_MODULES
 
 smart.context.android/ndk := \
   PROGRAM \

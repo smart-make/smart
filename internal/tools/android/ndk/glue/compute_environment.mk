@@ -16,7 +16,7 @@ smart~ARFLAGS  := $(TARGET_ARFLAGS) $(ARFLAGS)
 smart~LDFLAGS  := $(TARGET_LDFLAGS) $(LDFLAGS)
 smart~LDLIBS   := $(TARGET_LDLIBS) $(LDLIBS)
 smart~OBJS     := $(OBJECTS)
-smart~LIBS     := $(TARGET_LIBS) $(LIBS) $(smart~libs~required)
+smart~LIBS     := $(TARGET_LIBS) $(LIBS)
 smart~DEPS     :=
 smart~CPP_FEATURES := $(CPP_FEATURES)
 
@@ -37,10 +37,6 @@ endif
 
 #$(warning $(smart~m): $(__ndk_modules.$(smart~m).BUILT_MODULE))
 
-##
-## Shortcuts used for USE_MODULES computation.
-smart~mexport = $(call module-get-export,$(smart~m),$(strip $1))
-
 ############################################################
 ##
 ##  Computation base on Android NDK's USE_MODULES.
@@ -60,14 +56,14 @@ endef #smart~use~SHARED_LIBRARY
 define smart~use~PREBUILT_STATIC_LIBRARY
 $(eval \
   #smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
-  smart~LDLIBS += $(call module-get-built,$(APP_STL))
+  smart~LDLIBS += $(call module-get-built,$(smart~m))
  )
 endef #smart~use~PREBUILT_STATIC_LIBRARY
 
 define smart~use~PREBUILT_SHARED_LIBRARY
 $(eval \
   #smart~LDLIBS += $(__ndk_modules.$(smart~m).OBJECTS)
-  smart~LDLIBS += $(call module-get-built,$(APP_STL))
+  smart~LDLIBS += $(call module-get-built,$(smart~m))
  )
 endef #smart~use~PREBUILT_SHARED_LIBRARY
 
@@ -75,20 +71,20 @@ endef #smart~use~PREBUILT_SHARED_LIBRARY
 define smart~use
 $(call smart~use~$(call module-get-class,$(smart~m)))\
 $(eval \
-  smart~CFLAGS   += $(call smart~mexport,CFLAGS)
-  smart~CXXFLAGS += $(call smart~mexport,CXXFLAGS)
-  smart~CPPFLAGS += $(call smart~mexport,CPPFLAGS)
-  smart~LDFLAGS  += $(call smart~mexport,LDFLAGS)
-  smart~LDLIBS   += $(call smart~mexport,LDLIBS)
-  smart~INCLUDES += $(call smart~mexport,C_INCLUDES)
-  smart~OBJS     += $(call smart~mexport,OBJECTS)
-  ifneq ($(filter -l$(smart~m),$(call smart~mexport,LDLIBS)),)
+  smart~CFLAGS   += $(call smart~var~export,CFLAGS)
+  smart~CXXFLAGS += $(call smart~var~export,CXXFLAGS)
+  smart~CPPFLAGS += $(call smart~var~export,CPPFLAGS)
+  smart~LDFLAGS  += $(call smart~var~export,LDFLAGS)
+  smart~LDLIBS   += $(call smart~var~export,LDLIBS)
+  smart~INCLUDES += $(call smart~var~export,INCLUDES)
+  smart~OBJS     += $(call smart~var~export,OBJECTS)
+  ifneq ($(filter -l$(smart~m),$(call smart~var~export,LDLIBS)),)
     smart~LDFLAGS += -L$(TARGET_OUT)
     smart~DEPS   += $(addprefix $(TARGET_OUT)/,$(call smart~var,LIBRARY))
   else
     smart~LIBS   += $(addprefix $(TARGET_OUT)/,$(call smart~var,LIBRARY))
   endif
-  smart~CPP_FEATURES += $(__ndk_modules.$(smart~m).CPP_FEATURES)
+  smart~CPP_FEATURES += $(call smart~var~export,CPP_FEATURES)
  )$(foreach smart~m,$(call smart~var,USE_MODULES),$(call smart~use))
 endef #smart~use
 
@@ -98,9 +94,27 @@ $(foreach smart~m, $(USE_MODULES) \
     $(NDK_STL.$(APP_STL).SHARED_LIBS:lib%=%) \
  ,$(smart~use))
 
-smart~use =
-
 ############################################################
+##
+## Also compute REQUIRES variable for LIBRARY dependencies.
+## 
+## The REQUIRES variable had already been calculated by "smart" base system,
+## but we do this again just for LIBRARY dependencies.
+##
+##  TODO: do recursive for static library, non-recursive for shared library
+##
+define smart~req
+$(foreach lib,$(call smart~var,LIBRARY),$(eval \
+   smart~LIBS += $(TARGET_OUT)/$(lib)
+ ))$(foreach smart~m,$(call smart~var,REQUIRES),$(call smart~req))\
+   $(foreach smart~m,$(call smart~var,USE_MODULES),$(call smart~use))
+endef #smart~req
+$(foreach smart~m,$(REQUIRES),$(smart~req))
+
+smart~use =
+smart~req =
+
+###########################################################
 ##
 ## More specific features
 ##
