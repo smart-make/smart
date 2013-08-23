@@ -3,12 +3,6 @@
 #    
 #    All rights reserved.
 #
-APK := $(APK:%=$(SRCDIR)/%)
-
-ifndef CERT
-  CERT := cert
-endif #CERT
-
 KEYSTORE := $(or \
   $(wildcard $(SRCDIR)/.androidsdk/keystore),\
   $(wildcard $(SRCDIR)/.android/keystore),\
@@ -22,30 +16,36 @@ STOREPASS := $(or \
   $(wildcard $(SRCDIR)/.android/storepass),\
   $(wildcard $(smart.tooldir)/key/storepass))
 
-define smart~rule
-  $(OUT)/$(NAME)/_.pack:
-	$$(PACK_COMMANDS) || rm -f $$@
-  $(OUT)/$(NAME)/_.unsigned : $(CLASSES.DEX) $(OUT)/$(NAME)/_.pack \
+$(OUT)/$(NAME)/_.pack:
+	$(PACK_COMMANDS) || rm -f $@
 
-	@cp -f $(OUT)/$(NAME)/_.pack $$@
-	$(ANDROID.aapt) add -k $$@ $$< || rm -f $$@
-endef #smart~rule
+$(OUT)/$(NAME)/_.unsigned: aapt := $(ANDROID.aapt)
+$(OUT)/$(NAME)/_.unsigned: out := $(OUT)/$(NAME)
+$(OUT)/$(NAME)/_.unsigned: $(CLASSES.DEX) $(OUT)/$(NAME)/_.pack
+	@cp -f $(out)/_.pack $@
+	$(aapt) add -k $@ $< || rm -f $@
 
-$(eval $(smart~rule))
+$(OUT)/$(NAME)/_.signed: cert := $(or $(CERT),cert)
+$(OUT)/$(NAME)/_.signed: storepass := $(STOREPASS)
+$(OUT)/$(NAME)/_.signed: keypass := $(KEYPASS)
+$(OUT)/$(NAME)/_.signed: keystore := $(KEYSTORE)
+$(OUT)/$(NAME)/_.signed: jarsigner := $(ANDROID.jarsigner)
+$(OUT)/$(NAME)/_.signed: command = \
+	$(jarsigner) -sigalg MD5withRSA -digestalg SHA1 \
+	$(addprefix -keystore , $(keystore)) \
+	$(if $(keypass),-keypass `cat $(keypass)`) \
+	$(if $(storepass), -storepass `cat $(storepass)`) \
+	$@ $(cert) || rm -f $@
+$(OUT)/$(NAME)/_.signed: $(OUT)/$(NAME)/_.unsigned
+	@cp -f $< $@
+	$(command)
 
-define smart~rule
-  $(OUT)/$(NAME)/_.signed: $(OUT)/$(NAME)/_.unsigned
-	@cp -f $$< $$@
-	$(ANDROID.jarsigner) -sigalg MD5withRSA -digestalg SHA1 \
-	$(addprefix -keystore , $(KEYSTORE))\
-	$(if $(KEYPASS),-keypass `cat $(KEYPASS)`)\
-	$(if $(STOREPASS), -storepass `cat $(STOREPASS)`)\
-	$$@ $(CERT) || rm -f $$@
-endef #smart~rule
+APK := $(APK:%=$(SRCDIR)/%)
+$(APK): zipalign := $(ANDROID.zipalign)
+$(APK): $(OUT)/$(NAME)/_.signed
+	$(zipalign) -f 4 $< $@
 
-$(eval $(smart~rule))
 
 smart~rule =
 
-$(APK) : $(OUT)/$(NAME)/_.signed
-	$(ANDROID.zipalign) -f 4 $< $@
+#$(OUT)/$(NAME):

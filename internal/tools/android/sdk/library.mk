@@ -54,4 +54,4 @@ $(OUT)/$(NAME)/classes: $(OUT)/$(NAME)/sources/.list
 	@mkdir -p $@
 	$(command)
 
-$(warning jar: $(NAME) $(TOOL) $(SRCDIR))
+#$(warning jar: $(NAME) $(TOOL) $(SRCDIR))
