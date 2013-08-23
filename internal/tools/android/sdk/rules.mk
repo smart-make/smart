@@ -16,7 +16,7 @@ ifneq ($(wildcard $(SRCDIR)/libs),)
   LIBS.native += $(call smart.find,$(SRCDIR)/libs,%.so %/gdbserver %/gdb.setup)
 endif
 
-CLASSPATH := $(ANDROID_PLATFORM_LIB):$(CLASSPATH)
+#CLASSPATH := $(ANDROID_PLATFORM_LIB):$(CLASSPATH)
 $(foreach 1,$(LIBS.java),$(eval CLASSPATH := $(CLASSPATH):$1))
 
 # $(modules-get-list), __ndk_modules, __ndk_import_list, __ndk_import_dirs
@@ -49,6 +49,12 @@ endif #LIBS.native or LIBS.native_list
 ifdef PACKAGE
   include $(smart.tooldir)/jar.mk
 endif #PACKAGE
+
+ifdef LIBRARY
+  include $(smart.tooldir)/library.mk
+  module-$(SCRIPT): $(OUT)/$(NAME)
+  modules: module-$(SCRIPT)
+endif #LIBRARY
 
 ifdef APK
   include $(smart.tooldir)/apk.mk

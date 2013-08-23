@@ -5,6 +5,7 @@
 #
 $(smart.internal)
 
+# LIBS.java includes the list of .jar libs.
 define smart~rule
   $(OUT)/$(NAME)/.classpath : $(LIBS.java)
 	@mkdir -p $$(@D) && echo '-cp "$(CLASSPATH)"' > $$@
@@ -17,12 +18,16 @@ define smart~rule
 	@rm -rf $(OUT)/$(NAME)/classes
 	@rm -vf $(OUT)/$(NAME)/classes.dex
 	@mkdir -p $(OUT)/$(NAME)/classes
-	javac -d $(OUT)/$(NAME)/classes "@$(OUT)/$(NAME)/.classpath" \
-	"@$(OUT)/$(NAME)/res/.sources" "@$(OUT)/$(NAME)/.sources" \
+	javac -d $(OUT)/$(NAME)/classes $(if $(DEBUG),-g)\
+	-encoding "UTF-8" -source 1.5 -target 1.5 \
+        -bootclasspath "$(ANDROID_PLATFORM_LIB)" \
+	"@$(OUT)/$(NAME)/.classpath" \
+	"@$(OUT)/$(NAME)/.sources" \
+	"@$(OUT)/$(NAME)/res/.sources" \
 	$(SOURCES.java_from_aidl)
 	@cd $(OUT)/$(NAME)/classes && find . -type f -name '*.class' > ../$$(@F)
 endef #smart~rule
-
+# -sourcepath
 $(eval $(smart~rule))
 
 ifdef PROGUARD

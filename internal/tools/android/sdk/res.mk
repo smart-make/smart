@@ -19,15 +19,17 @@ define smart~rule
   $(OUT)/$(NAME)/public.xml \
   $(OUT)/$(NAME)/res/.sources: $(LIBS.java) $(smart~res.all)
 	@mkdir -p $$(@D)
-	$(ANDROID.aapt) package -f -m -J "$(OUT)/$(NAME)/res" \
-	-P "$(OUT)/$(NAME)/public.xml" \
+	$(ANDROID.aapt) package -f -m \
+	--output-text-symbols "$(OUT)/$(NAME)" --auto-add-overlay \
 	$(addprefix --custom-package ,$(R_PACKAGE)) \
 	$(addprefix -M ,$(wildcard $(MANIFEST))) \
-        $(addprefix -I ,$(ANDROID_PLATFORM_LIB)) \
-	$(foreach 1,$(LIBS.java),-I "$1") \
+	$(foreach 1,$(LIBS.java) $(ANDROID_PLATFORM_LIB),-I "$1") \
 	$(foreach 1,$(SRCDIR)/res $(RES),$(addprefix -S ,$(wildcard $1))) \
-	$(foreach 1,$(SRCDIR)/assets $(ASSETS),$(addprefix -A ,$(wildcard $1)))
-	@find $(OUT)/$(NAME)/res -type f -name R.java > $$@
+	$(foreach 1,$(SRCDIR)/assets $(ASSETS),$(addprefix -A ,$(wildcard $1))) \
+	-J "$(OUT)/$(NAME)/res" --generate-dependencies \
+	-P "$(OUT)/$(NAME)/public.xml"
+	@find $(OUT)/$(NAME)/res -type f -name '*.java' > $$@
+  -include $(OUT)/$(NAME)/res/R.java.d
 endef #smart~rule
 
 $(eval $(smart~rule))
@@ -86,3 +88,25 @@ smart~rule =
 # '-G'
 # '/store/open/CSipSimple/bin/proguard.txt'
 
+
+
+# Executing '/store/open/android-sdk/build-tools/17.0.0/aapt' with arguments:
+# 'package'
+# '--non-constant-id'
+# '-f'
+# '-m'
+# '--output-text-symbols'
+# '/store/open/CSipSimple/ActionBarSherlock/bin'
+# '-M'
+# '/store/open/CSipSimple/ActionBarSherlock/bin/AndroidManifest.xml'
+# '-S'
+# '/store/open/CSipSimple/ActionBarSherlock/bin/res'
+# '-S'
+# '/store/open/CSipSimple/ActionBarSherlock/res'
+# '-I'
+# '/store/open/android-sdk/platforms/android-16/android.jar'
+# '-J'
+# '/store/open/CSipSimple/ActionBarSherlock/gen'
+# '--generate-dependencies'
+# '-G'
+# '/store/open/CSipSimple/ActionBarSherlock/bin/proguard.txt'
