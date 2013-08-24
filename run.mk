@@ -89,6 +89,7 @@ SMART.RULES := $(smart.root)/pend.mk
 $(smart.internal)
 ROOT := $(or $(smart.me),.)
 OUT = $(ROOT)/out
+TOP := $(PWD)
 
 smart~error :=
 

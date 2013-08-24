@@ -6,4 +6,4 @@ LIBRARY := yes
 
 EXPORT.LIBS := $(SRCDIR)/libs/google-play-services.jar
 #EXPORT.RES := $(OUT)/$(NAME)/res $(SRCDIR)/res
-EXPORT.RES := $(OUT)/$(NAME)/res
+#EXPORT.RES := $(SRCDIR)/res
