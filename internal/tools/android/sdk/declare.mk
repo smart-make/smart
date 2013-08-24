@@ -9,11 +9,9 @@ ifndef ANDROID.root
   include $(smart.tooldir)/init.mk
 endif #ANDROID.root
 
-ANDROID_ROOT = $(ANDROID.root)
-ANDROID_COMPAT = $(ANDROID.root)/android-compatibility
-ANDROID_EXTRAS = $(ANDROID.root)/extras
 MANIFEST := $(SRCDIR)/AndroidManifest.xml
 APK := $(NAME).apk
+EXTRA_PACKAGES :=
 CLASSPATH :=
 LIBS :=
 

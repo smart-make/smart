@@ -23,15 +23,17 @@ ifneq ($(wildcard $(SRCDIR)/libs),)
 endif
 
 define smart~use
-$(info $(smart~m): $(call smart~var,SRCDIR))\
 $(eval \
   ifeq ($(call smart~var,TOOL),$(TOOL))
     ifneq ($(call smart~var,LIBRARY),)
-      LIBS.classes += $(OUT)/$(call smart~var,NAME)/classes
-      LIBS.jar += $(OUT)/$(call smart~var,NAME)/classes.jar
+      #LIBS.classes += $(OUT)/$(call smart~var,NAME)/classes
+      #LIBS.jar += $(OUT)/$(call smart~var,NAME)/classes.jar
       RES.proguard += ../$(call smart~var,NAME)/res.proguard
       RES.crunched += $(OUT)/$(call smart~var,NAME)/res
       RES += $(call smart~var,SRCDIR)/res
+      ifneq ($(wildcard $(call smart~var,SRCDIR)/AndroidManifest.xml),)
+        EXTRA_PACKAGES := $(if $(EXTRA_PACKAGES),$(EXTRA_PACKAGES):)$$(shell awk -f $(smart.tooldir)/extract-package-name.awk $(call smart~var,SRCDIR)/AndroidManifest.xml)
+      endif
     endif
   endif
  )$(foreach smart~m,$(call smart~var,REQUIRES),$(call smart~use))

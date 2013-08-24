@@ -17,21 +17,24 @@ $(OUT)/$(NAME)/sources/.res: manifest := $(wildcard $(SRCDIR)/AndroidManifest.xm
 $(OUT)/$(NAME)/sources/.res: assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
 $(OUT)/$(NAME)/sources/.res: reses := $(wildcard $(SRCDIR)/res) $(RES)
 $(OUT)/$(NAME)/sources/.res: libs := $(LIBS.jar) $(ANDROID_PLATFORM_LIB)
+$(OUT)/$(NAME)/sources/.res: extra-packages := $(EXTRA_PACKAGES)
 $(OUT)/$(NAME)/sources/.res: out := $(OUT)/$(NAME)
 $(OUT)/$(NAME)/sources/.res: command = \
 	$(aapt) package -f -m \
 	-J "$(out)/sources" \
 	-P "$(out)/public.xml" \
 	-G "$(out)/res.proguard" \
+	$(addprefix --extra-packages ,$(extra-packages)) \
 	$(addprefix --custom-package ,$(package)) \
-	$(addprefix -M ,"$(manifest)") \
-	$(foreach 1,$(libs),-I "$1") \
-	$(foreach 1,$(reses),-S "$1") \
+	$(addprefix -M ,$(manifest)) \
 	$(foreach 1,$(assets),-A "$1") \
+	$(foreach 1,$(reses),-S "$1") \
+	$(foreach 1,$(libs),-I "$1") \
 	--output-text-symbols "$(out)" \
 	--generate-dependencies \
 	--auto-add-overlay
 $(OUT)/$(NAME)/sources/.res: $(LIBS.jar)
+$(OUT)/$(NAME)/sources/.res: $(SRCDIR)/AndroidManifest.xml
 	@mkdir -p "$(@D)"
 	$(command)
 	@touch $@
@@ -115,6 +118,7 @@ endif
 
 
 
+## Crunch
 # Executing '/store/open/android-sdk/build-tools/17.0.0/aapt' with arguments:
 # 'crunch'
 # '-v'
@@ -123,7 +127,7 @@ endif
 # '-C'
 # '/store/open/ActionBarSherlock/actionbarsherlock/bin/res'
 
-
+## Generate R.java
 # Executing '/store/open/android-sdk/build-tools/17.0.0/aapt' with arguments:
 # 'package'
 # '-f'
@@ -150,6 +154,7 @@ endif
 # '/store/open/CSipSimple/bin/proguard.txt'
 
 
+## Build library
 # Executing '/store/open/android-sdk/build-tools/17.0.0/aapt' with arguments:
 # 'package'
 # '--non-constant-id'
@@ -170,3 +175,26 @@ endif
 # '--generate-dependencies'
 # '-G'
 # '/store/open/CSipSimple/ActionBarSherlock/bin/proguard.txt'
+
+## Build apk..
+# Executing '/store/open/android-sdk/build-tools/17.0.0/aapt' with arguments:
+# 'package'
+# '--no-crunch'
+# '-f'
+# '--debug-mode'
+# '--auto-add-overlay'
+# '-M'
+# '/w/android/sandbox/NavigationDrawer/bin/AndroidManifest.xml'
+# '-S'
+# '/w/android/sandbox/NavigationDrawer/bin/res'
+# '-S'
+# '/w/android/sandbox/NavigationDrawer/res'
+# '-S'
+# '/w/android/sandbox/NavigationDrawer/v7-appcompat/bin/res'
+# '-S'
+# '/w/android/sandbox/NavigationDrawer/v7-appcompat/res'
+# '-I'
+# '/store/open/android-sdk/platforms/android-14/android.jar'
+# '-F'
+# '/w/android/sandbox/NavigationDrawer/bin/MainActivity.ap_'
+# '--generate-dependencies'

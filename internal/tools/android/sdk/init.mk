@@ -47,8 +47,12 @@ ifndef ANDROID.jarsigner
   ANDROID.jarsigner = jarsigner
 endif #ANDROID.jarsigner
 
-ANDROID_PLATFORM_LIB = $(ANDROID.root)/platforms/$(PLATFORM)/android.jar
-ANDROID_PREPROCESS_IMPORT = $(ANDROID.root)/platforms/$(PLATFORM)/framework.aidl
+ANDROID_ROOT = $(ANDROID.root)
+ANDROID_COMPAT = $(ANDROID.root)/android-compatibility
+ANDROID_EXTRAS = $(ANDROID.root)/extras
+ANDROID_PLATFORM = $(ANDROID.root)/platforms/$(PLATFORM)
+ANDROID_PLATFORM_LIB = $(ANDROID_PLATFORM)/android.jar
+ANDROID_PREPROCESS_IMPORT = $(ANDROID_PLATFORM)/framework.aidl
 
 android-new-app:
 	@if test -f $(SRCDIR)/AndroidManifest.xml; then \

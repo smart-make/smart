@@ -26,16 +26,18 @@ ifneq ($(wildcard $(OUT)/$(NAME)/sources/R.java.d),)
 endif
 $(OUT)/$(NAME)/sources/R.java.d: $(OUT)/$(NAME)/sources
 $(OUT)/$(NAME)/sources: aapt := $(ANDROID.aapt)
+$(OUT)/$(NAME)/sources: package := $(R_PACKAGE)
 $(OUT)/$(NAME)/sources: manifest := $(wildcard $(SRCDIR)/AndroidManifest.xml)
 $(OUT)/$(NAME)/sources: assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
 $(OUT)/$(NAME)/sources: reses := $(wildcard $(SRCDIR)/res) $(RES)
 $(OUT)/$(NAME)/sources: libs := $(LIBS.java) $(ANDROID_PLATFORM_LIB)
 $(OUT)/$(NAME)/sources: out := $(OUT)/$(NAME)
 $(OUT)/$(NAME)/sources: command = \
-	$(aapt) package -f -m \
+	$(aapt) package -f -m -x \
 	-J "$(out)/sources" \
 	-P "$(out)/public.xml" \
 	-G "$(out)/res.proguard" \
+	$(addprefix --custom-package ,$(package)) \
 	$(addprefix -M ,$(manifest)) \
 	$(foreach 1,$(libs),-I "$1") \
 	$(foreach 1,$(reses),-S "$1") \
@@ -44,6 +46,7 @@ $(OUT)/$(NAME)/sources: command = \
 	--generate-dependencies \
 	--non-constant-id
 $(OUT)/$(NAME)/sources: $(OUT)/$(NAME)/res
+$(OUT)/$(NAME)/sources: $(SRCDIR)/AndroidManifest.xml
 	@mkdir -p $@
 	$(command)
 
