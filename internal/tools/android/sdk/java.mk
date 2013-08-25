@@ -6,20 +6,23 @@
 $(smart.internal)
 
 ifneq ($(or $(wildcard $(SRCDIR)/AndroidManifest.xml),$(wildcard $(SRCDIR)/res),$(RES)),)
+smart~r.java := $(OUT)/$(NAME)/sources/R.java.d
+smart~r.java += $(foreach p,$(PACKAGE) $(subst :, ,$(EXTRA_PACKAGES)),$(OUT)/$(NAME)/sources/$(subst .,/,$p)/R.java)
 ifneq ($(wildcard $(OUT)/$(NAME)/sources/R.java.d),)
-  -include $(OUT)/$(NAME)/sources/R.java.d
+  include $(OUT)/$(NAME)/sources/R.java.d
 endif
-$(OUT)/$(NAME)/sources/R.java.d: $(OUT)/$(NAME)/sources/.res
-$(OUT)/$(NAME)/res.proguard: $(OUT)/$(NAME)/sources/.res
-$(OUT)/$(NAME)/sources/.res: aapt := $(ANDROID.aapt)
-$(OUT)/$(NAME)/sources/.res: package := $(R_PACKAGE)
-$(OUT)/$(NAME)/sources/.res: manifest := $(wildcard $(SRCDIR)/AndroidManifest.xml)
-$(OUT)/$(NAME)/sources/.res: assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
-$(OUT)/$(NAME)/sources/.res: reses := $(wildcard $(SRCDIR)/res) $(RES)
-$(OUT)/$(NAME)/sources/.res: libs := $(LIBS.jar) $(ANDROID_PLATFORM_LIB)
-$(OUT)/$(NAME)/sources/.res: extra-packages := $(EXTRA_PACKAGES)
-$(OUT)/$(NAME)/sources/.res: out := $(OUT)/$(NAME)
-$(OUT)/$(NAME)/sources/.res: command = \
+#$(warning $(EXTRA_PACKAGES))
+#$(warning $(smart~r.java))
+$(OUT)/$(NAME)/res.proguard: $(smart~r.java)
+$(smart~r.java): aapt := $(ANDROID.aapt)
+$(smart~r.java): package := $(R_PACKAGE)
+$(smart~r.java): manifest := $(wildcard $(SRCDIR)/AndroidManifest.xml)
+$(smart~r.java): assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
+$(smart~r.java): reses := $(wildcard $(SRCDIR)/res) $(RES)
+$(smart~r.java): libs := $(LIBS.jar) $(ANDROID_PLATFORM_LIB)
+$(smart~r.java): extra-packages := $(EXTRA_PACKAGES)
+$(smart~r.java): out := $(OUT)/$(NAME)
+$(smart~r.java): command = \
 	$(aapt) package -f -m \
 	-J "$(out)/sources" \
 	-P "$(out)/public.xml" \
@@ -33,11 +36,11 @@ $(OUT)/$(NAME)/sources/.res: command = \
 	--output-text-symbols "$(out)" \
 	--generate-dependencies \
 	--auto-add-overlay
-$(OUT)/$(NAME)/sources/.res: $(LIBS.jar)
-$(OUT)/$(NAME)/sources/.res: $(SRCDIR)/AndroidManifest.xml
+$(smart~r.java): $(LIBS.jar)
+$(smart~r.java): $(SRCDIR)/AndroidManifest.xml
+	@echo "Gen R.java..."
 	@mkdir -p "$(@D)"
 	$(command)
-	@touch $@
 endif ## has res/assests/AndroidMenifest.xml
 
 $(OUT)/$(NAME)/sources/.aidl: aidl := $(ANDROID.aidl)
@@ -46,6 +49,7 @@ $(OUT)/$(NAME)/sources/.aidl: preprocess := $(ANDROID_PREPROCESS_IMPORT)
 $(OUT)/$(NAME)/sources/.aidl: out := $(OUT)/$(NAME)
 $(OUT)/$(NAME)/sources/.aidl: $(SOURCES.aidl)
 $(OUT)/$(NAME)/sources/.aidl:
+	@echo "Compile aidl.."
 	@mkdir -p "$(@D)"
 	@for f in $^ ; do echo "aidl $$f"; \
 	if grep "^parcelable\s.*;" $$f > /dev/null ; then true; else \
@@ -53,11 +57,9 @@ $(OUT)/$(NAME)/sources/.aidl:
 	@touch $@
 
 $(OUT)/$(NAME)/.sources: sources := $(SOURCES.java)
-$(OUT)/$(NAME)/.sources: sources.res := $(OUT)/$(NAME)/sources/.res
-$(OUT)/$(NAME)/.sources: sources.aidl := $(OUT)/$(NAME)/sources/.aidl
 $(OUT)/$(NAME)/.sources: out := $(OUT)/$(NAME)
-$(OUT)/$(NAME)/.sources: $(SOURCES.java)
-$(OUT)/$(NAME)/.sources: $(OUT)/$(NAME)/sources/.res
+$(OUT)/$(NAME)/.sources: $(SOURCES.java) 
+$(OUT)/$(NAME)/.sources: $(smart~r.java)
 $(OUT)/$(NAME)/.sources: $(OUT)/$(NAME)/sources/.aidl
 $(OUT)/$(NAME)/.sources:
 	@echo "Gen source list.."

@@ -9,8 +9,9 @@ ifndef ANDROID.root
   include $(smart.tooldir)/init.mk
 endif #ANDROID.root
 
-MANIFEST := $(SRCDIR)/AndroidManifest.xml
 APK := $(NAME).apk
+MANIFEST := $(SRCDIR)/AndroidManifest.xml
+PACKAGE := $(shell awk -f $(smart.tooldir)/extract-package-name.awk $(MANIFEST))
 EXTRA_PACKAGES :=
 CLASSPATH :=
 LIBS :=

@@ -6,16 +6,15 @@
 $(smart.internal)
 
 # $(RES.crunched) 
+# $(if $(PACKAGE),-x)
 $(OUT)/$(NAME)/_.pack: aapt := $(ANDROID.aapt)
 $(OUT)/$(NAME)/_.pack: reses := $(wildcard $(SRCDIR)/res) $(RES)
 $(OUT)/$(NAME)/_.pack: assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
 $(OUT)/$(NAME)/_.pack: manifest := $(wildcard $(SRCDIR)/AndroidManifest.xml)
 $(OUT)/$(NAME)/_.pack: libs := $(LIBS.jar) $(ANDROID_PLATFORM_LIB)
 $(OUT)/$(NAME)/_.pack: classes := $(CLASSES.DEX)
-$(OUT)/$(NAME)/_.pack: package := $(PACKAGE)
 $(OUT)/$(NAME)/_.pack: command = \
-	$(aapt) package -f \
-	-F $@ $(if $(package),-x) \
+	$(aapt) package -f -F $@ \
 	$(addprefix -M ,"$(manifest)") \
 	$(foreach 1,$(libs),-I "$1") \
 	$(foreach 1,$(reses),-S "$1") \
@@ -30,7 +29,7 @@ $(OUT)/$(NAME)/_.pack: $(SRCDIR)/AndroidManifest.xml
 $(OUT)/$(NAME)/_.pack:
 	@mkdir -p $(@D)
 	$(command)
-	$(pack_libs)
+	@$(pack_libs)
 	$(aapt) add -k $@ $(classes)
 
 $(OUT)/$(NAME)/_.signed: storepass := $(or \

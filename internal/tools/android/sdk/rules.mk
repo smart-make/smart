@@ -76,5 +76,5 @@ ifdef APK
 endif #APK
 
 ifdef PACKAGE
-  $(error PACKAGE is deprecated, use "LIBRARY=yes" instead)
+  #$(error PACKAGE is deprecated, use "LIBRARY=yes" instead)
 endif #PACKAGE
