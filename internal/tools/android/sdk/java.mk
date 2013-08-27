@@ -9,7 +9,7 @@ ifneq ($(or $(wildcard $(SRCDIR)/AndroidManifest.xml),$(wildcard $(SRCDIR)/res),
 smart~r.java := $(OUT)/$(NAME)/sources/R.java.d
 smart~r.java += $(foreach p,$(PACKAGE) $(subst :, ,$(EXTRA_PACKAGES)),$(OUT)/$(NAME)/sources/$(subst .,/,$p)/R.java)
 ifneq ($(wildcard $(OUT)/$(NAME)/sources/R.java.d),)
-  include $(OUT)/$(NAME)/sources/R.java.d
+  -include $(OUT)/$(NAME)/sources/R.java.d
 endif
 #$(warning $(EXTRA_PACKAGES))
 #$(warning $(smart~r.java))
