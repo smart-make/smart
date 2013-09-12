@@ -8,6 +8,7 @@ $(smart.internal)
 smart~native :=
 
 $(OUT)/$(NAME)/_.pack: pack_libs = true
+$(OUT)/$(NAME)/_.pack: natives :=
 
 # process .so libs
 ifdef LIBS.native
@@ -30,6 +31,7 @@ endif #LIBS.native_list
 
 # process packing native .so libs
 ifdef smart~native
-  $(OUT)/$(NAME)/_.pack: pack_libs += && ( bash $(smart.tooldir)/pack-file.bash "$$(@D)" "$$(@F)" "$(smart~native:$(OUT)/$(NAME)/%=%)" )
+  $(OUT)/$(NAME)/_.pack: natives := $(smart~native:$(OUT)/$(NAME)/%=%)
+  $(OUT)/$(NAME)/_.pack: pack_libs += && ( bash $(smart.tooldir)/pack-file.bash "$(@D)" "$(@F)" "$(natives)" )
   $(OUT)/$(NAME)/_.pack: $(smart~native)
 endif #smart~native

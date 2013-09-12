@@ -7,6 +7,9 @@ $(smart.internal)
 
 ifndef ANDROID.root
   include $(smart.tooldir)/init.mk
+  uninstall: uninstall-$(shell basename $(PWD))
+  install: install-$(shell basename $(PWD))
+  run: run-$(shell basename $(PWD))
 endif #ANDROID.root
 
 APK := $(NAME).apk
@@ -15,9 +18,13 @@ PACKAGE := $(shell awk -f $(smart.tooldir)/extract-package-name.awk $(MANIFEST))
 EXTRA_PACKAGES :=
 CLASSPATH :=
 LIBS :=
+JAVAC_FLAGS := -Xlint:deprecation -Xlint:unchecked
 
-#PROGUARD := $(wildcard $(SRCDIR)/proguard.cfg)
-PROGUARD := $(wildcard $(SRCDIR)/obfuscate.pro)
+ifndef PACKAGE
+  $(error package name unknown ($(MANIFEST)))
+endif
+
+PROGUARD := $(or $(wildcard $(SRCDIR)/obfuscate.pro),$(wildcard $(SRCDIR)/obfuscate.cfg))
 
 ifndef ANDROID_SDK_LIBS.initialized
   ANDROID_SDK_LIBS.initialized := yes

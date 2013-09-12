@@ -13,7 +13,7 @@ $(foreach 1,$(SUPPORTS),$(eval LIBS += $(ANDROID.root)/android-compatibility/$1/
 
 RES.proguard :=
 RES.crunched :=
-LIBS.classes :=
+LIBS.path :=
 LIBS.jar := $(filter %.jar,$(LIBS))
 LIBS.native := $(filter %.so,$(LIBS))
 LIBS.native_list := $(filter %.native,$(LIBS))
@@ -26,8 +26,12 @@ define smart~use
 $(eval \
   ifeq ($(call smart~var,TOOL),$(TOOL))
     ifneq ($(call smart~var,LIBRARY),)
-      #LIBS.classes += $(OUT)/$(call smart~var,NAME)/classes
-      #LIBS.jar += $(OUT)/$(call smart~var,NAME)/classes.jar
+      ifeq ($$(filter $(OUT)/$(call smart~var,NAME)/classes.jar,$$(LIBS.jar)),)
+        #LIBS.jar += $(OUT)/$(call smart~var,NAME)/classes.jar
+      endif
+      ifeq ($$(filter $(OUT)/$(call smart~var,NAME)/classes,$$(LIBS.path)),)
+        LIBS.path += $(OUT)/$(call smart~var,NAME)/classes
+      endif
       RES.proguard += ../$(call smart~var,NAME)/res.proguard
       RES.crunched += $(OUT)/$(call smart~var,NAME)/res
       RES += $(call smart~var,SRCDIR)/res
@@ -40,9 +44,22 @@ $(eval \
 endef #smart~use
 $(foreach smart~m,$(REQUIRES),$(smart~use))
 
+#$(warning $(NAME): $(LIBS), $(REQUIRES))
+#$(warning $(NAME): $(LIBS.jar))
+#$(warning $(NAME): $(LIBS.path))
+
 #CLASSPATH := $(ANDROID_PLATFORM_LIB):$(CLASSPATH)
 $(foreach 1,$(LIBS.jar),$(eval CLASSPATH := $(CLASSPATH):$1))
+$(foreach 1,$(LIBS.path),$(eval CLASSPATH := $(CLASSPATH):$1))
 CLASSPATH := $(CLASSPATH::%=%)
+
+# LIBS.jar includes the list of .jar libs.
+$(OUT)/$(NAME)/.classpath: bootclass := $(ANDROID_PLATFORM_LIB)
+$(OUT)/$(NAME)/.classpath: classpath := $(CLASSPATH)
+$(OUT)/$(NAME)/.classpath: $(LIBS.jar) $(LIBS.path)
+	@mkdir -p $(@D)
+	@echo '-bootclasspath "$(bootclass)"' > $@
+	@echo '-cp "$(classpath)"' >> $@
 
 # $(modules-get-list), __ndk_modules, __ndk_import_list, __ndk_import_dirs
 # $(foreach 1,$(USE_MODULES),$(warning $1))
@@ -55,26 +72,96 @@ endif #SOURCES
 SOURCES.aidl := $(filter %.aidl,$(SOURCES))
 SOURCES.java := $(filter %.java,$(SOURCES))
 
-ifdef SOURCES.java
-  include $(smart.tooldir)/java.mk
-endif #SOURCES.java
-
 ifneq ($(or $(LIBS.native),$(LIBS.native_list)),)
   include $(smart.tooldir)/native.mk
 endif #LIBS.native or LIBS.native_list
 
+ifdef PACKAGE
+smart~package~out := $(OUT)/$(NAME)/sources/$(subst .,/,$(PACKAGE))
+smart~buildconfig.java := $(smart~package~out)/BuildConfig.java
+$(OUT)/$(NAME)/sources: $(smart~buildconfig.java)
+$(smart~buildconfig.java): debug := $(DEBUG)
+$(smart~buildconfig.java): package := $(PACKAGE)
+$(smart~buildconfig.java): 
+	@echo "Gen BuildConfig.java for '$(package)'..."
+	@mkdir -p "$(@D)"
+	@echo "/** Automatically generated file. DO NOT MODIFY */" > $@
+	@echo "package $(package);" >> $@
+	@echo "public final class BuildConfig {" >> $@
+	@echo "    public final static boolean DEBUG = $(if $(debug),true,false);" >> $@
+	@echo "}" >> $@
+else
+smart~buildconfig.java :=
+endif # PACKAGE
+
+ifdef SOURCES.aidl
+$(OUT)/$(NAME)/sources: $(OUT)/$(NAME)/sources/.aidl
+$(OUT)/$(NAME)/sources/.aidl: aidl := $(ANDROID.aidl)
+$(OUT)/$(NAME)/sources/.aidl: src := $(SRCDIR)/src
+$(OUT)/$(NAME)/sources/.aidl: preprocess := $(ANDROID_PREPROCESS_IMPORT)
+$(OUT)/$(NAME)/sources/.aidl: out := $(OUT)/$(NAME)
+$(OUT)/$(NAME)/sources/.aidl: $(SOURCES.aidl)
+$(OUT)/$(NAME)/sources/.aidl:
+	@echo "Compile aidl.."
+	@mkdir -p "$(@D)"
+	@for f in $^ ; do echo "aidl $$f"; \
+	if grep "^parcelable\s.*;" $$f > /dev/null ; then true; else \
+	$(aidl) -I"$(src)" -p"$(preprocess)" -o"$(out)/sources" -b $$f ; fi ; done
+	@touch $@
+endif # SOURCES.aidl
+
+$(OUT)/$(NAME)/.sources: package := $(PACKAGE)
+$(OUT)/$(NAME)/.sources: sources := $(SOURCES.java)
+$(OUT)/$(NAME)/.sources: $(SOURCES.java) 
+$(OUT)/$(NAME)/.sources: $(OUT)/$(NAME)/sources
+
+$(OUT)/$(NAME)/classes: debug := $(DEBUG)
+$(OUT)/$(NAME)/classes: package := $(PACKAGE)
+$(OUT)/$(NAME)/classes: classpath := $(OUT)/$(NAME)/.classpath
+$(OUT)/$(NAME)/classes: sourcepath := $(OUT)/$(NAME)/sources
+$(OUT)/$(NAME)/classes: sources := $(SOURCES.java)
+$(OUT)/$(NAME)/classes: out := $(OUT)/$(NAME)/classes
+$(OUT)/$(NAME)/classes: command = \
+	javac -d $(out) $(if $(debug),-g) \
+	-encoding "UTF-8" -source 1.5 -target 1.5 \
+	-sourcepath "$(sourcepath)" \
+        "@$(classpath)" "@$(@D)/.sources"
+$(OUT)/$(NAME)/classes: $(OUT)/$(NAME)/.classpath
+$(OUT)/$(NAME)/classes: $(OUT)/$(NAME)/.sources
+$(OUT)/$(NAME)/classes:
+	@rm -f $(@D)/classes.{dex,jar}
+	@mkdir -p $@
+	@echo "Compiling sources for '$(package)'..."
+	@if [ "0 $(@D)/.sources" != "`wc -l $(@D)/.sources`" ]; then $(command); fi
+	@touch $@
+
 ifdef LIBRARY
+  APK :=
   include $(smart.tooldir)/library.mk
-  module-$(SCRIPT): $(OUT)/$(NAME)
-  modules: module-$(SCRIPT)
+  #module-$(SCRIPT): $(OUT)/$(NAME)
+  #modules: module-$(SCRIPT)
+  module-$(SCRIPT): name := $(NAME) ; @echo $(name)
 endif #LIBRARY
 
 ifdef APK
   include $(smart.tooldir)/apk.mk
   module-$(SCRIPT): $(APK)
   modules: module-$(SCRIPT)
+  $(OUT)/$(NAME)/.install: apk := $(APK)
+  $(OUT)/$(NAME)/.install: package := $(PACKAGE)
+  $(OUT)/$(NAME)/.install: adb_environment := $(addprefix ANDROID_SERIAL=,$(DEVICE))
+  $(OUT)/$(NAME)/.install: $(APK)
+	$(adb_environment) adb install -r $(apk) && touch $@
+  install-$(NAME): $(OUT)/$(NAME)/.install
+  uninstall-$(NAME): package := $(PACKAGE)
+  uninstall-$(NAME): install_stamp_file := $(OUT)/$(NAME)/.install
+  uninstall-$(NAME): adb_environment := $(addprefix ANDROID_SERIAL=,$(DEVICE))
+  uninstall-$(NAME):
+	$(adb_environment) adb uninstall $(package) && sleep 1
+	@rm -f $(install_stamp_file)
+  run-$(NAME): package := $(PACKAGE)
+  run-$(NAME): launch := $(or $(LAUNCH),.Main)
+  run-$(NAME): adb_environment := $(addprefix ANDROID_SERIAL=,$(DEVICE))
+  run-$(NAME): install-$(NAME)
+	$(adb_environment) adb shell am start -a MAIN -n $(package)/$(launch)
 endif #APK
-
-ifdef PACKAGE
-  #$(error PACKAGE is deprecated, use "LIBRARY=yes" instead)
-endif #PACKAGE
