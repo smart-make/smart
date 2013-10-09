@@ -11,6 +11,10 @@ smart~var = $(call smart.get,$(smart~m),$1)
 PLATFORM := $(or $(PLATFORM),android-14)
 $(foreach 1,$(SUPPORTS),$(eval LIBS += $(ANDROID.root)/android-compatibility/$1/android-support-$1.jar))
 
+ifeq ($(shell expr $(PLATFORM:android-%=%) '<' 15),yes)
+  LIBS += $(ANDROID_ROOT)/tools/support/annotations.jar
+endif
+
 RES.proguard :=
 RES.crunched :=
 LIBS.path :=
@@ -56,7 +60,9 @@ CLASSPATH := $(CLASSPATH::%=%)
 # LIBS.jar includes the list of .jar libs.
 $(OUT)/$(NAME)/.classpath: bootclass := $(ANDROID_PLATFORM_LIB)
 $(OUT)/$(NAME)/.classpath: classpath := $(CLASSPATH)
-$(OUT)/$(NAME)/.classpath: $(LIBS.jar) $(LIBS.path)
+$(OUT)/$(NAME)/.classpath: $(SCRIPT)
+$(OUT)/$(NAME)/.classpath: $(LIBS.path:%/classes=%/.classes)
+$(OUT)/$(NAME)/.classpath: $(LIBS.jar) $(LIBS.path:%/classes=%/.classes)
 	@mkdir -p $(@D)
 	@echo '-bootclasspath "$(bootclass)"' > $@
 	@echo '-cp "$(classpath)"' >> $@
@@ -115,25 +121,25 @@ $(OUT)/$(NAME)/.sources: sources := $(SOURCES.java)
 $(OUT)/$(NAME)/.sources: $(SOURCES.java) 
 $(OUT)/$(NAME)/.sources: $(OUT)/$(NAME)/sources
 
-$(OUT)/$(NAME)/classes: debug := $(DEBUG)
-$(OUT)/$(NAME)/classes: package := $(PACKAGE)
-$(OUT)/$(NAME)/classes: classpath := $(OUT)/$(NAME)/.classpath
-$(OUT)/$(NAME)/classes: sourcepath := $(OUT)/$(NAME)/sources
-$(OUT)/$(NAME)/classes: sources := $(SOURCES.java)
-$(OUT)/$(NAME)/classes: out := $(OUT)/$(NAME)/classes
-$(OUT)/$(NAME)/classes: command = \
+$(OUT)/$(NAME)/.classes: debug := $(DEBUG)
+$(OUT)/$(NAME)/.classes: package := $(PACKAGE)
+$(OUT)/$(NAME)/.classes: classpath := $(OUT)/$(NAME)/.classpath
+$(OUT)/$(NAME)/.classes: sourcepath := $(OUT)/$(NAME)/sources
+$(OUT)/$(NAME)/.classes: sources := $(SOURCES.java)
+$(OUT)/$(NAME)/.classes: out := $(OUT)/$(NAME)/classes
+$(OUT)/$(NAME)/.classes: command = \
 	javac -d $(out) $(if $(debug),-g) \
 	-encoding "UTF-8" -source 1.5 -target 1.5 \
 	-sourcepath "$(sourcepath)" \
         "@$(classpath)" "@$(@D)/.sources"
-$(OUT)/$(NAME)/classes: $(OUT)/$(NAME)/.classpath
-$(OUT)/$(NAME)/classes: $(OUT)/$(NAME)/.sources
-$(OUT)/$(NAME)/classes:
+$(OUT)/$(NAME)/.classes: $(OUT)/$(NAME)/.classpath
+$(OUT)/$(NAME)/.classes: $(OUT)/$(NAME)/.sources
+$(OUT)/$(NAME)/.classes:
 	@rm -f $(@D)/classes.{dex,jar}
-	@mkdir -p $@
+	@mkdir -p $(out)
 	@echo "Compiling sources for '$(package)'..."
 	@if [ "0 $(@D)/.sources" != "`wc -l $(@D)/.sources`" ]; then $(command); fi
-	@touch $@
+	@find $(out) -type f -name '*.class' -print > $@
 
 ifdef LIBRARY
   APK :=

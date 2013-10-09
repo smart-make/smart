@@ -5,6 +5,8 @@
 #
 $(smart.internal)
 
+#$(warning $(NAME), $(SCRIPT), $(SRCDIR))
+
 smart~debug~tag~file := $(OUT)/$(NAME)/.debug.$(if $(DEBUG),true,false)
 smart~debug~tag~file~neg := $(OUT)/$(NAME)/.debug.$(if $(DEBUG),false,true)
 smart~r.java := $(OUT)/$(NAME)/sources/R.java.d
@@ -40,10 +42,12 @@ $(smart~r.java): command = \
 	--generate-dependencies \
 	--auto-add-overlay
 $(smart~r.java): $(LIBS.jar)
+$(smart~r.java): $(call smart.find,$(SRCDIR)/res,%.xml %.png %.jpg)
+#$(smart~r.java): $(call smart.find,$(SRCDIR)/assets,,%~)
 $(smart~r.java): $(SRCDIR)/AndroidManifest.xml
-	@echo "Gen R.java for $(package)..."
+	@echo "Generate R.java for '$(package)'..."
 	@mkdir -p "$(@D)"
-	$(command)
+	@$(command)
 
 $(smart~buildconfig.java): $(smart~debug~tag~file)
 $(smart~debug~tag~file): debug := $(DEBUG)
@@ -53,8 +57,8 @@ $(smart~debug~tag~file):
 	@rm -f $(negative) $(buildconfig)
 	@touch $@
 
-$(OUT)/$(NAME)/.sources: $(OUT)/$(NAME)/sources
-	@echo "Gen source list for $(package).."
+$(OUT)/$(NAME)/.sources: $(OUT)/$(NAME)/sources $(smart~r.java)
+	@echo "Prepare source list for '$(package)'.."
 	@mkdir -p $(@D) && echo -n > $@
 	@(for f in $(sources) ; do echo $$f ; done) >> $@
 	@find "$(@D)/sources" -type f -name '*.java' >> $@
@@ -70,7 +74,7 @@ ifneq ($(SOURCES.java),)
     $(OUT)/$(NAME)/classes.dex: dex_dest := $(OUT)/$(NAME)/classes
     $(OUT)/$(NAME)/classes.dex: dex_input := .
     $(OUT)/$(NAME)/classes.dex: dex_output := ../classes.dex
-    $(OUT)/$(NAME)/classes.dex: $(OUT)/$(NAME)/classes
+    $(OUT)/$(NAME)/classes.dex: $(OUT)/$(NAME)/.classes
   endif #PROGUARD
   $(OUT)/$(NAME)/classes.dex: dx := $(ANDROID.dx)
   $(OUT)/$(NAME)/classes.dex: out := $(OUT)/$(NAME)
@@ -114,10 +118,12 @@ $(OUT)/$(NAME)/_.pack: $(CLASSES.DEX)
 $(OUT)/$(NAME)/_.pack: $(SRCDIR)/AndroidManifest.xml
 $(OUT)/$(NAME)/_.pack:
 	@mkdir -p $(@D)
-	$(command)
-	@echo "Packing native libs..."
+	@echo "Packing resources..."
+	@$(command)
+	@echo "Packing native libraries..."
 	@$(pack_libs)
-	$(aapt) add -k $@ $(classes)
+	@echo "Packing classes..."
+	@$(aapt) add -k $@ $(classes)
 
 $(OUT)/$(NAME)/_.signed: storepass := $(or \
 	$(wildcard $(SRCDIR)/.androidsdk/storepass),\
@@ -141,12 +147,14 @@ $(OUT)/$(NAME)/_.signed: command = \
 	$@ $(cert)
 $(OUT)/$(NAME)/_.signed: $(OUT)/$(NAME)/_.pack
 	@cp -f $< $@
-	$(command)
+	@echo "Signing package..."
+	@$(command)
 
 APK := $(APK:%=$(SRCDIR)/%)
 $(APK): zipalign := $(ANDROID.zipalign)
 $(APK): $(OUT)/$(NAME)/_.signed
-	$(zipalign) -f 4 $< $@
+	@echo "Aligning $@..."
+	@$(zipalign) -f 4 $< $@
 
 
 

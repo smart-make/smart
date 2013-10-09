@@ -27,6 +27,6 @@ $(OUT)/$(NAME)/classes-obfuscated.jar: proguard := $(ANDROID.proguard)/lib/progu
 $(OUT)/$(NAME)/classes-obfuscated.jar: proguard_cfg := $(OUT)/$(NAME)/proguard.cfg
 $(OUT)/$(NAME)/classes-obfuscated.jar: $(OUT)/$(NAME)/res.proguard
 $(OUT)/$(NAME)/classes-obfuscated.jar: $(OUT)/$(NAME)/proguard.cfg
-$(OUT)/$(NAME)/classes-obfuscated.jar: $(OUT)/$(NAME)/classes
+$(OUT)/$(NAME)/classes-obfuscated.jar: $(OUT)/$(NAME)/.classes
 $(OUT)/$(NAME)/classes-obfuscated.jar: $(PROGUARD)
 	@java -jar $(proguard) @$(proguard_cfg)

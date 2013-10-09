@@ -12,7 +12,7 @@ $(smart.internal)
 $(OUT)/$(NAME): $(OUT)/$(NAME)/classes.deleted
 
 $(OUT)/$(NAME)/classes.deleted: classes := $(OUT)/$(NAME)/classes
-$(OUT)/$(NAME)/classes.deleted: $(OUT)/$(NAME)/classes
+$(OUT)/$(NAME)/classes.deleted: $(OUT)/$(NAME)/.classes
 #	@find $(classes) -type f \( -name 'R.class' -or -name 'R$$*.class' \) -delete
 	@find $(classes) -type f \( -name 'R.class' -or -name 'R$$*.class' \) -print > $@
 	@for f in $$(cat $@) ; do rm -f $$f; done

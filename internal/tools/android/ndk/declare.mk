@@ -7,6 +7,7 @@ $(smart.internal)
 
 ifeq ($(and $(NDK_ROOT),$(BUILD_SYSTEM),$(NDK_ALL_TOOLCHAINS),$(NDK_ALL_ABIS),$(NDK_ALL_ARCHS)),)
   include $(smart.tooldir)/glue/init.mk
+  DEFAULT_TOOLCHAIN_VERSION := 4.8
 endif
 
 ## Use debug version by defalult
@@ -42,6 +43,7 @@ LIBADD :=
 
 # TOOLCHAIN_NAME := 
 #TOOLCHAIN_VERSION := 4.6
-TOOLCHAIN_VERSION := 4.7
+#TOOLCHAIN_VERSION := 4.7
+TOOLCHAIN_VERSION := 4.8
 
 EXPORT.LIBS := $(OUT)/$(NAME).native

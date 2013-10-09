@@ -42,7 +42,8 @@ $(eval smart~d := $(smart~o:%.o=%.d))\
 $(if $(and $(smart~s),$(smart~o)),$(eval \
   smart~OBJS += $(smart~o)
   $(smart~o) : $(TARGET_OBJS)/%.o : %$2 | $(dir $(sort $(smart~o)))
-	$(call smart~compile.$1)
+	@echo "$1: $$@"
+	@$(call smart~compile.$1)
  )$(foreach o,$(smart~o),$(call smart~make~target~dir,$o))\
   $(foreach d,$(smart~d),$(if $(wildcard $d),$(eval -include $d))))
 endef #smart~compile~rules

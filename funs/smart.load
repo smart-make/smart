@@ -47,20 +47,26 @@ ifeq ($(smart.load-$(smart~sm.mk)),true)
   $(warning info: "$(smart~sm.mk)" already loaded)
 else
 
-smart~srcdir := $(SRCDIR)
+## Save SRCDIR to smart~srcdir, because SRCDIR is going to be overrided.
+smart~srcdir := $(SRCDIR)/
+ifeq ($(patsubst /%,/,$(@loadee)),/)
+  smart~srcdir :=
+endif
 
 $(call smart.test.load.before.push)
 $(call smart.push)
 $(call smart.test.load.after.push)
 
 ifdef smart~smart
-  ifeq ($(smart~sm.mk),$(smart~srcdir)/$(@loadee).mk)
-    MAKEFILE_LIST += $(smart~srcdir)/$(@loadee).mk
+  ifeq ($(smart~sm.mk),$(smart~srcdir)$(@loadee).mk)
+    MAKEFILE_LIST += $(smart~srcdir)$(@loadee).mk
   else
-    MAKEFILE_LIST += $(smart~srcdir)/$(@loadee)/$(smart~smart)
+    MAKEFILE_LIST += $(smart~srcdir)$(@loadee:%/$(smart~smart)=%)/$(smart~smart)
   endif
   include $(SMART.DECLARE)
 endif #smart~smart
+
+#$(warning $(SRCDIR), $(smart~smart), $(@loadee))
 
 smart.load-$(smart~sm.mk) := true
 include $(smart~sm.mk)

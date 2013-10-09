@@ -12,7 +12,7 @@ $(smart.internal)
 #$(info smart: AndroidNDK: Build "$(NAME)" for $(TARGET_PLATFORM) using ABI "$(TARGET_ARCH_ABI)")
 
 ## Setup toolchain version, and default to 4.6..
-NDK_TOOLCHAIN_VERSION := $(or $(TOOLCHAIN_VERSION),4.7,4.6)
+NDK_TOOLCHAIN_VERSION := $(or $(TOOLCHAIN_VERSION),4.8,4.7,4.6)
 
 define smart~make~target~dir
 $(eval \
