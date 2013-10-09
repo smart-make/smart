@@ -15,6 +15,7 @@ ifeq ($(shell expr $(PLATFORM:android-%=%) '<' 15),yes)
   LIBS += $(ANDROID_ROOT)/tools/support/annotations.jar
 endif
 
+SRC.required :=
 RES.proguard :=
 RES.crunched :=
 LIBS.path :=
@@ -39,6 +40,7 @@ $(eval \
       RES.proguard += ../$(call smart~var,NAME)/res.proguard
       RES.crunched += $(OUT)/$(call smart~var,NAME)/res
       RES += $(call smart~var,SRCDIR)/res
+      SRC.required += $(call smart~var,SRCDIR)/src
       ifneq ($(wildcard $(call smart~var,SRCDIR)/AndroidManifest.xml),)
         EXTRA_PACKAGES := $(if $(EXTRA_PACKAGES),$(EXTRA_PACKAGES):)$$(shell awk -f $(smart.tooldir)/extract-package-name.awk $(call smart~var,SRCDIR)/AndroidManifest.xml)
       endif
@@ -103,7 +105,7 @@ endif # PACKAGE
 ifdef SOURCES.aidl
 $(OUT)/$(NAME)/sources: $(OUT)/$(NAME)/sources/.aidl
 $(OUT)/$(NAME)/sources/.aidl: aidl := $(ANDROID.aidl)
-$(OUT)/$(NAME)/sources/.aidl: src := $(SRCDIR)/src
+$(OUT)/$(NAME)/sources/.aidl: incs := $(foreach s,$(SRCDIR)/src $(SRC.required),-I"$s")
 $(OUT)/$(NAME)/sources/.aidl: preprocess := $(ANDROID_PREPROCESS_IMPORT)
 $(OUT)/$(NAME)/sources/.aidl: out := $(OUT)/$(NAME)
 $(OUT)/$(NAME)/sources/.aidl: $(SOURCES.aidl)
@@ -112,7 +114,7 @@ $(OUT)/$(NAME)/sources/.aidl:
 	@mkdir -p "$(@D)"
 	@for f in $^ ; do echo "aidl $$f"; \
 	if grep "^parcelable\s.*;" $$f > /dev/null ; then true; else \
-	$(aidl) -I"$(src)" -p"$(preprocess)" -o"$(out)/sources" -b $$f ; fi ; done
+	$(aidl) $(incs) -p"$(preprocess)" -o"$(out)/sources" -b $$f ; fi ; done
 	@touch $@
 endif # SOURCES.aidl
 
