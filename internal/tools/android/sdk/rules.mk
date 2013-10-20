@@ -5,13 +5,19 @@
 #
 $(smart.internal)
 
+V := $(if $(DEBUG),debug,release)
+
 ## Helper for getting variable of $(smart~m)
 smart~var = $(call smart.get,$(smart~m),$1)
 
 PLATFORM := $(or $(PLATFORM),android-14)
 $(foreach 1,$(SUPPORTS),$(eval LIBS += $(ANDROID.root)/android-compatibility/$1/android-support-$1.jar))
 
-ifeq ($(shell expr $(PLATFORM:android-%=%) '<' 15),yes)
+smart~platform~lt~15 := $(shell expr $(PLATFORM:android-%=%) '<' 15)
+ifeq ($(smart~platform~lt~15),1)
+  smart~platform~lt~15 := yes
+endif
+ifeq ($(smart~platform~lt~15),yes)
   LIBS += $(ANDROID_ROOT)/tools/support/annotations.jar
 endif
 
@@ -31,14 +37,14 @@ define smart~use
 $(eval \
   ifeq ($(call smart~var,TOOL),$(TOOL))
     ifneq ($(call smart~var,LIBRARY),)
-      ifeq ($$(filter $(OUT)/$(call smart~var,NAME)/classes.jar,$$(LIBS.jar)),)
-        #LIBS.jar += $(OUT)/$(call smart~var,NAME)/classes.jar
+      ifeq ($$(filter $(OUT)/$(call smart~var,NAME)/$V/classes.jar,$$(LIBS.jar)),)
+        #LIBS.jar += $(OUT)/$(call smart~var,NAME)/$V/classes.jar
       endif
-      ifeq ($$(filter $(OUT)/$(call smart~var,NAME)/classes,$$(LIBS.path)),)
-        LIBS.path += $(OUT)/$(call smart~var,NAME)/classes
+      ifeq ($$(filter $(OUT)/$(call smart~var,NAME)/$V/classes,$$(LIBS.path)),)
+        LIBS.path += $(OUT)/$(call smart~var,NAME)/$V/classes
       endif
       RES.proguard += ../$(call smart~var,NAME)/res.proguard
-      RES.crunched += $(OUT)/$(call smart~var,NAME)/res
+      RES.crunched += $(OUT)/$(call smart~var,NAME)/$V/res
       RES += $(call smart~var,SRCDIR)/res
       SRC.required += $(call smart~var,SRCDIR)/src
       ifneq ($(wildcard $(call smart~var,SRCDIR)/AndroidManifest.xml),)
@@ -60,11 +66,11 @@ $(foreach 1,$(LIBS.path),$(eval CLASSPATH := $(CLASSPATH):$1))
 CLASSPATH := $(CLASSPATH::%=%)
 
 # LIBS.jar includes the list of .jar libs.
-$(OUT)/$(NAME)/.classpath: bootclass := $(ANDROID_PLATFORM_LIB)
-$(OUT)/$(NAME)/.classpath: classpath := $(CLASSPATH)
-$(OUT)/$(NAME)/.classpath: $(SCRIPT)
-$(OUT)/$(NAME)/.classpath: $(LIBS.path:%/classes=%/.classes)
-$(OUT)/$(NAME)/.classpath: $(LIBS.jar) $(LIBS.path:%/classes=%/.classes)
+$(OUT)/$(NAME)/$V/.classpath: bootclass := $(ANDROID_PLATFORM_LIB)
+$(OUT)/$(NAME)/$V/.classpath: classpath := $(CLASSPATH)
+$(OUT)/$(NAME)/$V/.classpath: $(SCRIPT)
+$(OUT)/$(NAME)/$V/.classpath: $(LIBS.path:%/classes=%/.classes)
+$(OUT)/$(NAME)/$V/.classpath: $(LIBS.jar) $(LIBS.path:%/classes=%/.classes)
 	@mkdir -p $(@D)
 	@echo '-bootclasspath "$(bootclass)"' > $@
 	@echo '-cp "$(classpath)"' >> $@
@@ -85,9 +91,9 @@ ifneq ($(or $(LIBS.native),$(LIBS.native_list)),)
 endif #LIBS.native or LIBS.native_list
 
 ifdef PACKAGE
-smart~package~out := $(OUT)/$(NAME)/sources/$(subst .,/,$(PACKAGE))
+smart~package~out := $(OUT)/$(NAME)/$V/sources/$(subst .,/,$(PACKAGE))
 smart~buildconfig.java := $(smart~package~out)/BuildConfig.java
-$(OUT)/$(NAME)/sources: $(smart~buildconfig.java)
+$(OUT)/$(NAME)/$V/sources: $(smart~buildconfig.java)
 $(smart~buildconfig.java): debug := $(DEBUG)
 $(smart~buildconfig.java): package := $(PACKAGE)
 $(smart~buildconfig.java): 
@@ -103,13 +109,13 @@ smart~buildconfig.java :=
 endif # PACKAGE
 
 ifdef SOURCES.aidl
-$(OUT)/$(NAME)/sources: $(OUT)/$(NAME)/sources/.aidl
-$(OUT)/$(NAME)/sources/.aidl: aidl := $(ANDROID.aidl)
-$(OUT)/$(NAME)/sources/.aidl: incs := $(foreach s,$(SRCDIR)/src $(SRC.required),-I"$s")
-$(OUT)/$(NAME)/sources/.aidl: preprocess := $(ANDROID_PREPROCESS_IMPORT)
-$(OUT)/$(NAME)/sources/.aidl: out := $(OUT)/$(NAME)
-$(OUT)/$(NAME)/sources/.aidl: $(SOURCES.aidl)
-$(OUT)/$(NAME)/sources/.aidl:
+$(OUT)/$(NAME)/$V/sources: $(OUT)/$(NAME)/$V/sources/.aidl
+$(OUT)/$(NAME)/$V/sources/.aidl: aidl := $(ANDROID.aidl)
+$(OUT)/$(NAME)/$V/sources/.aidl: incs := $(foreach s,$(SRCDIR)/src $(SRC.required),-I"$s")
+$(OUT)/$(NAME)/$V/sources/.aidl: preprocess := $(ANDROID_PREPROCESS_IMPORT)
+$(OUT)/$(NAME)/$V/sources/.aidl: out := $(OUT)/$(NAME)/$V
+$(OUT)/$(NAME)/$V/sources/.aidl: $(SOURCES.aidl)
+$(OUT)/$(NAME)/$V/sources/.aidl:
 	@echo "Compile aidl.."
 	@mkdir -p "$(@D)"
 	@for f in $^ ; do echo "aidl $$f"; \
@@ -118,25 +124,25 @@ $(OUT)/$(NAME)/sources/.aidl:
 	@touch $@
 endif # SOURCES.aidl
 
-$(OUT)/$(NAME)/.sources: package := $(PACKAGE)
-$(OUT)/$(NAME)/.sources: sources := $(SOURCES.java)
-$(OUT)/$(NAME)/.sources: $(SOURCES.java) 
-$(OUT)/$(NAME)/.sources: $(OUT)/$(NAME)/sources
+$(OUT)/$(NAME)/$V/.sources: package := $(PACKAGE)
+$(OUT)/$(NAME)/$V/.sources: sources := $(SOURCES.java)
+$(OUT)/$(NAME)/$V/.sources: $(SOURCES.java) 
+$(OUT)/$(NAME)/$V/.sources: $(OUT)/$(NAME)/$V/sources
 
-$(OUT)/$(NAME)/.classes: debug := $(DEBUG)
-$(OUT)/$(NAME)/.classes: package := $(PACKAGE)
-$(OUT)/$(NAME)/.classes: classpath := $(OUT)/$(NAME)/.classpath
-$(OUT)/$(NAME)/.classes: sourcepath := $(OUT)/$(NAME)/sources
-$(OUT)/$(NAME)/.classes: sources := $(SOURCES.java)
-$(OUT)/$(NAME)/.classes: out := $(OUT)/$(NAME)/classes
-$(OUT)/$(NAME)/.classes: command = \
+$(OUT)/$(NAME)/$V/.classes: debug := $(DEBUG)
+$(OUT)/$(NAME)/$V/.classes: package := $(PACKAGE)
+$(OUT)/$(NAME)/$V/.classes: classpath := $(OUT)/$(NAME)/$V/.classpath
+$(OUT)/$(NAME)/$V/.classes: sourcepath := $(OUT)/$(NAME)/$V/sources
+$(OUT)/$(NAME)/$V/.classes: sources := $(SOURCES.java)
+$(OUT)/$(NAME)/$V/.classes: out := $(OUT)/$(NAME)/$V/classes
+$(OUT)/$(NAME)/$V/.classes: command = \
 	javac -d $(out) $(if $(debug),-g) \
 	-encoding "UTF-8" -source 1.5 -target 1.5 \
 	-sourcepath "$(sourcepath)" \
         "@$(classpath)" "@$(@D)/.sources"
-$(OUT)/$(NAME)/.classes: $(OUT)/$(NAME)/.classpath
-$(OUT)/$(NAME)/.classes: $(OUT)/$(NAME)/.sources
-$(OUT)/$(NAME)/.classes:
+$(OUT)/$(NAME)/$V/.classes: $(OUT)/$(NAME)/$V/.classpath
+$(OUT)/$(NAME)/$V/.classes: $(OUT)/$(NAME)/$V/.sources
+$(OUT)/$(NAME)/$V/.classes:
 	@rm -f $(@D)/classes.{dex,jar}
 	@mkdir -p $(out)
 	@echo "Compiling sources for '$(package)'..."
@@ -146,7 +152,7 @@ $(OUT)/$(NAME)/.classes:
 ifdef LIBRARY
   APK :=
   include $(smart.tooldir)/library.mk
-  #module-$(SCRIPT): $(OUT)/$(NAME)
+  #module-$(SCRIPT): $(OUT)/$(NAME)/$V
   #modules: module-$(SCRIPT)
   module-$(SCRIPT): name := $(NAME) ; @echo $(name)
 endif #LIBRARY
@@ -155,14 +161,14 @@ ifdef APK
   include $(smart.tooldir)/apk.mk
   module-$(SCRIPT): $(APK)
   modules: module-$(SCRIPT)
-  $(OUT)/$(NAME)/.install: apk := $(APK)
-  $(OUT)/$(NAME)/.install: package := $(PACKAGE)
-  $(OUT)/$(NAME)/.install: adb_environment := $(addprefix ANDROID_SERIAL=,$(DEVICE))
-  $(OUT)/$(NAME)/.install: $(APK)
+  $(OUT)/$(NAME)/$V/.install: apk := $(APK)
+  $(OUT)/$(NAME)/$V/.install: package := $(PACKAGE)
+  $(OUT)/$(NAME)/$V/.install: adb_environment := $(addprefix ANDROID_SERIAL=,$(DEVICE))
+  $(OUT)/$(NAME)/$V/.install: $(APK)
 	$(adb_environment) adb install -r $(apk) && touch $@
-  install-$(NAME): $(OUT)/$(NAME)/.install
+  install-$(NAME): $(OUT)/$(NAME)/$V/.install
   uninstall-$(NAME): package := $(PACKAGE)
-  uninstall-$(NAME): install_stamp_file := $(OUT)/$(NAME)/.install
+  uninstall-$(NAME): install_stamp_file := $(OUT)/$(NAME)/$V/.install
   uninstall-$(NAME): adb_environment := $(addprefix ANDROID_SERIAL=,$(DEVICE))
   uninstall-$(NAME):
 	$(adb_environment) adb uninstall $(package) && sleep 1

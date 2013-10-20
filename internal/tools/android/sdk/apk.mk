@@ -7,17 +7,17 @@ $(smart.internal)
 
 #$(warning $(NAME), $(SCRIPT), $(SRCDIR))
 
-smart~debug~tag~file := $(OUT)/$(NAME)/.debug.$(if $(DEBUG),true,false)
-smart~debug~tag~file~neg := $(OUT)/$(NAME)/.debug.$(if $(DEBUG),false,true)
-smart~r.java := $(OUT)/$(NAME)/sources/R.java.d
-smart~r.java += $(foreach p,$(PACKAGE) $(subst :, ,$(EXTRA_PACKAGES)),$(OUT)/$(NAME)/sources/$(subst .,/,$p)/R.java)
-ifneq ($(wildcard $(OUT)/$(NAME)/sources/R.java.d),)
-  -include $(OUT)/$(NAME)/sources/R.java.d
+smart~debug~tag~file := $(OUT)/$(NAME)/$V/.debug.$(if $(DEBUG),true,false)
+smart~debug~tag~file~neg := $(OUT)/$(NAME)/$V/.debug.$(if $(DEBUG),false,true)
+smart~r.java := $(OUT)/$(NAME)/$V/sources/R.java.d
+smart~r.java += $(foreach p,$(PACKAGE) $(subst :, ,$(EXTRA_PACKAGES)),$(OUT)/$(NAME)/$V/sources/$(subst .,/,$p)/R.java)
+ifneq ($(wildcard $(OUT)/$(NAME)/$V/sources/R.java.d),)
+  -include $(OUT)/$(NAME)/$V/sources/R.java.d
 endif
 #$(warning $(EXTRA_PACKAGES))
 #$(warning $(smart~r.java))
-$(OUT)/$(NAME)/res.proguard: $(smart~r.java)
-$(OUT)/$(NAME)/sources: $(smart~r.java)
+$(OUT)/$(NAME)/$V/res.proguard: $(smart~r.java)
+$(OUT)/$(NAME)/$V/sources: $(smart~r.java)
 $(smart~r.java): aapt := $(ANDROID.aapt)
 $(smart~r.java): r-package := $(R_PACKAGE)
 $(smart~r.java): package := $(PACKAGE)
@@ -26,7 +26,7 @@ $(smart~r.java): assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
 $(smart~r.java): reses := $(wildcard $(SRCDIR)/res) $(RES)
 $(smart~r.java): libs := $(ANDROID_PLATFORM_LIB) $(LIBS.jar) $(LIBS.path)
 $(smart~r.java): extra-packages := $(EXTRA_PACKAGES)
-$(smart~r.java): out := $(OUT)/$(NAME)
+$(smart~r.java): out := $(OUT)/$(NAME)/$V
 $(smart~r.java): command = \
 	$(aapt) package -f -m \
 	-J "$(out)/sources" \
@@ -57,7 +57,7 @@ $(smart~debug~tag~file):
 	@rm -f $(negative) $(buildconfig)
 	@touch $@
 
-$(OUT)/$(NAME)/.sources: $(OUT)/$(NAME)/sources $(smart~r.java)
+$(OUT)/$(NAME)/$V/.sources: $(OUT)/$(NAME)/$V/sources $(smart~r.java)
 	@echo "Prepare source list for '$(package)'.."
 	@mkdir -p $(@D) && echo -n > $@
 	@(for f in $(sources) ; do echo $$f ; done) >> $@
@@ -66,44 +66,44 @@ $(OUT)/$(NAME)/.sources: $(OUT)/$(NAME)/sources $(smart~r.java)
 ifneq ($(SOURCES.java),)
   ifdef PROGUARD
     include $(smart.tooldir)/proguard.mk
-    $(OUT)/$(NAME)/classes.dex: dex_dest := $(OUT)/$(NAME)
-    $(OUT)/$(NAME)/classes.dex: dex_input := classes-obfuscated.jar
-    $(OUT)/$(NAME)/classes.dex: dex_output := classes.dex
-    $(OUT)/$(NAME)/classes.dex: $(OUT)/$(NAME)/classes-obfuscated.jar
+    $(OUT)/$(NAME)/$V/classes.dex: dex_dest := $(OUT)/$(NAME)/$V
+    $(OUT)/$(NAME)/$V/classes.dex: dex_input := classes-obfuscated.jar
+    $(OUT)/$(NAME)/$V/classes.dex: dex_output := classes.dex
+    $(OUT)/$(NAME)/$V/classes.dex: $(OUT)/$(NAME)/$V/classes-obfuscated.jar
   else
-    $(OUT)/$(NAME)/classes.dex: dex_dest := $(OUT)/$(NAME)/classes
-    $(OUT)/$(NAME)/classes.dex: dex_input := .
-    $(OUT)/$(NAME)/classes.dex: dex_output := ../classes.dex
-    $(OUT)/$(NAME)/classes.dex: $(OUT)/$(NAME)/.classes
+    $(OUT)/$(NAME)/$V/classes.dex: dex_dest := $(OUT)/$(NAME)/$V/classes
+    $(OUT)/$(NAME)/$V/classes.dex: dex_input := .
+    $(OUT)/$(NAME)/$V/classes.dex: dex_output := ../classes.dex
+    $(OUT)/$(NAME)/$V/classes.dex: $(OUT)/$(NAME)/$V/.classes
   endif #PROGUARD
-  $(OUT)/$(NAME)/classes.dex: dx := $(ANDROID.dx)
-  $(OUT)/$(NAME)/classes.dex: out := $(OUT)/$(NAME)
-  $(OUT)/$(NAME)/classes.dex: apk := $(APK)
-  $(OUT)/$(NAME)/classes.dex: libs := $(LIBS.jar:$(OUT)/%=$(TOP)/$(OUT)/%)
-  $(OUT)/$(NAME)/classes.dex: libs += $(LIBS.path:$(OUT)/%=$(TOP)/$(OUT)/%)
-  $(OUT)/$(NAME)/classes.dex: command = \
+  $(OUT)/$(NAME)/$V/classes.dex: dx := $(ANDROID.dx)
+  $(OUT)/$(NAME)/$V/classes.dex: out := $(OUT)/$(NAME)/$V
+  $(OUT)/$(NAME)/$V/classes.dex: apk := $(APK)
+  $(OUT)/$(NAME)/$V/classes.dex: libs := $(LIBS.jar:$(OUT)/%=$(TOP)/$(OUT)/%)
+  $(OUT)/$(NAME)/$V/classes.dex: libs += $(LIBS.path:$(OUT)/%=$(TOP)/$(OUT)/%)
+  $(OUT)/$(NAME)/$V/classes.dex: command = \
 	$(dx) $(if $(findstring windows,$(sm.os.name)),,-JXms16M -JXmx1536M)\
 	--dex --output $(dex_output) $(libs) $(dex_input)
-  $(OUT)/$(NAME)/classes.dex: $(LIBS.path:%=%.deleted)
-  $(OUT)/$(NAME)/classes.dex:
+  $(OUT)/$(NAME)/$V/classes.dex: $(LIBS.path:%=%.deleted)
+  $(OUT)/$(NAME)/$V/classes.dex:
 	@rm -vf $(apk) $(out)/_.unsigned $(out)/_.signed
 	@echo "dx $(dex_dest)..."
 	@cd $(dex_dest) && $(command)
 
-  CLASSES.DEX := $(OUT)/$(NAME)/classes.dex
+  CLASSES.DEX := $(OUT)/$(NAME)/$V/classes.dex
 else
   CLASSES.DEX :=
 endif
 
 # $(RES.crunched) 
 # $(if $(PACKAGE),-x)
-$(OUT)/$(NAME)/_.pack: aapt := $(ANDROID.aapt)
-$(OUT)/$(NAME)/_.pack: reses := $(wildcard $(SRCDIR)/res) $(RES)
-$(OUT)/$(NAME)/_.pack: assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
-$(OUT)/$(NAME)/_.pack: manifest := $(wildcard $(SRCDIR)/AndroidManifest.xml)
-$(OUT)/$(NAME)/_.pack: libs := $(ANDROID_PLATFORM_LIB) $(LIBS.jar)
-$(OUT)/$(NAME)/_.pack: classes := $(CLASSES.DEX)
-$(OUT)/$(NAME)/_.pack: command = \
+$(OUT)/$(NAME)/$V/_.pack: aapt := $(ANDROID.aapt)
+$(OUT)/$(NAME)/$V/_.pack: reses := $(wildcard $(SRCDIR)/res) $(RES)
+$(OUT)/$(NAME)/$V/_.pack: assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
+$(OUT)/$(NAME)/$V/_.pack: manifest := $(wildcard $(SRCDIR)/AndroidManifest.xml)
+$(OUT)/$(NAME)/$V/_.pack: libs := $(ANDROID_PLATFORM_LIB) $(LIBS.jar)
+$(OUT)/$(NAME)/$V/_.pack: classes := $(CLASSES.DEX)
+$(OUT)/$(NAME)/$V/_.pack: command = \
 	$(aapt) package -f -F $@ \
 	$(addprefix -M ,"$(manifest)") \
 	$(foreach 1,$(libs),-I "$1") \
@@ -113,10 +113,10 @@ $(OUT)/$(NAME)/_.pack: command = \
 	--auto-add-overlay \
 
 #	--no-crunch
-$(OUT)/$(NAME)/_.pack: $(LIBS.jar)
-$(OUT)/$(NAME)/_.pack: $(CLASSES.DEX)
-$(OUT)/$(NAME)/_.pack: $(SRCDIR)/AndroidManifest.xml
-$(OUT)/$(NAME)/_.pack:
+$(OUT)/$(NAME)/$V/_.pack: $(LIBS.jar)
+$(OUT)/$(NAME)/$V/_.pack: $(CLASSES.DEX)
+$(OUT)/$(NAME)/$V/_.pack: $(SRCDIR)/AndroidManifest.xml
+$(OUT)/$(NAME)/$V/_.pack:
 	@mkdir -p $(@D)
 	@echo "Packing resources..."
 	@$(command)
@@ -125,34 +125,34 @@ $(OUT)/$(NAME)/_.pack:
 	@echo "Packing classes..."
 	@$(aapt) add -k $@ $(classes)
 
-$(OUT)/$(NAME)/_.signed: storepass := $(or \
+$(OUT)/$(NAME)/$V/_.signed: storepass := $(or \
 	$(wildcard $(SRCDIR)/.androidsdk/storepass),\
 	$(wildcard $(SRCDIR)/.android/storepass),\
 	$(wildcard $(smart.tooldir)/key/storepass))
-$(OUT)/$(NAME)/_.signed: keypass := $(or \
+$(OUT)/$(NAME)/$V/_.signed: keypass := $(or \
 	$(wildcard $(SRCDIR)/.androidsdk/keypass),\
 	$(wildcard $(SRCDIR)/.android/keypass),\
 	$(wildcard $(smart.tooldir)/key/keypass))
-$(OUT)/$(NAME)/_.signed: keystore := $(or \
+$(OUT)/$(NAME)/$V/_.signed: keystore := $(or \
 	$(wildcard $(SRCDIR)/.androidsdk/keystore),\
 	$(wildcard $(SRCDIR)/.android/keystore),\
 	$(wildcard $(smart.tooldir)/key/keystore))
-$(OUT)/$(NAME)/_.signed: cert := $(or $(CERT),cert)
-$(OUT)/$(NAME)/_.signed: jarsigner := $(ANDROID.jarsigner)
-$(OUT)/$(NAME)/_.signed: command = \
+$(OUT)/$(NAME)/$V/_.signed: cert := $(or $(CERT),cert)
+$(OUT)/$(NAME)/$V/_.signed: jarsigner := $(ANDROID.jarsigner)
+$(OUT)/$(NAME)/$V/_.signed: command = \
 	$(jarsigner) -sigalg MD5withRSA -digestalg SHA1 \
 	$(addprefix -keystore , $(keystore)) \
 	$(if $(keypass),-keypass `cat $(keypass)`) \
 	$(if $(storepass), -storepass `cat $(storepass)`) \
 	$@ $(cert)
-$(OUT)/$(NAME)/_.signed: $(OUT)/$(NAME)/_.pack
+$(OUT)/$(NAME)/$V/_.signed: $(OUT)/$(NAME)/$V/_.pack
 	@cp -f $< $@
 	@echo "Signing package..."
 	@$(command)
 
 APK := $(APK:%=$(SRCDIR)/%)
 $(APK): zipalign := $(ANDROID.zipalign)
-$(APK): $(OUT)/$(NAME)/_.signed
+$(APK): $(OUT)/$(NAME)/$V/_.signed
 	@echo "Aligning $@..."
 	@$(zipalign) -f 4 $< $@
 
