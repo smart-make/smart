@@ -7,26 +7,7 @@ $(smart.internal)
 
 #$(warning $(NAME), $(SCRIPT), $(SRCDIR))
 
-smart~debug~tag~file := $(OUT)/$(NAME)/$V/.debug.$(if $(DEBUG),true,false)
-smart~debug~tag~file~neg := $(OUT)/$(NAME)/$V/.debug.$(if $(DEBUG),false,true)
-smart~r.java := $(OUT)/$(NAME)/$V/sources/R.java.d
-smart~r.java += $(foreach p,$(PACKAGE) $(subst :, ,$(EXTRA_PACKAGES)),$(OUT)/$(NAME)/$V/sources/$(subst .,/,$p)/R.java)
-ifneq ($(wildcard $(OUT)/$(NAME)/$V/sources/R.java.d),)
-  -include $(OUT)/$(NAME)/$V/sources/R.java.d
-endif
-#$(warning $(EXTRA_PACKAGES))
-#$(warning $(smart~r.java))
-$(OUT)/$(NAME)/$V/res.proguard: $(smart~r.java)
-$(OUT)/$(NAME)/$V/sources: $(smart~r.java)
-$(smart~r.java): aapt := $(ANDROID.aapt)
-$(smart~r.java): r-package := $(R_PACKAGE)
-$(smart~r.java): package := $(PACKAGE)
-$(smart~r.java): manifest := $(wildcard $(SRCDIR)/AndroidManifest.xml)
-$(smart~r.java): assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
-$(smart~r.java): reses := $(wildcard $(SRCDIR)/res) $(RES)
-$(smart~r.java): libs := $(ANDROID_PLATFORM_LIB) $(LIBS.jar) $(LIBS.path)
 $(smart~r.java): extra-packages := $(EXTRA_PACKAGES)
-$(smart~r.java): out := $(OUT)/$(NAME)/$V
 $(smart~r.java): command = \
 	$(aapt) package -f -m \
 	-J "$(out)/sources" \
@@ -41,13 +22,9 @@ $(smart~r.java): command = \
 	--output-text-symbols "$(out)" \
 	--generate-dependencies \
 	--auto-add-overlay
-$(smart~r.java): $(LIBS.jar)
-$(smart~r.java): $(call smart.find,$(SRCDIR)/res,%.xml %.png %.jpg)
-#$(smart~r.java): $(call smart.find,$(SRCDIR)/assets,,%~)
-$(smart~r.java): $(SRCDIR)/AndroidManifest.xml
-	@echo "Generate R.java for '$(package)'..."
-	@mkdir -p "$(@D)"
-	@$(command)
+
+smart~debug~tag~file := $(OUT)/$(NAME)/$V/.debug.$(if $(DEBUG),true,false)
+smart~debug~tag~file~neg := $(OUT)/$(NAME)/$V/.debug.$(if $(DEBUG),false,true)
 
 $(smart~buildconfig.java): $(smart~debug~tag~file)
 $(smart~debug~tag~file): debug := $(DEBUG)
@@ -56,12 +33,6 @@ $(smart~debug~tag~file): negative := $(smart~debug~tag~file~neg)
 $(smart~debug~tag~file):
 	@rm -f $(negative) $(buildconfig)
 	@touch $@
-
-$(OUT)/$(NAME)/$V/.sources: $(OUT)/$(NAME)/$V/sources $(smart~r.java)
-	@echo "Prepare source list for '$(package)'.."
-	@mkdir -p $(@D) && echo -n > $@
-	@(for f in $(sources) ; do echo $$f ; done) >> $@
-	@find "$(@D)/sources" -type f -name '*.java' >> $@
 
 ifneq ($(SOURCES.java),)
   ifdef PROGUARD
@@ -80,11 +51,11 @@ ifneq ($(SOURCES.java),)
   $(OUT)/$(NAME)/$V/classes.dex: out := $(OUT)/$(NAME)/$V
   $(OUT)/$(NAME)/$V/classes.dex: apk := $(APK)
   $(OUT)/$(NAME)/$V/classes.dex: libs := $(LIBS.jar:$(OUT)/%=$(TOP)/$(OUT)/%)
-  $(OUT)/$(NAME)/$V/classes.dex: libs += $(LIBS.path:$(OUT)/%=$(TOP)/$(OUT)/%)
+  $(OUT)/$(NAME)/$V/classes.dex: libs += $(LIBS.classes:$(OUT)/%=$(TOP)/$(OUT)/%)
   $(OUT)/$(NAME)/$V/classes.dex: command = \
 	$(dx) $(if $(findstring windows,$(sm.os.name)),,-JXms16M -JXmx1536M)\
 	--dex --output $(dex_output) $(libs) $(dex_input)
-  $(OUT)/$(NAME)/$V/classes.dex: $(LIBS.path:%=%.deleted)
+  $(OUT)/$(NAME)/$V/classes.dex: $(LIBS.classes:%=%.deleted)
   $(OUT)/$(NAME)/$V/classes.dex:
 	@rm -vf $(apk) $(out)/_.unsigned $(out)/_.signed
 	@echo "dx $(dex_dest)..."
@@ -119,7 +90,7 @@ $(OUT)/$(NAME)/$V/_.pack: $(SRCDIR)/AndroidManifest.xml
 $(OUT)/$(NAME)/$V/_.pack:
 	@mkdir -p $(@D)
 	@echo "Packing resources..."
-	@$(command)
+	$(command)
 	@echo "Packing native libraries..."
 	@$(pack_libs)
 	@echo "Packing classes..."

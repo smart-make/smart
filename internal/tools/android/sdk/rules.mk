@@ -24,7 +24,7 @@ endif
 SRC.required :=
 RES.proguard :=
 RES.crunched :=
-LIBS.path :=
+LIBS.classes :=
 LIBS.jar := $(filter %.jar,$(LIBS))
 LIBS.native := $(filter %.so,$(LIBS))
 LIBS.native_list := $(filter %.native,$(LIBS))
@@ -37,12 +37,8 @@ define smart~use
 $(eval \
   ifeq ($(call smart~var,TOOL),$(TOOL))
     ifneq ($(call smart~var,LIBRARY),)
-      ifeq ($$(filter $(OUT)/$(call smart~var,NAME)/$V/classes.jar,$$(LIBS.jar)),)
-        #LIBS.jar += $(OUT)/$(call smart~var,NAME)/$V/classes.jar
-      endif
-      ifeq ($$(filter $(OUT)/$(call smart~var,NAME)/$V/classes,$$(LIBS.path)),)
-        LIBS.path += $(OUT)/$(call smart~var,NAME)/$V/classes
-      endif
+      #LIBS.jar += $(OUT)/$(call smart~var,NAME)/$V/classes.jar
+      LIBS.classes += $(OUT)/$(call smart~var,NAME)/$V/classes
       RES.proguard += ../$(call smart~var,NAME)/res.proguard
       RES.crunched += $(OUT)/$(call smart~var,NAME)/$V/res
       RES += $(call smart~var,SRCDIR)/res
@@ -56,21 +52,29 @@ $(eval \
 endef #smart~use
 $(foreach smart~m,$(REQUIRES),$(smart~use))
 
+$(call smart~unique,LIBS.native)
+$(call smart~unique,LIBS.native_list)
+$(call smart~unique,LIBS.classes)
+$(call smart~unique,LIBS.jar)
+$(call smart~unique,RES.proguard)
+$(call smart~unique,RES.crunched)
+$(call smart~unique,RES)
+
 #$(warning $(NAME): $(LIBS), $(REQUIRES))
 #$(warning $(NAME): $(LIBS.jar))
-#$(warning $(NAME): $(LIBS.path))
+#$(warning $(NAME): $(LIBS.classes))
 
 #CLASSPATH := $(ANDROID_PLATFORM_LIB):$(CLASSPATH)
 $(foreach 1,$(LIBS.jar),$(eval CLASSPATH := $(CLASSPATH):$1))
-$(foreach 1,$(LIBS.path),$(eval CLASSPATH := $(CLASSPATH):$1))
+$(foreach 1,$(LIBS.classes),$(eval CLASSPATH := $(CLASSPATH):$1))
 CLASSPATH := $(CLASSPATH::%=%)
 
 # LIBS.jar includes the list of .jar libs.
 $(OUT)/$(NAME)/$V/.classpath: bootclass := $(ANDROID_PLATFORM_LIB)
 $(OUT)/$(NAME)/$V/.classpath: classpath := $(CLASSPATH)
 $(OUT)/$(NAME)/$V/.classpath: $(SCRIPT)
-$(OUT)/$(NAME)/$V/.classpath: $(LIBS.path:%/classes=%/.classes)
-$(OUT)/$(NAME)/$V/.classpath: $(LIBS.jar) $(LIBS.path:%/classes=%/.classes)
+$(OUT)/$(NAME)/$V/.classpath: $(LIBS.classes:%/classes=%/.classes)
+$(OUT)/$(NAME)/$V/.classpath: $(LIBS.jar) $(LIBS.classes:%/classes=%/.classes)
 	@mkdir -p $(@D)
 	@echo '-bootclasspath "$(bootclass)"' > $@
 	@echo '-cp "$(classpath)"' >> $@
@@ -93,7 +97,7 @@ endif #LIBS.native or LIBS.native_list
 ifdef PACKAGE
 smart~package~out := $(OUT)/$(NAME)/$V/sources/$(subst .,/,$(PACKAGE))
 smart~buildconfig.java := $(smart~package~out)/BuildConfig.java
-$(OUT)/$(NAME)/$V/sources: $(smart~buildconfig.java)
+$(OUT)/$(NAME)/$V/.sources: $(smart~buildconfig.java)
 $(smart~buildconfig.java): debug := $(DEBUG)
 $(smart~buildconfig.java): package := $(PACKAGE)
 $(smart~buildconfig.java): 
@@ -108,8 +112,41 @@ else
 smart~buildconfig.java :=
 endif # PACKAGE
 
+
+ifneq ($(wildcard $(OUT)/$(NAME)/$V/sources/R.java.d),)
+  -include $(OUT)/$(NAME)/$V/sources/R.java.d
+endif
+smart~r.java := $(OUT)/$(NAME)/$V/sources/R.java.d
+smart~r.java += $(foreach p,$(PACKAGE)\
+  $(if $(LIBRARY),,$(subst :, ,$(EXTRA_PACKAGES))),\
+  $(OUT)/$(NAME)/$V/sources/$(subst .,/,$p)/R.java)
+
+$(call smart~unique,smart~r.java)
+$(OUT)/$(NAME)/$V/res.proguard: $(filter-out %/R.java.d,$(smart~r.java))
+$(OUT)/$(NAME)/$V/.sources: $(filter-out %/R.java.d,$(smart~r.java))
+$(smart~r.java): aapt := $(ANDROID.aapt)
+$(smart~r.java): package := $(PACKAGE)
+$(smart~r.java): r-package := $(R_PACKAGE)
+$(smart~r.java): manifest := $(wildcard $(SRCDIR)/AndroidManifest.xml)
+$(smart~r.java): assets := $(wildcard $(SRCDIR)/assets) $(ASSETS)
+$(smart~r.java): reses := $(wildcard $(SRCDIR)/res) $(RES)
+$(smart~r.java): libs := $(ANDROID_PLATFORM_LIB) $(LIBS.jar) $(LIBS.classes)
+$(smart~r.java): out := $(OUT)/$(NAME)/$V
+$(smart~r.java): $(LIBS.jar)
+#$(smart~r.java): $(call smart.find,$(SRCDIR)/res,%.xml %.png %.jpg)
+#$(smart~r.java): $(call smart.find,$(SRCDIR)/assets,,%~)
+$(smart~r.java): $(SRCDIR)/AndroidManifest.xml
+$(smart~r.java):
+	@echo "Generate R.java for '$(package)'..."
+	@mkdir -p "$(@D)"
+	@$(command)
+
+#$(warning $(NAME): $(smart~r.java))
+#$(warning $(NAME): $(LIBS.jar))
+#$(warning $(NAME): $(filter-out %/R.java.d,$(smart~r.java)))
+
 ifdef SOURCES.aidl
-$(OUT)/$(NAME)/$V/sources: $(OUT)/$(NAME)/$V/sources/.aidl
+$(OUT)/$(NAME)/$V/.sources: $(OUT)/$(NAME)/$V/sources/.aidl
 $(OUT)/$(NAME)/$V/sources/.aidl: aidl := $(ANDROID.aidl)
 $(OUT)/$(NAME)/$V/sources/.aidl: incs := $(foreach s,$(SRCDIR)/src $(SRC.required),-I"$s")
 $(OUT)/$(NAME)/$V/sources/.aidl: preprocess := $(ANDROID_PREPROCESS_IMPORT)
@@ -126,8 +163,12 @@ endif # SOURCES.aidl
 
 $(OUT)/$(NAME)/$V/.sources: package := $(PACKAGE)
 $(OUT)/$(NAME)/$V/.sources: sources := $(SOURCES.java)
-$(OUT)/$(NAME)/$V/.sources: $(SOURCES.java) 
-$(OUT)/$(NAME)/$V/.sources: $(OUT)/$(NAME)/$V/sources
+$(OUT)/$(NAME)/$V/.sources: $(SOURCES.java)
+$(OUT)/$(NAME)/$V/.sources:
+	@echo "Prepare source list for '$(package)'.."
+	@mkdir -p $(@D) && echo -n > $@
+	@(for f in $(sources) ; do echo $$f ; done) >> $@
+	@find "$(@D)/sources" -type f -name '*.java' >> $@
 
 $(OUT)/$(NAME)/$V/.classes: debug := $(DEBUG)
 $(OUT)/$(NAME)/$V/.classes: package := $(PACKAGE)
@@ -136,7 +177,7 @@ $(OUT)/$(NAME)/$V/.classes: sourcepath := $(OUT)/$(NAME)/$V/sources
 $(OUT)/$(NAME)/$V/.classes: sources := $(SOURCES.java)
 $(OUT)/$(NAME)/$V/.classes: out := $(OUT)/$(NAME)/$V/classes
 $(OUT)/$(NAME)/$V/.classes: command = \
-	javac -d $(out) $(if $(debug),-g) \
+	javac -d $(out) $(if $(debug),-g) -Xlint:unchecked \
 	-encoding "UTF-8" -source 1.5 -target 1.5 \
 	-sourcepath "$(sourcepath)" \
         "@$(classpath)" "@$(@D)/.sources"
@@ -145,15 +186,13 @@ $(OUT)/$(NAME)/$V/.classes: $(OUT)/$(NAME)/$V/.sources
 $(OUT)/$(NAME)/$V/.classes:
 	@rm -f $(@D)/classes.{dex,jar}
 	@mkdir -p $(out)
-	@echo "Compiling sources for '$(package)'..."
+	@echo "Compile sources for '$(package)'..."
 	@if [ "0 $(@D)/.sources" != "`wc -l $(@D)/.sources`" ]; then $(command); fi
 	@find $(out) -type f -name '*.class' -print > $@
 
 ifdef LIBRARY
   APK :=
   include $(smart.tooldir)/library.mk
-  #module-$(SCRIPT): $(OUT)/$(NAME)/$V
-  #modules: module-$(SCRIPT)
   module-$(SCRIPT): name := $(NAME) ; @echo $(name)
 endif #LIBRARY
 
