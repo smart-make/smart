@@ -1,0 +1,5 @@
+/** Automatically generated file. DO NOT MODIFY */
+package __PACKAGE__;
+public final class BuildConfig {
+    public final static boolean DEBUG = __DEBUG__;
+}

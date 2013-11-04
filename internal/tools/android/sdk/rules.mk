@@ -72,9 +72,10 @@ CLASSPATH := $(CLASSPATH::%=%)
 # LIBS.jar includes the list of .jar libs.
 $(OUT)/$(NAME)/$V/.classpath: bootclass := $(ANDROID_PLATFORM_LIB)
 $(OUT)/$(NAME)/$V/.classpath: classpath := $(CLASSPATH)
-$(OUT)/$(NAME)/$V/.classpath: $(SCRIPT)
 $(OUT)/$(NAME)/$V/.classpath: $(LIBS.classes:%/classes=%/.classes)
 $(OUT)/$(NAME)/$V/.classpath: $(LIBS.jar) $(LIBS.classes:%/classes=%/.classes)
+$(OUT)/$(NAME)/$V/.classpath: $(SCRIPT)
+$(OUT)/$(NAME)/$V/.classpath:
 	@mkdir -p $(@D)
 	@echo '-bootclasspath "$(bootclass)"' > $@
 	@echo '-cp "$(classpath)"' >> $@
@@ -100,14 +101,12 @@ smart~buildconfig.java := $(smart~package~out)/BuildConfig.java
 $(OUT)/$(NAME)/$V/.sources: $(smart~buildconfig.java)
 $(smart~buildconfig.java): debug := $(DEBUG)
 $(smart~buildconfig.java): package := $(PACKAGE)
+$(smart~buildconfig.java): buildconfig := $(smart.tooldir)/BuildConfig.in
+$(smart~buildconfig.java): $(smart.tooldir)/BuildConfig.in
 $(smart~buildconfig.java): 
-	@echo "Gen BuildConfig.java for '$(package)'..."
-	@mkdir -p "$(@D)"
-	@echo "/** Automatically generated file. DO NOT MODIFY */" > $@
-	@echo "package $(package);" >> $@
-	@echo "public final class BuildConfig {" >> $@
-	@echo "    public final static boolean DEBUG = $(if $(debug),true,false);" >> $@
-	@echo "}" >> $@
+	@echo "Gen BuildConfig.java for '$(package)'..." && mkdir -p "$(@D)"
+	@m4 -D__PACKAGE__=$(package) -D__DEBUG__=$(if $(debug),true,false) \
+	$(buildconfig) > $@
 else
 smart~buildconfig.java :=
 endif # PACKAGE
@@ -141,7 +140,7 @@ $(smart~r.java):
 	@mkdir -p "$(@D)"
 	@$(command)
 
-#$(warning $(NAME): $(smart~r.java))
+#$(warning $(NAME): $(OUT)/$(NAME)/$V/.sources; $(smart~r.java))
 #$(warning $(NAME): $(LIBS.jar))
 #$(warning $(NAME): $(filter-out %/R.java.d,$(smart~r.java)))
 
@@ -166,6 +165,7 @@ $(OUT)/$(NAME)/$V/.sources: sources := $(SOURCES.java)
 $(OUT)/$(NAME)/$V/.sources: $(SOURCES.java)
 $(OUT)/$(NAME)/$V/.sources:
 	@echo "Prepare source list for '$(package)'.."
+	@echo "$(sources)"
 	@mkdir -p $(@D) && echo -n > $@
 	@(for f in $(sources) ; do echo $$f ; done) >> $@
 	@find "$(@D)/sources" -type f -name '*.java' >> $@
