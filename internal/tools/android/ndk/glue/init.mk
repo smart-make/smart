@@ -14,7 +14,7 @@ ifeq ($(and $(BUILD_SYSTEM),$(NDK_ALL_ABIS),$(NDK_ALL_ARCHS),$(NDK_ALL_TOOLCHAIN
 
   # NDK_ROOT *must* be defined and point to the root of the NDK installation
   # before init.mk
-  NDK_ROOT := /store/open/android-ndk
+  NDK_ROOT := /open/android/android-ndk
   include $(NDK_ROOT)/build/core/init.mk
 
   ##################################################
