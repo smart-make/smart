@@ -1,7 +1,7 @@
 # Example of build a C program using smart-make
 
 Main Smart Files
-================
+----------------
 
   * `.tool`
   
@@ -38,7 +38,7 @@ EXPORT.LOADLIBS := $(SRCDIR)/libfoo.a
 ```
 
 Build The Example
-=================
+-----------------
 
 ```shell
 $ smart
