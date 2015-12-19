@@ -3,26 +3,30 @@ smart-make
 
 Reusable GNU/Make scripts (same as smart-build but much simpler).
 
-Files
-====
-$TOP/declare.mk
-$(SMART.DECLARE)
-$(SMART.RULES)
-*/sm.mk
+Examples
+========
+
+  * [Build a C program](examples/build-c-program)
 
 Variables
-====
+=========
 
-PROGRAM
-LIBRARY
+Module Target Name
+------------------
+  * PROGRAM
+  * LIBRARY
 
-SRCDIR
-SOURCES
+Source Files and Sub-modules
+----------------------------
+  * SOURCES
+  * SRCDIR
 
-CFLAGS
-CXXFLAGS
+Compile Flags
+-------------
+  * CFLAGS
+  * CXXFLAGS
 
-LDFLAGS
-
-LOADLIBS
-
+Link Flags
+----------
+  * LDFLAGS
+  * LOADLIBS

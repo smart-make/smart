@@ -1,0 +1,4 @@
+PROGRAM  := example
+SOURCES  := main.c
+REQUIRES := libfoo
+SUBDIRS  := libfoo

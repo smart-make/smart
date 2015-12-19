@@ -1,0 +1,9 @@
+## Set LIBRARY to build a library
+LIBRARY := libfoo.a
+
+## Set SOURCES to include source files
+SOURCES := foo.c
+
+## EXPORT properties
+EXPORT.INCLUDES := $(SRCDIR)
+EXPORT.LOADLIBS := $(SRCDIR)/libfoo.a
