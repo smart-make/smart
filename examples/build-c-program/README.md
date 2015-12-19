@@ -42,7 +42,6 @@ Build The Example
 
 ```shell
 $ smart
-{% endhighlight %}
 ```
 
 Or explicitly specify a `TOOL`:
