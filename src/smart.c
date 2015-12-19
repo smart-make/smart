@@ -10,7 +10,7 @@ static char smartroot[1024], smartload[1024];
  *  #!/usr/bin/env bash
  *  SMARTROOT=$(dirname $(dirname $0))
  *  GNUMAKE=$(which make)
- *  exec $GNUMAKE -f $SMARTROOT/load.mk $@
+ *  exec $GNUMAKE -f $SMARTROOT/load/main.mk $@
  */
 int main(int argc, char**argv)
 {
@@ -26,7 +26,7 @@ int main(int argc, char**argv)
     *slash = '\0';
   }
 
-  sprintf (smartload, "%s/load.mk", smartroot);
+  sprintf (smartload, "%s/load/main.mk", smartroot);
 
   char **args = (char **) malloc (sizeof(char *) * (argc + 3));
   for (n = 0; n < argc + 3; ++n) args[n] = NULL;
