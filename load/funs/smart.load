@@ -6,85 +6,87 @@
 #####################################################
 #
 #  smart.load - Load a subdir under SRCDIR.
+#  smart.load.done|* - Holds all smart files loaded.
 #  
 #  @param: loadee
 #
 $(smart.internal)
 
+## Precondition#1: SRCDIR
 ifndef SRCDIR
   smart~error := SRCDIR is undefined
 else
 
+## Precondition#2: @loadee
 ifndef @loadee
   smart~error := @loadee is undefined
 else
 
-smart~sm.mk := $(wildcard $(SRCDIR)/$(@loadee)/sm.mk)
-smart~smart :=
+$(call smart~sync~smart~e,$(SRCDIR)/$(@loadee)/smart)
 
-ifndef smart~sm.mk
-  $(call smart~sync~smart~e,$(SRCDIR)/$(@loadee)/smart)
-  smart~sm.mk := $(strip $(or \
-    $(or $(wildcard $(SRCDIR)/$(@loadee)/smart),$(shell ls $(SRCDIR)/$(@loadee)/smart 2>/dev/null)),\
-    $(or $(wildcard $(SRCDIR)/$(@loadee)/smart.mk),$(shell ls $(SRCDIR)/$(@loadee)/smart.mk 2>/dev/null))))
-  ifdef smart~sm.mk
-    smart~smart := $(notdir $(smart~sm.mk))
-  else
-    ifeq ($(patsubst /%,/,$(@loadee)),/)
-      smart~sm.mk := $(wildcard $(@loadee))
-    else
-      smart~sm.mk := $(wildcard $(SRCDIR)/$(@loadee).mk)
-    endif
-    smart~smart := $(notdir $(SRCDIR)/$(@loadee))
-  endif #smart~sm.mk
-endif #!smart~sm.mk
+## Deal with absolute and relative paths:
+ifeq ($(patsubst /%,/,$(@loadee)),/)
+  # Absolute path (starting with '/')
+  smart.load.prefix :=
+  smart.load.file := $(@loadee)
+else
+  # Relative path to the SRCDIR
+  smart.load.prefix := $(SRCDIR)/
+  smart.load.file := $(SRCDIR)/$(@loadee)
+endif
 
-ifndef smart~sm.mk
+## Caculate smart.load.file base on existance of these:
+##   1) $(smart.load.file)/smart
+##   2) $(smart.load.file)/smart.mk
+##   3) $(smart.load.file)
+##   4) $(smart.load.file).mk
+smart.load.file := $(strip $(or \
+  $(or $(wildcard $(smart.load.file)/smart),$(shell ls $(smart.load.file)/smart 2>/dev/null)),\
+  $(or $(wildcard $(smart.load.file)/smart.mk),$(shell ls $(smart.load.file)/smart.mk 2>/dev/null)),\
+  $(or $(wildcard $(smart.load.file)),$(shell ls $(smart.load.file) 2>/dev/null)),\
+  $(or $(wildcard $(smart.load.file).mk),$(shell ls $(smart.load.file).mk 2>/dev/null)),\
+  ))
+
+## Precondition#3: smart.load.file
+ifndef smart.load.file
+  $(warning $(SRCDIR)/$(@loadee) is missing)
+  $(info $(SCRIPT):1: no build script '$(@loadee)')
+  #$(error $(@loadee) not found)
   smart~error := missing scripts in "$(SRCDIR)/$(@loadee)"
 else
 
-ifeq ($(smart.load-$(smart~sm.mk)),true)
-  $(warning info: "$(smart~sm.mk)" already loaded)
+## Precondition#4: check if loaded
+ifeq ($(smart.load.done|$(smart.load.file)),true)
+  $(warning info: "$(smart.load.file)" already loaded)
 else
-
-## Save SRCDIR to smart~srcdir, because SRCDIR is going to be overrided.
-smart~srcdir := $(SRCDIR)/
-ifeq ($(patsubst /%,/,$(@loadee)),/)
-  smart~srcdir :=
-endif
 
 $(call smart.test.load.before.push)
 $(call smart.push)
 $(call smart.test.load.after.push)
 
-ifdef smart~smart
-  ifeq ($(smart~sm.mk),$(smart~srcdir)$(@loadee).mk)
-    MAKEFILE_LIST += $(smart~srcdir)$(@loadee).mk
-  else
-    MAKEFILE_LIST += $(smart~srcdir)$(@loadee:%/$(smart~smart)=%)/$(smart~smart)
-  endif
-  include $(SMART.DECLARE)
-endif #smart~smart
+## Step#0. Add to current smart file to MAKEFILE_LIST
+MAKEFILE_LIST += $(smart.load.file)
 
-#$(warning $(SRCDIR), $(smart~smart), $(@loadee))
+## Step#1. Do declaration
+include $(SMART.DECLARE)
 
-smart.load-$(smart~sm.mk) := true
-include $(smart~sm.mk)
-
+## Step#2. Load the smart file
+smart.load.done|$(smart.load.file) := true
+include $(smart.load.file)
 $(call smart.test.loaded)
 
-ifdef smart~smart
-  include $(SMART.RULES)
-endif #smart~smart
+#$(warning info: "$(smart.load.file)" loaded)
+
+## Step#3. Build rules
+include $(SMART.RULES)
 
 $(call smart.test.load.before.pop)
 $(call smart.pop)
 $(call smart.test.load.after.pop)
 
-endif #$(smart.load-$(smart~sm.mk)) == true
-endif #!smart~sm.mk
-endif #!@loadee
-endif #!SRCDIR
+endif # Precondition#4
+endif # Precondition#3
+endif # Precondition#2
+endif # Precondition#1
 
-smart~smart :=
-smart~sm.mk :=
+smart.load.file :=

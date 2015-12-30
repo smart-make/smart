@@ -34,11 +34,12 @@ int main(int argc, char**argv)
   args[0] = argv[0];
   args[1] = "-f";
   args[2] = smartload;
-
   for (n = 1; n < argc; ++n) args[n + 2] = argv[n];
 
   if ((n = execvp ("make", (char * const *) args)) < 0) {
     fprintf (stderr, "error: %s\n", strerror(errno));
   }
+
+  free (args);
   return n;
 }

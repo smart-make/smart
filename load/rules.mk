@@ -1,6 +1,8 @@
 #
-#    Copyright (C) 2012, Duzy Chan <code@duzy.info>.
+#    Copyright (C) 2012-2015, Duzy Chan <code@duzy.info>.
 #    All rights reserved.
+#
+#------------------------------------------------------------
 #
 $(smart.internal)
 
@@ -63,6 +65,8 @@ ifdef REQUIRES
 endif #REQUIRES
 
 OBJECTS :=
+
+$(warning $(NAME): $(TOOL), $(PROGRAM), $(SRCDIR))
 
 ifdef TOOL
   include $(smart.root)/internal/tools/$(TOOL)/rules.mk

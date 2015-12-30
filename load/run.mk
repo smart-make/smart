@@ -1,7 +1,10 @@
 #
-#    Copyright (C) 2012, Duzy Chan <code@duzy.info>.
+#    Copyright (C) 2012-2015, Duzy Chan <code@duzy.info>.
 #    All rights reserved.
 #
+#------------------------------------------------------------
+#
+#    
 ifneq ($(words $(MAKEFILE_LIST)),1)
   $(error You should always run smart utility!)
 endif
@@ -30,6 +33,7 @@ smart.settle_root :=
 ##     * smart.context.*
 ##       Defines regular context names, which can be exported using
 ##       EXPORT.* or export.* grammar.
+##       
 smart.context.names.global = $(smart.context.global.$(TOOL))
 smart.context.names.private = NAME SCRIPT TOOL TOOL_FILE SRCDIR SUBDIRS \
   REQUIRES MODULES TARGETS SETTLE_ROOT SETTLE \
@@ -37,6 +41,7 @@ smart.context.names.private = NAME SCRIPT TOOL TOOL_FILE SRCDIR SUBDIRS \
 smart.context.names = this.% export.% THIS.% EXPORT.% \
   $(smart.context.names.private) $(smart.context.$(TOOL))
 
+## Internal Declaration
 define smart.internal
 $(eval MAKEFILE_LIST := $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
 endef #smart.internal
@@ -105,11 +110,11 @@ endif
 
 define smart~sync~smart~e
 $(if $(and $1,$(wildcard $1.e)),$(if $(wildcard $1),\
- $(info $(shell $(smart.root)/scripts/sync-smart-e -save $1))\
- $(if $(shell ls $1.e),,$(error failed to save "$1"))\
- ,\
- $(info $(shell $(smart.root)/scripts/sync-smart-e -restore $1))\
- $(if $(shell ls $1),,$(error failed to prepare "$1"))))
+   $(info $(shell $(smart.root)/scripts/sync-smart-e -save $1))\
+   $(if $(shell ls $1.e),,$(error failed to save "$1"))\
+   ,\
+   $(info $(shell $(smart.root)/scripts/sync-smart-e -restore $1))\
+   $(if $(shell ls $1),,$(error failed to prepare "$1"))))
 endef #smart~sync~smart~e
 
 PHONY := modules settle clean

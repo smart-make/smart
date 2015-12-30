@@ -1,6 +1,8 @@
 #
-#    Copyright (C) 2012, Duzy Chan <code@duzy.info>.
+#    Copyright (C) 2012-2015, Duzy Chan <code@duzy.info>.
 #    All rights reserved.
+#
+#------------------------------------------------------------
 #
 $(smart.internal)
 

@@ -70,6 +70,7 @@ Source Files and Sub-modules
 ----------------------------
   * SOURCES
   * SRCDIR
+  * MODULES
 
 Compile Flags
 -------------

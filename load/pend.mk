@@ -1,15 +1,21 @@
 #
-#    Copyright (C) 2012, Duzy Chan <code@duzy.info>.
+#    Copyright (C) 2012-2015, Duzy Chan <code@duzy.info>.
 #    All rights reserved.
+#
+#------------------------------------------------------------
 #
 $(smart.internal)
 $(foreach @script,$(SCRIPT),$(eval include $(smart.root)/funs/smart.save))
 
 ifndef TOOL
-  #$(warning no TOOL for building $(NAME))
+  $(warning $(NAME): TOOL)
+  $(info $(SCRIPT):1: TOOL must be set, e.g. 'TOOL = gcc')
+  $(error TOOL is undefined)
 endif #!TOOL
 
 ifndef SRCDIR
+  $(warning $(NAME): SRCDIR)
+  $(info $(SCRIPT):1: SRCDIR should not be changed)
   $(error SRCDIR is undefined)
 endif #!SRCDIR
 

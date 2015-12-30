@@ -2,10 +2,11 @@
 #    Copyright (C) 2012,2013, Duzy Chan <code@duzy.info>.
 #    All rights reserved.
 #
+#------------------------------------------------------------
+#
 $(smart.internal)
 
-#$(warning $(NAME): $(TOOL), $(SOURCES))
-#$(warning $(NAME): $(TOOL), $(PROGRAM))
+$(warning $(NAME): $(TOOL), $(PROGRAM), $(SOURCES))
 
 ifdef SOURCES
   include $(smart.tooldir)/sources.mk
