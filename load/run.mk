@@ -11,6 +11,9 @@ endif
 
 #SHELL := /bin/bash
 
+smart.declare := $(smart.root)/declare.mk
+smart.rules := $(smart.root)/pend.mk
+
 smart.tooldir = $(smart.root)/internal/tools/$(TOOL)
 smart.stack :=
 smart.list :=
@@ -35,7 +38,7 @@ smart.settle_root :=
 ##       EXPORT.* or export.* grammar.
 ##       
 smart.context.names.global = $(smart.context.global.$(TOOL))
-smart.context.names.private = NAME SCRIPT TOOL TOOL_FILE SRCDIR SUBDIRS \
+smart.context.names.private = NAME SCRIPT TOOL TOOL_CONFIG SRCDIR SUBDIRS \
   REQUIRES MODULES TARGETS SETTLE_ROOT SETTLE \
   $(smart.context.private.$(TOOL))
 smart.context.names = this.% export.% THIS.% EXPORT.% \
@@ -86,17 +89,16 @@ $(eval \
  )
 endef #smart.test.assert.equal
 
-SM.MK = $(error SM.MK is replaced by SCRIPT)
-SMART.MK = $(SCRIPT)
-SMART.DECLARE := $(smart.root)/declare.mk
-SMART.RULES := $(smart.root)/pend.mk
-
 $(smart.internal)
+
+PHONY := modules settle clean
 ROOT := $(or $(smart.me),.)
-OUT = $(ROOT)/out
 TOP := $(PWD)
+OUT = $(ROOT)/out
+LEVEL = $(words $(LEVEL.x))
 
 smart~error :=
+smart~result :=
 
 #
 #  Define funs.
@@ -116,23 +118,18 @@ $(if $(and $1,$(wildcard $1.e)),$(if $(wildcard $1),\
    $(info $(shell $(smart.root)/scripts/sync-smart-e -restore $1))\
    $(if $(shell ls $1),,$(error failed to prepare "$1"))))
 endef #smart~sync~smart~e
+$(call smart~sync~smart~e,$(ROOT)/smart)
 
-PHONY := modules settle clean
-ROOT.MK := $(wildcard $(ROOT)/sm.mk)
-ifdef ROOT.MK
-  include $(ROOT.MK)
-else
-  $(call smart~sync~smart~e,$(ROOT)/smart)
-  ROOT.MK := $(strip $(or \
-    $(or $(wildcard $(ROOT)/smart),$(shell ls $(ROOT)/smart)),\
-    $(or $(wildcard $(ROOT)/smart.mk),$(shell ls $(ROOT)/smart.mk))))
-  ifdef ROOT.MK
-    MAKEFILE_LIST += $(ROOT.MK)
-    include $(SMART.DECLARE)
-    include $(ROOT.MK)
-    include $(SMART.RULES)
-  endif #ROOT.MK
-endif #ROOT.MK
+## Include root script.
+smart.root.script := $(strip $(or \
+  $(or $(wildcard $(ROOT)/smart),$(shell ls $(ROOT)/smart)),\
+  $(or $(wildcard $(ROOT)/smart.mk),$(shell ls $(ROOT)/smart.mk))))
+ifdef smart.root.script
+  MAKEFILE_LIST += $(smart.root.script)
+  include $(smart.declare)
+  include $(smart.root.script)
+  include $(smart.rules)
+endif #smart.root.script
 
 #$(warning info: $(smart.list))
 

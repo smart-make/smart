@@ -28,3 +28,8 @@ ifdef MODULES
 endif #MODULES
 
 -include $(smart.tooldir)/pend.mk
+
+#$(warning $(NAME): $(LEVEL.x))
+
+## Remove the last 'x' from the LEVEL.x list.
+LEVEL.x := $(wordlist 2,$(words $(LEVEL.x)),x $(LEVEL.x))

@@ -68,7 +68,7 @@ $(call smart.test.load.after.push)
 MAKEFILE_LIST += $(smart.load.file)
 
 ## Step#1. Do declaration
-include $(SMART.DECLARE)
+include $(smart.declare)
 
 ## Step#2. Load the smart file
 smart.load.done|$(smart.load.file) := true
@@ -78,7 +78,7 @@ $(call smart.test.loaded)
 #$(warning info: "$(smart.load.file)" loaded)
 
 ## Step#3. Build rules
-include $(SMART.RULES)
+include $(smart.rules)
 
 $(call smart.test.load.before.pop)
 $(call smart.pop)

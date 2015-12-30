@@ -58,26 +58,46 @@ Examples
 
   * [Build a C program](examples/build-c-program)
 
+Quick Reference
+===============
+
 Variables
-=========
+---------
 
-Module Target Name
-------------------
-  * PROGRAM
+**Predefined**
+
+  * NAME
+  * LEVEL
+  * CURDIR
+  * ROOT
+  * TOP
+  * OUT
+  * SCRIPT
+  * SRCDIR
+  * TOOL_CONFIG
+
+**Build Configuration**
+
+  * PHONY
+  * SETTLE
+
+**Module Target Name**
+
   * LIBRARY
+  * PROGRAM
 
-Source Files and Sub-modules
-----------------------------
+**Source Files and Sub-modules**
+
+  * MODULES
   * SOURCES
   * SRCDIR
-  * MODULES
 
-Compile Flags
--------------
+**Compile Flags**
+
   * CFLAGS
   * CXXFLAGS
 
-Link Flags
-----------
+**Link Flags**
+
   * LDFLAGS
   * LOADLIBS

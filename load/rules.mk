@@ -9,19 +9,24 @@ $(smart.internal)
 #$(warning info: $(NAME), $(TOOL), $(SRCDIR), $(SOURCES))
 
 ifndef TOOL
-  #$(warning no TOOL for building $(NAME))
+  $(warning $(NAME): TOOL)
+  $(info $(SCRIPT):1: TOOL is empty)
+  $(error TOOL is undefined)
 endif #!TOOL
 
 ifndef SRCDIR
+  $(warning $(NAME): SRCDIR)
+  $(info $(SCRIPT):1: SRCDIR is empty)
   $(error SRCDIR is undefined)
 endif #!SRCDIR
 
-modules: module-$(SCRIPT)
-clean: clean-$(SCRIPT)
-
 PHONY += module-$(SCRIPT)
 PHONY += clean-$(SCRIPT)
+
+modules: module-$(SCRIPT)
 module-$(SCRIPT):
+
+clean: clean-$(SCRIPT)
 clean-$(SCRIPT): smart~clean~files :=
 clean-$(SCRIPT):
 	@$(if $(smart~clean~files),rm -vf $(smart~clean~files),true)

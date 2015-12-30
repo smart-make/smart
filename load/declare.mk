@@ -13,27 +13,34 @@ ifeq ($(NAME),smart)
   NAME := $(notdir $(SRCDIR))
 endif
 ifeq ($(NAME),.)
-  NAME := $(notdir $(PWD))
+  NAME := $(notdir $(or $(CURDIR),$(PWD)))
 endif
 
+#$(warning $(CURDIR), $(PWD))
 #$(warning $(NAME), $(TOOL), $(SCRIPT))
 
-MAKEFILE_LIST.saved := $(MAKEFILE_LIST)
-TOOL :=
-TOOL_FILE := $(wildcard $(SRCDIR)/.tool)
--include $(TOOL_FILE)
+## Append 'x' to the LEVEL.x list.
+LEVEL.x := $(strip $(LEVEL.x) x)
+MAKEFILE_LIST.$(LEVEL.x) := $(MAKEFILE_LIST)
+
+$(warning $(NAME): TOOL=$(TOOL), $(LEVEL.x))
+
+#TOOL :=
+
+TOOL_CONFIG := $(wildcard $(SRCDIR)/.tool)
+-include $(TOOL_CONFIG)
 ifndef TOOL
   $(foreach 1,$(wildcard $(smart.root)/internal/tools/*/detect.mk),$(eval include $1))
 endif #!TOOL
 
-## search .tool upwards
-ifeq ($(or $(TOOL),$(TOOL_FILE)),)
-  TOOL_FILE := $(call smart.findtool,$(SRCDIR))
-  ifndef TOOL_FILE
-    #TOOL_FILE := $(shell $(smart.root)/scripts/find-tool $(SRCDIR))
+## Search tool config (.tool) upwards
+ifeq ($(or $(TOOL),$(TOOL_CONFIG)),)
+  TOOL_CONFIG := $(call smart.findtool,$(SRCDIR))
+  ifndef TOOL_CONFIG
+    TOOL_CONFIG := $(shell $(smart.root)/scripts/find-tool-config $(SRCDIR))
   endif
-  -include $(TOOL_FILE)
-endif #no TOOL nor TOOL_FILE
+  -include $(TOOL_CONFIG)
+endif #no TOOL nor TOOL_CONFIG
 
 ifdef TOOL
   ifeq ($(TOOL),names)
@@ -44,12 +51,18 @@ ifdef TOOL
 endif
 
 #$(warning $(smart.context.names))
-#$(warning $(NAME), $(TOOL), $(SCRIPT))
+#$(warning $(NAME), $(TOOL), $(TOOL_CONFIG), $(SCRIPT))
 
-MAKEFILE_LIST := $(MAKEFILE_LIST.saved)
-MAKEFILE_LIST.saved :=
+MAKEFILE_LIST := $(MAKEFILE_LIST.$(LEVEL.x))
+MAKEFILE_LIST.$(LEVEL.x) :=
 
-$(foreach 1,$(filter-out SCRIPT SRCDIR NAME TOOL,$(filter $(smart.context.names),$(.VARIABLES))),$(eval $1 :=))
+## Clear context variables.
+$(foreach 1,$(filter-out NAME CURDIR SCRIPT SRCDIR \
+	TOOL TOOL_CONFIG LEVEL LEVEL.x,\
+	$(filter $(smart.context.names),$(.VARIABLES))),\
+    $(eval $1 :=))
+
 #$(warning $(NAME), $(TOOL), $(SRCDIR), $(SCRIPT))
 
+## Do tool specific declaraction.
 include $(smart.root)/internal/declare.mk
