@@ -17,3 +17,5 @@ Makefile.in
 /docs/smart-make.pdf
 /docs/main.out
 /bin/smart
+
+/.emacs.desktop

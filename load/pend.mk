@@ -20,11 +20,11 @@ ifndef SRCDIR
 endif #!SRCDIR
 
 ifdef SUBDIRS
-  include $(smart.root)/internal/subdirs.mk
+  include $(smart.root)/tool/subdirs.mk
 endif #SUBDIRS
 
 ifdef MODULES
-  include $(smart.root)/internal/modules.mk
+  include $(smart.root)/tool/modules.mk
 endif #MODULES
 
 -include $(smart.tooldir)/pend.mk

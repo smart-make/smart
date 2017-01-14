@@ -74,7 +74,6 @@ Variables
   * OUT
   * SCRIPT
   * SRCDIR
-  * TOOL_CONFIG
 
 **Build Configuration**
 

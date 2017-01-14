@@ -6,8 +6,6 @@
 #
 $(smart.internal)
 
-#$(warning info: $(NAME), $(TOOL), $(SRCDIR), $(SOURCES))
-
 ifndef TOOL
   $(warning $(NAME): TOOL)
   $(info $(SCRIPT):1: TOOL is empty)
@@ -71,26 +69,24 @@ endif #REQUIRES
 
 OBJECTS :=
 
-$(warning $(NAME): $(TOOL), $(PROGRAM), $(SRCDIR))
+$(warning $(NAME): $(TOOL), $(SRCDIR))
 
-ifdef TOOL
-  include $(smart.root)/internal/tools/$(TOOL)/rules.mk
-endif #TOOL
+include $(smart.tooldir)/rules.mk
 
 ifdef TARGETS
-  include $(smart.root)/internal/targets.mk
+  include $(smart.root)/tool/targets.mk
   ifdef TARGETS
     module-$(SCRIPT): $(TARGETS)
   endif #TARGETS
 endif #TARGETS
 
 ifdef SETTLE
-  include $(smart.root)/internal/settle.mk
+  include $(smart.root)/tool/settle.mk
   settle: settle-$(SCRIPT)
   PHONY += settle-$(SCRIPT)
 endif #SETTLE
 
 ifeq ($(SETTLE_ROOT),true)
-  $(info settle_root: $(SRCDIR))
+  $(warning $(NAME): settle_root: $(SRCDIR))
   smart.settle_root := $(SRCDIR)
 endif #SETTLE_ROOT

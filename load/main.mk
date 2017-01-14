@@ -18,6 +18,8 @@ else
   smart.reentrance := true
 endif
 
+#SHELL := /bin/bash
+
 ifneq ($(smart.reentrance),true)
   MAKEFILE_LIST :=
   include $(smart.root)/run.mk

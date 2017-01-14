@@ -9,12 +9,10 @@ ifneq ($(words $(MAKEFILE_LIST)),1)
   $(error You should always run smart utility!)
 endif
 
-#SHELL := /bin/bash
-
 smart.declare := $(smart.root)/declare.mk
 smart.rules := $(smart.root)/pend.mk
 
-smart.tooldir = $(smart.root)/internal/tools/$(TOOL)
+smart.tooldir = $(smart.root)/tool/$(TOOL)
 smart.stack :=
 smart.list :=
 smart.export :=
@@ -38,7 +36,7 @@ smart.settle_root :=
 ##       EXPORT.* or export.* grammar.
 ##       
 smart.context.names.global = $(smart.context.global.$(TOOL))
-smart.context.names.private = NAME SCRIPT TOOL TOOL_CONFIG SRCDIR SUBDIRS \
+smart.context.names.private = TOOL NAME SCRIPT SRCDIR SUBDIRS \
   REQUIRES MODULES TARGETS SETTLE_ROOT SETTLE \
   $(smart.context.private.$(TOOL))
 smart.context.names = this.% export.% THIS.% EXPORT.% \
